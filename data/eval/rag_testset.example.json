@@ -1,0 +1,23 @@
+{
+  "name": "rag-agent-kb-smoke-test",
+  "cases": [
+    {
+      "id": "smoke-001",
+      "question": "较大婴儿配方食品中蛋白质含量要求是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": ["蛋白质"],
+      "expected_citation_keywords": ["GB"],
+      "document_ids": null,
+      "top_k": 5
+    },
+    {
+      "id": "smoke-002",
+      "question": "文档中是否说明了火星土壤中某添加剂的限量？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": null,
+      "top_k": 5
+    }
+  ]
+}

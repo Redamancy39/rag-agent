@@ -1,0 +1,13 @@
+# Stage 2+ RAG dependencies.
+# Install after the Stage 1 backend is running.
+# Recommended Python: 3.10 or 3.11. Local BGE models may install PyTorch.
+
+chromadb==0.5.23
+sentence-transformers==3.3.1
+# Recommended for BGE rerankers such as bge-reranker-v2-m3.
+# If omitted, the app falls back to sentence-transformers CrossEncoder when compatible.
+FlagEmbedding==1.3.3
+openai==1.58.1
+httpx[socks]==0.28.1
+pypdf==5.1.0
+PyMuPDF==1.24.14

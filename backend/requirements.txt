@@ -1,0 +1,15 @@
+# Stage 1 backend runtime dependencies.
+# Recommended Python: 3.10 or 3.11.
+
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+sqlalchemy==2.0.36
+pydantic==2.10.4
+pydantic-settings==2.7.1
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+python-multipart==0.0.20
+
+# Used by FastAPI/Starlette TestClient for local verification.
+httpx==0.28.1

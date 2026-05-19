@@ -1,0 +1,721 @@
+{
+  "name": "rag-food-safety-standards-v1-answer-key",
+  "version": "1.0",
+  "created": "2026-05-19",
+  "description": "RAG评估测试集答案键，包含每题的标准答案、来源、难度等元数据。共70题：60题应找到答案，10题应返回未找到。",
+  "total_questions": 70,
+  "difficulty_distribution": {
+    "easy": 25,
+    "medium": 25,
+    "hard": 20
+  },
+  "type_distribution": {
+    "factual_lookup": 35,
+    "table_data": 20,
+    "definition": 10,
+    "cross_reference": 5,
+    "negative": 10
+  },
+  "questions": [
+    {
+      "id": "Q001",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "鲜(冻)畜、禽产品中挥发性盐基氮的限量指标为≤15 mg/100g，检验方法为GB 5009.228。",
+      "source_file": "GB 2707-2016",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q002",
+      "difficulty": "easy",
+      "question_type": "definition",
+      "standard_answer": "冻畜、禽肉是指活畜(猪、牛、羊、兔等)、禽(鸡、鸭、鹅等)宰杀、加工后，在≤-18℃冷冻处理的肉。",
+      "source_file": "GB 2707-2016",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q003",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "气味要求为：具有产品应有的气味，无异味。",
+      "source_file": "GB 2707-2016",
+      "source_page": 3,
+      "source_table": "表1 感官要求",
+      "expected_found": true
+    },
+    {
+      "id": "Q004",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "GB 2707-2016不适用于即食生肉制品。",
+      "source_file": "GB 2707-2016",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q005",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "酱油中氨基酸态氮的最低限量为≥0.4 g/100mL，检验方法为GB 5009.235。",
+      "source_file": "GB 2717-2018",
+      "source_page": 3,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q006",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "酱油菌落总数的采样方案：n=5, c=2, m=5×10³ CFU/mL, M=5×10⁴ CFU/mL。",
+      "source_file": "GB 2717-2018",
+      "source_page": 4,
+      "source_table": "表3 微生物限量",
+      "expected_found": true
+    },
+    {
+      "id": "Q007",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "食醋中总酸(以乙酸计)的最低限量：食醋≥3.5 g/100mL，甜醋≥2.5 g/100mL。检验方法为GB/T 5009.41。",
+      "source_file": "GB 2719-2018",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q008",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "食醋中禁止使用冰乙酸(又名冰醋酸)和冰乙酸(低压羟基化法)。",
+      "source_file": "GB 2719-2018",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q009",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "预包装食醋的标签应标示总酸含量，产品的包装标识上应醒目标出'食醋'或'甜醋'字样。",
+      "source_file": "GB 2719-2018",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q010",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "粮食中麦角在小麦、燕麦、莜麦、大麦、米大麦中的限量为≤0.01%。",
+      "source_file": "GB 2715-2016",
+      "source_page": 4,
+      "source_table": "表3 有毒有害菌类、植物种子限量",
+      "expected_found": true
+    },
+    {
+      "id": "Q011",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "霉变粒限量：大豆≤1.0%，除大豆外的其他粮食≤2.0%。",
+      "source_file": "GB 2715-2016",
+      "source_page": 4,
+      "source_table": "表1 感官要求",
+      "expected_found": true
+    },
+    {
+      "id": "Q012",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "木薯粉中总氢氰酸的限量指标为≤10 mg/kg，检验方法为GB 5009.36。",
+      "source_file": "GB 2715-2016",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q013",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "粮食中麦角在大米、玉米、豆类中的限量为不得检出。",
+      "source_file": "GB 2715-2016",
+      "source_page": 4,
+      "source_table": "表3 有毒有害菌类、植物种子限量",
+      "expected_found": true
+    },
+    {
+      "id": "Q014",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "熟肉制品大肠菌群的采样方案及限量：n=5, c=2, m=10 CFU/g, M=10² CFU/g。检验方法为GB 4789.3。",
+      "source_file": "GB 2726-2016",
+      "source_page": 4,
+      "source_table": "表2 微生物限量",
+      "expected_found": true
+    },
+    {
+      "id": "Q015",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "GB 2726-2016不适用于肉类罐头。",
+      "source_file": "GB 2726-2016",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q016",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "熟肉制品状态要求为：具有产品应有的状态，无正常视力可见外来异物，无焦斑和霉斑。",
+      "source_file": "GB 2726-2016",
+      "source_page": 3,
+      "source_table": "表1 感官要求",
+      "expected_found": true
+    },
+    {
+      "id": "Q017",
+      "difficulty": "easy",
+      "question_type": "definition",
+      "standard_answer": "调制肉制品是以鲜(冻)畜、禽产品为主要原料，经原辅料预处理、调制加工、冷却或冻结、包装而成的需冷藏或冷冻贮存、运输的非即食肉制品，也称为调理肉制品。包括冷藏调制肉制品和冷冻调制肉制品。",
+      "source_file": "GB 31661-2025",
+      "source_page": 2,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q018",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "解冻后畜禽产品中心温度不应高于4℃。",
+      "source_file": "GB 31661-2025",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q019",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "采用空气解冻时，静态气流解冻环境温度不应高于18℃，流动气体解冻环境温度不应高于21℃。",
+      "source_file": "GB 31661-2025",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q020",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "腌制环境温度不应高于4℃。",
+      "source_file": "GB 31661-2025",
+      "source_page": 5,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q021",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "冷藏调制肉制品冷却后产品中心温度应降至4℃及以下；冷冻调制肉制品冻结后产品中心温度应降至-18℃及以下。",
+      "source_file": "GB 31661-2025",
+      "source_page": 5,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q022",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "煎炸过程中的食用植物油应符合GB 2716的相关要求。",
+      "source_file": "GB 31661-2025",
+      "source_page": 6,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q023",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "采用热水进行清洁消毒时，清洁用的水温不宜低于40℃，消毒用的水温不应低于82℃。",
+      "source_file": "GB 31661-2025",
+      "source_page": 6,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q024",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "运输冷藏调制肉制品的运输工具厢体内温度应控制在0℃~4℃范围，运输冷冻调制肉制品的运输工具厢体内温度应控制在-18℃及以下。",
+      "source_file": "GB 31661-2025",
+      "source_page": 6,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q025",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "恩诺沙星的残留标志物是恩诺沙星与环丙沙星之和(sum of enrofloxacin and ciprofloxacin)。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 8,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q026",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "诺氟沙星对所有食品动物的残留限量为不得检出(在所有食品组织中)。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 12,
+      "source_table": "表28",
+      "expected_found": true
+    },
+    {
+      "id": "Q027",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "培氟沙星在所有食品动物肌肉中的最大残留限量为2 μg/kg。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 13,
+      "source_table": "表32",
+      "expected_found": true
+    },
+    {
+      "id": "Q028",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "氯芬新(lufenuron)在鱼皮+肉中的最大残留限量为1350 μg/kg。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 11,
+      "source_table": "表24",
+      "expected_found": true
+    },
+    {
+      "id": "Q029",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "氟苯尼考的残留标志物是氟苯尼考与氟苯尼考胺之和(sum of florfenicol and florfenicol-amine)。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 9,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q030",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "加米霉素(gamithromycin)在猪肾中的最大残留限量为300 μg/kg。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 10,
+      "source_table": "表20",
+      "expected_found": true
+    },
+    {
+      "id": "Q031",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "酿造酱中氨基酸态氮的最低限量为≥0.3 g/100g，检验方法为GB/T 5009.40。",
+      "source_file": "GB 2718-2014",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q032",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "GB 2718-2014不适用于半固态复合调味料。",
+      "source_file": "GB 2718-2014",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q033",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "酿造酱的原料要求中，谷物、豆类应符合GB 2715的规定。",
+      "source_file": "GB 2718-2014",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q034",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "豆制品中脲酶试验的指标要求为阴性，检验方法为GB/T 5009.183，仅适用于豆浆。",
+      "source_file": "GB 2712-2014",
+      "source_page": 3,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q035",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "GB 2712-2014不适用于大豆蛋白粉。",
+      "source_file": "GB 2712-2014",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q036",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "即食豆制品中大肠菌群的采样方案及限量：n=5, c=2, m=10² CFU/g或CFU/mL, M=10³ CFU/g或CFU/mL。检验方法为GB 4789.3平板计数法。",
+      "source_file": "GB 2712-2014",
+      "source_page": 4,
+      "source_table": "表3 微生物限量",
+      "expected_found": true
+    },
+    {
+      "id": "Q037",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "食用盐(精制盐)中氯化钠含量≥97.00 g/100g，水分含量10~35 g/100g。不同类型食盐指标不同。",
+      "source_file": "GB 2721-2015",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q038",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "食用盐中钡的限量指标为≤15 mg/kg，检验方法为GB 5009.42。",
+      "source_file": "GB 2721-2015",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q039",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "味精中谷氨酸钠的含量应≥99.0%，检验方法为GB 5009.43。",
+      "source_file": "GB 2720-2015",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q040",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "蜂蜜中果糖和葡萄糖的含量合计应≥60 g/100g。",
+      "source_file": "GB 2730-2015",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q041",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "鲜、冻动物性水产品中挥发性盐基氮限量：海水鱼≤30 mg/100g，淡水鱼≤20 mg/100g。其他产品如虾≤25 mg/100g，贝类≤15 mg/100g。",
+      "source_file": "GB 2733-2015",
+      "source_page": 3,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q042",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "鲜、冻动物性水产品中麻痹性贝类毒素(PSP)的限量为≤4 MU/g，检验方法为GB/T 5009.213。",
+      "source_file": "GB 2733-2015",
+      "source_page": 4,
+      "source_table": "表3 生物毒素限量",
+      "expected_found": true
+    },
+    {
+      "id": "Q043",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "植物油中酸价(KOH)限量：食用植物油(含调和油)≤3 mg/g，食用植物调和油≤3 mg/g。不同类型油脂指标不同。",
+      "source_file": "GB 2716-2018",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q044",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "植物油中过氧化值的限量为≤0.25 g/100g。",
+      "source_file": "GB 2716-2018",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q045",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "对畜、禽产品进行剔骨、分割、分拣、切块(丝)或绞制时，环境温度不应高于12℃，原料肉温度应控制在7℃以下，并具有产品散热和防止积压的措施。",
+      "source_file": "GB 31661-2025",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q046",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "调制肉制品运输中，应严格控制装载作业时间，装卸货期间食品温度升高幅度不应超过3℃。",
+      "source_file": "GB 31661-2025",
+      "source_page": 6,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q047",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "畜、禽产品原料应具有检疫证明，猪肉还应具有肉品品质检验合格证。进口畜、禽产品应有入境货物相关证明文件。",
+      "source_file": "GB 31661-2025",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q048",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "蛋制品中菌落总数：再制蛋类n=5,c=2,m=5×10⁴,M=10⁶；干蛋类n=5,c=2,m=10⁴,M=10⁵。检验方法为GB 4789.2。",
+      "source_file": "GB 2749-2015",
+      "source_page": 4,
+      "source_table": "表3 微生物限量",
+      "expected_found": true
+    },
+    {
+      "id": "Q049",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "粮食中毒麦在小麦、大麦中的限量为≤1 粒/kg，检验方法为SN/T 1154。",
+      "source_file": "GB 2715-2016",
+      "source_page": 4,
+      "source_table": "表3 有毒有害菌类、植物种子限量",
+      "expected_found": true
+    },
+    {
+      "id": "Q050",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "粮食应专储、专运。应储存在清洁、干燥、防雨、防潮、防虫、防鼠、无异味的仓库内，不应与有毒有害物质或含水分较高的物质混存，并采用不同储粮生态区域相应的技术措施，确保粮食储藏安全，减少损失损耗，防止污染。应使用符合卫生要求的运输工具，运输过程中应注意防止被雨淋和被污染。",
+      "source_file": "GB 2715-2016",
+      "source_page": 5,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q051",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "莫奈太尔(monepantel)在牛脂肪中的最大残留限量为7000 μg/kg。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 12,
+      "source_table": "表27",
+      "expected_found": true
+    },
+    {
+      "id": "Q052",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "磺胺类(sulfonamides)在家禽组织中的最大残留限量为10 μg/kg。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 14,
+      "source_table": "表35",
+      "expected_found": true
+    },
+    {
+      "id": "Q053",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "氧氟沙星(ofloxacin)在所有食品动物肌肉、肝、肾、脂肪中均为2 μg/kg，奶、蛋、鱼皮+肉也为2 μg/kg。",
+      "source_file": "GB 31650.1-2022",
+      "source_page": 12,
+      "source_table": "表29",
+      "expected_found": true
+    },
+    {
+      "id": "Q054",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "蜂蜜中蔗糖的含量限量：桉树蜂蜜等特殊品种≤5 g/100g，其他蜂蜜≤5 g/100g（根据不同品种限量不同）。",
+      "source_file": "GB 2730-2015",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "Q055",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "滚揉过程的环境温度不应高于4℃，搅拌和滚揉后的产品中心温度不应高于12℃。",
+      "source_file": "GB 31661-2025",
+      "source_page": 5,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q056",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "调制肉制品冻结处理应在-23℃以下环境中进行。",
+      "source_file": "GB 31661-2025",
+      "source_page": 5,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q057",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "畜禽内脏的污染物限量应符合GB 2762中畜禽内脏的规定，除畜禽内脏以外的产品的污染物限量应符合GB 2762中畜禽肉的规定。",
+      "source_file": "GB 2707-2016",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q058",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "调制肉制品的穿串用签应符合GB 4806.9、GB 4806.12等的规定。",
+      "source_file": "GB 31661-2025",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q059",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "调制肉制品生产用水应符合GB 5749的相关规定。",
+      "source_file": "GB 31661-2025",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "Q060",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "蜂蜜中锌的限量为≤25 mg/kg。",
+      "source_file": "GB 2730-2015",
+      "source_page": 4,
+      "source_table": "表2 理化指标",
+      "expected_found": true
+    },
+    {
+      "id": "N001",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含婴幼儿奶粉中三聚氰胺限量标准的相关内容，应返回'未找到'。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N002",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含矿泉水相关标准，应返回'未找到'。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N003",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含食品中铝残留限量标准，应返回'未找到'。注意GB 2762虽然涉及污染物但未在库中。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N004",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含白酒相关标准，应返回'未找到'。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N005",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含乳制品三聚氰胺检测方法相关内容，应返回'未找到'。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N006",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含茶叶农药残留限量标准，应返回'未找到'。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N007",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含方便面相关标准，应返回'未找到'。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N008",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含婴幼儿配方食品标准，应返回'未找到'。注意GB 31661是调制肉制品而非婴幼儿食品。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N009",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含饼干相关标准，应返回'未找到'。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "N010",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "当前文档库中不包含巧克力相关标准，应返回'未找到'。",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    }
+  ]
+}

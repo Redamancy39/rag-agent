@@ -1,0 +1,5 @@
+# Optional OCR dependencies for scanned PDFs.
+# Install only when PREPROCESS_OCR_FALLBACK_ENABLED=true is needed.
+
+paddleocr
+paddlepaddle

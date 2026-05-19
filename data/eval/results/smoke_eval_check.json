@@ -1,0 +1,145 @@
+{
+  "name": "rag-agent-kb-smoke-test",
+  "total": 2,
+  "passed": 1,
+  "failed": 1,
+  "pass_rate": 0.5,
+  "results": [
+    {
+      "id": "smoke-001",
+      "question": "较大婴儿配方食品中蛋白质含量要求是什么？",
+      "passed": false,
+      "expected_found": true,
+      "actual_found": false,
+      "missing_answer_keywords": [
+        "蛋白质"
+      ],
+      "missing_citation_keywords": [],
+      "response": {
+        "answer": "分类判断：未找到\n结论：未找到相关答案。\n依据：未找到可支撑结论的依据。\n引用：无",
+        "sections": {
+          "classification": "未找到",
+          "conclusion": "未找到相关答案。",
+          "basis": "未找到可支撑结论的依据。",
+          "citation": "无"
+        },
+        "evidence_rows": [
+          {
+            "index": 1,
+            "score": 0.9866190552711487,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "page": 3,
+            "table": null,
+            "chunk_id": "doc:9:chunk:1",
+            "keywords": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第3页；内容类型：ocr_page_text。 GB 10766—2021 前 言 本标准代替GB10767一2010《食品安全国家标准较大婴儿和幼儿配方食品》中适用于6..."
+          },
+          {
+            "index": 2,
+            "score": 0.9834790229797363,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "page": 5,
+            "table": null,
+            "chunk_id": "doc:9:chunk:3",
+            "keywords": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第5页；内容类型：ocr_page_text。 GB 10766—2021 食纤维的能量系数为8kJ/g），所得之和为千焦/100毫升（kJ/100mL）值，再除以4.1..."
+          },
+          {
+            "index": 3,
+            "score": 0.9832964539527893,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "page": 4,
+            "table": null,
+            "chunk_id": "doc:9:chunk:2",
+            "keywords": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第4页；内容类型：ocr_page_text。 GB 10766—2021 食品安全国家标准 较大婴儿配方食品 1范围 本标准适用于6～12月龄较大婴儿食用的配方食品。 ..."
+          },
+          {
+            "index": 4,
+            "score": 0.9764898419380188,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "page": 10,
+            "table": null,
+            "chunk_id": "doc:9:chunk:11",
+            "keywords": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第10页；内容类型：ocr_page_text。 GB 10766—2021 附录A 推荐的较大婴儿配方食品中必需与半必需氨基酸含量值 A.1参照已发表的有代表性的中国人..."
+          },
+          {
+            "index": 5,
+            "score": 0.9349609613418579,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "page": 5,
+            "table": null,
+            "chunk_id": "doc:9:chunk:4",
+            "keywords": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第5页；内容类型：ocr_page_text。 ）总量≤总脂肪酸的20%；反式脂肪酸含量≤总脂肪酸的3%；芥酸 含量三总脂肪酸的1%；总脂肪酸指C4~C24脂肪酸的总和。..."
+          }
+        ],
+        "citations": [
+          {
+            "document_id": 9,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "chunk_id": "doc:9:chunk:1",
+            "page": 3,
+            "chunk_type": "ocr_page_text",
+            "score": 0.9866190552711487,
+            "text": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第3页；内容类型：ocr_page_text。 GB 10766—2021 前 言 本标准代替GB10767一2010《食品安全国家标准较大婴儿和幼儿配方食品》中适用于6～12月 龄较大婴儿食用的配方食品的内容。 本标准与GB10767一2010中适用于6～12月龄的较大婴儿配方食品相比，主要变化如下： 修改了标准的范围。 修改了术语和定义。 增加了乳清蛋白和乳糖的比例要求。 修改和增加了多数营养素的最小值..."
+          },
+          {
+            "document_id": 9,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "chunk_id": "doc:9:chunk:3",
+            "page": 5,
+            "chunk_type": "ocr_page_text",
+            "score": 0.9834790229797363,
+            "text": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第5页；内容类型：ocr_page_text。 GB 10766—2021 食纤维的能量系数为8kJ/g），所得之和为千焦/100毫升（kJ/100mL）值，再除以4.184为千卡/ 100毫升（kcal/100mL）值。 3.3.3产品中每100kJ（100kcal）所含蛋白质、脂肪和碳水化合物的量应符合表1的规定。 3.3.4较大婴儿配方食品不应使用果糖和蔗糖作为碳水化合物的来源，可适当添加葡萄糖聚合物..."
+          },
+          {
+            "document_id": 9,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "chunk_id": "doc:9:chunk:2",
+            "page": 4,
+            "chunk_type": "ocr_page_text",
+            "score": 0.9832964539527893,
+            "text": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第4页；内容类型：ocr_page_text。 GB 10766—2021 食品安全国家标准 较大婴儿配方食品 1范围 本标准适用于6～12月龄较大婴儿食用的配方食品。 2术语和定义 2.1 较大婴儿配方食品 适用于正常较大婴儿食用，其能量和营养成分能满足6～12月龄较大婴儿部分营养需要的配方 食品。 2.2 乳基较大婴儿配方食品 以乳类及乳蛋白制品为主要蛋白来源，加入适量的维生素、矿物质和（或）其他原料，..."
+          },
+          {
+            "document_id": 9,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "chunk_id": "doc:9:chunk:11",
+            "page": 10,
+            "chunk_type": "ocr_page_text",
+            "score": 0.9764898419380188,
+            "text": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第10页；内容类型：ocr_page_text。 GB 10766—2021 附录A 推荐的较大婴儿配方食品中必需与半必需氨基酸含量值 A.1参照已发表的有代表性的中国人乳中必需与半必需氨基酸含量数据及有关氮含量和（或)蛋白质 含量的数据，并考虑一定的变异范围，计算出推荐的较大婴儿配方食品中必需与半必需氨基酸含量低限 值(mg/gN)。 A.2根据我国人乳中每种氨基酸的低限值（mg/gN），计算蛋白质含量最..."
+          },
+          {
+            "document_id": 9,
+            "filename": "GB 10766-2021 较大婴儿配方食品.pdf",
+            "chunk_id": "doc:9:chunk:4",
+            "page": 5,
+            "chunk_type": "ocr_page_text",
+            "score": 0.9349609613418579,
+            "text": "来源文件：GB 10766-2021 较大婴儿配方食品.pdf；页码：第5页；内容类型：ocr_page_text。 ）总量≤总脂肪酸的20%；反式脂肪酸含量≤总脂肪酸的3%；芥酸 含量三总脂肪酸的1%；总脂肪酸指C4~C24脂肪酸的总和。 。没有特别说明。 』碳水化合物的含量A」，按式（1）计算： A1 = 100 — (A₂ + A₃ + A4 + A₅ + A6 ) ………(1) 式中： A」————碳水化合物的含量，单位为克每100克（g/100g）； A₂————蛋..."
+          }
+        ],
+        "retrieval_only": true
+      }
+    },
+    {
+      "id": "smoke-002",
+      "question": "文档中是否说明了火星土壤中某添加剂的限量？",
+      "passed": true,
+      "expected_found": false,
+      "actual_found": false,
+      "missing_answer_keywords": [],
+      "missing_citation_keywords": [],
+      "response": {
+        "answer": "分类判断：未找到\n结论：未找到相关答案。\n依据：未找到可支撑结论的依据。\n引用：无",
+        "sections": {
+          "classification": "未找到",
+          "conclusion": "未找到相关答案。",
+          "basis": "未找到可支撑结论的依据。",
+          "citation": "无"
+        },
+        "evidence_rows": [],
+        "citations": [],
+        "retrieval_only": true
+      }
+    }
+  ]
+}
