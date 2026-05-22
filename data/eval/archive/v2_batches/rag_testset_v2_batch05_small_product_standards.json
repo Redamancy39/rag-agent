@@ -1,0 +1,3103 @@
+{
+  "name": "rag-testset-v2-batch05-small-product-standards",
+  "cases": [
+    {
+      "id": "V2-B05-Q001",
+      "question": "GB 2711-2014面筋制品标准适用于什么类型的面筋制品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "预包装",
+        "面筋制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "1"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2711-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q002",
+      "question": "根据GB 2711-2014，面筋制品的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "小麦粉",
+        "去除淀粉",
+        "蛋白产品",
+        "油面筋",
+        "水面筋",
+        "烤麸"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "2.1"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2711-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q003",
+      "question": "GB 2711-2014面筋制品的感官要求中，状态指标有什么要求？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "应有形态",
+        "无霉变",
+        "无正常视力可见外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "表1"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2711-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q004",
+      "question": "根据GB 2711-2014，面筋制品的污染物限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "3.3"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2711-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q005",
+      "question": "GB 2711-2014中即食面筋制品的大肠菌群限量要求是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10²",
+        "M=10³",
+        "CFU/g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "表2"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2711-2014 page 4"
+    },
+    {
+      "id": "V2-B05-Q006",
+      "question": "GB 2711-2014规定面筋制品的致病菌限量应符合哪个标准的哪类规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 29921",
+        "熟制粮食制品类"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "3.4.1"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2711-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q007",
+      "question": "GB 2711-2014大肠菌群的检验方法是什么？样品采样及处理应按哪个标准执行？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 4789.3",
+        "平板计数法",
+        "GB 4789.1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "表2"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "mixed",
+        "medium"
+      ],
+      "notes": "source=GB 2711-2014 page 4"
+    },
+    {
+      "id": "V2-B05-Q008",
+      "question": "GB 2711-2014面筋制品的食品添加剂使用应符合哪个标准？该标准的前身是哪个旧标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "GB2711-2003",
+        "非发酵性豆制品及面筋卫生标准"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "3.5"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2711-2014 page 3-4"
+    },
+    {
+      "id": "V2-B05-Q009",
+      "question": "GB 2711-2014面筋制品感官检验中，色泽和形态的检验方法具体操作步骤是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "白色瓷盘",
+        "自然光",
+        "观察色泽和形态"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "表1"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2711-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q010",
+      "question": "GB 2712-2014豆制品标准适用于哪些产品？不适用于什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "预包装豆制品",
+        "不适用于大豆蛋白粉"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "1"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2712-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q011",
+      "question": "根据GB 2712-2014，豆制品的定义及分类是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "大豆",
+        "杂豆",
+        "发酵豆制品",
+        "非发酵豆制品",
+        "大豆蛋白类制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "2.1"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2712-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q012",
+      "question": "GB 2712-2014豆制品的理化指标中脲酶试验的要求是什么？适用于哪种产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阴性",
+        "仅适用于豆浆"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表2"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2712-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q013",
+      "question": "GB 2712-2014豆制品的污染物限量和真菌毒素限量分别应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "GB 2761"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "3.4"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2712-2014 page 4"
+    },
+    {
+      "id": "V2-B05-Q014",
+      "question": "GB 2712-2014即食豆制品的大肠菌群限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10²",
+        "M=10³",
+        "CFU/g或CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表3"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2712-2014 page 4"
+    },
+    {
+      "id": "V2-B05-Q015",
+      "question": "GB 2712-2014豆制品的感官检验中，液体样品和固体样品的检验方法有何不同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "液体",
+        "50mL烧杯",
+        "固体",
+        "白色瓷盘"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表1"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2712-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q016",
+      "question": "GB 2712-2014豆制品的致病菌限量应符合哪个标准？食品添加剂使用应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 29921",
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "3.5.1",
+        "3.6"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2712-2014 page 4"
+    },
+    {
+      "id": "V2-B05-Q017",
+      "question": "GB 2712-2014脲酶试验的检验方法标准号是什么？该标准代替了哪些旧标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB/T 5009.183",
+        "GB2712-2003",
+        "GB2711-2003"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表2",
+        "前言"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2712-2014 page 3-4"
+    },
+    {
+      "id": "V2-B05-Q018",
+      "question": "GB 2712-2014豆制品的感官要求中，状态指标有什么具体规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "应有状态",
+        "无霉变",
+        "无正常视力可见外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表1"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2712-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q019",
+      "question": "GB 2713-2015淀粉制品标准适用于哪些产品？请举例说明。",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "淀粉制品",
+        "粉条",
+        "粉丝",
+        "粉皮",
+        "凉粉"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "1"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2713-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q020",
+      "question": "根据GB 2713-2015，淀粉制品的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "薯类",
+        "豆类",
+        "谷类",
+        "食用淀粉",
+        "和浆",
+        "成型",
+        "干燥"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "2.1"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2713-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q021",
+      "question": "GB 2713-2015淀粉制品的感官要求中，状态指标有什么特殊要求？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "不发黏",
+        "无发霉",
+        "无变质",
+        "口尝无砂质"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "表1"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2713-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q022",
+      "question": "GB 2713-2015即食淀粉制品的菌落总数限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10⁵",
+        "M=10⁶",
+        "CFU/g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "表2"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2713-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q023",
+      "question": "GB 2713-2015即食淀粉制品的大肠菌群限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=20",
+        "M=10²",
+        "CFU/g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "表2"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2713-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q024",
+      "question": "GB 2713-2015淀粉制品的致病菌限量应符合哪个标准的哪类规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 29921",
+        "粮食制品类"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "3.4.1"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2713-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q025",
+      "question": "GB 2713-2015淀粉制品的食品添加剂和食品营养强化剂分别应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "GB 14880"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "3.5.1",
+        "3.5.2"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2713-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q026",
+      "question": "GB 2713-2015淀粉制品感官要求中滋味和气味有什么规定？与面筋制品的感官要求有什么不同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "无异味",
+        "不酸"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "表1"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2713-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q027",
+      "question": "GB 2713-2015淀粉制品的污染物限量应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "3.3"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2713-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q028",
+      "question": "GB 2714-2015酱腌菜标准适用于哪些产品？请举例。",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "酱渍菜",
+        "盐渍菜",
+        "酱油渍菜",
+        "糖渍菜",
+        "醋渍菜",
+        "发酵酸菜",
+        "糟渍菜"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "2.1"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2714-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q029",
+      "question": "根据GB 2714-2015，酱腌菜的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "新鲜蔬菜",
+        "腌渍",
+        "酱渍",
+        "蔬菜制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "2.1"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2714-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q030",
+      "question": "GB 2714-2015酱腌菜的感官要求中状态指标有什么规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "无霉变",
+        "无霉斑白膜",
+        "无正常视力可见外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "表1"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2714-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q031",
+      "question": "GB 2714-2015酱腌菜的污染物限量应符合GB 2762中哪类食品的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "腌渍蔬菜"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "3.3"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2714-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q032",
+      "question": "GB 2714-2015酱腌菜的大肠菌群限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10",
+        "M=10²",
+        "CFU/g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "表2"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2714-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q033",
+      "question": "GB 2714-2015酱腌菜的致病菌限量应符合哪个标准的哪类规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 29921",
+        "即食果蔬制品",
+        "含酱腌菜类"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "3.4.1"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2714-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q034",
+      "question": "GB 2714-2015酱腌菜的食品添加剂使用应符合GB 2760中哪类食品的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "腌渍蔬菜",
+        "发酵蔬菜制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "3.5"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2714-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q035",
+      "question": "GB 2714-2015酱腌菜大肠菌群限量不适用于哪类产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "非灭菌发酵型产品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "表2注b"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "factual_lookup",
+        "hard"
+      ],
+      "notes": "source=GB 2714-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q036",
+      "question": "GB 2714-2015酱腌菜与GB 2711-2014面筋制品的感官要求中状态指标有何异同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "酱腌菜",
+        "无霉斑白膜",
+        "面筋制品",
+        "无霉变"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "表1",
+        "GB 2711"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2714-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q037",
+      "question": "GB 2717-2018酱油标准适用于什么产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "酱油"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "1"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2717-2018 page 3"
+    },
+    {
+      "id": "V2-B05-Q038",
+      "question": "根据GB 2717-2018，酱油的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "大豆",
+        "脱脂大豆",
+        "小麦",
+        "小麦粉",
+        "麦麸",
+        "微生物发酵",
+        "液体调味品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "2.1"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2717-2018 page 3"
+    },
+    {
+      "id": "V2-B05-Q039",
+      "question": "GB 2717-2018酱油的感官要求中状态指标有什么规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "不混浊",
+        "无正常视力可见外来异物",
+        "无霉花浮膜"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "表1"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2717-2018 page 3"
+    },
+    {
+      "id": "V2-B05-Q040",
+      "question": "GB 2717-2018酱油的氨基酸态氮限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "≥0.4",
+        "g/100mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "表2"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2717-2018 page 3"
+    },
+    {
+      "id": "V2-B05-Q041",
+      "question": "GB 2717-2018酱油的菌落总数限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=5×10³",
+        "M=5×10⁴",
+        "CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "表3"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2717-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q042",
+      "question": "GB 2717-2018酱油的大肠菌群限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10",
+        "M=10²",
+        "CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "表3"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2717-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q043",
+      "question": "GB 2717-2018酱油的污染物限量和真菌毒素限量分别应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "GB 2761"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "3.4"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2717-2018 page 3-4"
+    },
+    {
+      "id": "V2-B05-Q044",
+      "question": "GB 2717-2018酱油的食品添加剂和食品营养强化剂分别应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "GB 14880"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "3.6"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2717-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q045",
+      "question": "GB 2717-2018酱油感官检验中，试样的取样和检验方法具体步骤是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "直径60mm~90mm白色瓷盘",
+        "自然光线",
+        "吸管吸取",
+        "滋味品尝"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "表1"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "factual_lookup",
+        "hard"
+      ],
+      "notes": "source=GB 2717-2018 page 3"
+    },
+    {
+      "id": "V2-B05-Q046",
+      "question": "GB 2718-2014酿造酱标准适用于什么产品？不适用于什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "酿造酱",
+        "不适用于半固态复合调味料"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "1"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2718-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q047",
+      "question": "根据GB 2718-2014，酿造酱的定义是什么？请举例。",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "谷物",
+        "豆类",
+        "微生物发酵",
+        "半固态",
+        "面酱",
+        "黄酱",
+        "蚕豆酱"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "2.1"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2718-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q048",
+      "question": "GB 2718-2014酿造酱的氨基酸态氮限量是多少？检验方法是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "≥0.3",
+        "g/100g",
+        "GB/T 5009.40"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "表2"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2718-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q049",
+      "question": "GB 2718-2014酿造酱的感官要求中状态指标有什么规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "无正常视力可见霉斑",
+        "外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "表1"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2718-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q050",
+      "question": "GB 2718-2014酿造酱的大肠菌群限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10",
+        "M=10²",
+        "CFU/g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "表3"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2718-2014 page 4"
+    },
+    {
+      "id": "V2-B05-Q051",
+      "question": "GB 2718-2014酿造酱的原料要求中，谷物和豆类应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2715"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "3.1.1"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2718-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q052",
+      "question": "GB 2718-2014酿造酱的污染物限量和真菌毒素限量分别应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "GB 2761"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "3.4"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2718-2014 page 3-4"
+    },
+    {
+      "id": "V2-B05-Q053",
+      "question": "GB 2718-2014酿造酱样品的采样及处理应按哪些标准执行？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 4789.1",
+        "GB/T 4789.22"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "表3脚注"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "factual_lookup",
+        "hard"
+      ],
+      "notes": "source=GB 2718-2014 page 4"
+    },
+    {
+      "id": "V2-B05-Q054",
+      "question": "GB 2718-2014酿造酱与GB 2717-2018酱油的氨基酸态氮限量有何不同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "酿造酱",
+        "≥0.3",
+        "酱油",
+        "≥0.4"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "表2",
+        "GB 2717",
+        "表2"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2718-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q055",
+      "question": "GB 2719-2018食醋标准适用于什么产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "食醋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "1"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2719-2018 page 3"
+    },
+    {
+      "id": "V2-B05-Q056",
+      "question": "根据GB 2719-2018，食醋和甜醋的定义分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "食醋",
+        "淀粉",
+        "糖",
+        "食用酒精",
+        "微生物发酵",
+        "酸性调味品",
+        "甜醋",
+        "食糖"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "2.1",
+        "2.1.1"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "definition",
+        "medium"
+      ],
+      "notes": "source=GB 2719-2018 page 3"
+    },
+    {
+      "id": "V2-B05-Q057",
+      "question": "GB 2719-2018食醋和甜醋的总酸限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "食醋",
+        "≥3.5",
+        "g/100mL",
+        "甜醋",
+        "≥2.5"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "表2"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2719-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q058",
+      "question": "GB 2719-2018食醋的感官要求中状态指标有什么规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "不混浊",
+        "可有少量沉淀",
+        "无正常视力可见外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "表1"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2719-2018 page 3"
+    },
+    {
+      "id": "V2-B05-Q059",
+      "question": "GB 2719-2018食醋的菌落总数限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10³",
+        "M=10⁴",
+        "CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "表3"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2719-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q060",
+      "question": "GB 2719-2018食醋的大肠菌群限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10",
+        "M=10²",
+        "CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "表3"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2719-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q061",
+      "question": "GB 2719-2018食醋标准中明确禁止在食醋中使用什么原料？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "冰乙酸",
+        "不可用于食醋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "3.6"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "factual_lookup",
+        "hard"
+      ],
+      "notes": "source=GB 2719-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q062",
+      "question": "GB 2719-2018食醋的标签标识要求中，必须标示什么内容？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "总酸含量",
+        "食醋",
+        "甜醋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "4"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2719-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q063",
+      "question": "GB 2719-2018食醋的总酸检验方法标准号是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB/T 5009.41"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "表2"
+      ],
+      "document_ids": [
+        37
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2719",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2719-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q064",
+      "question": "GB 2720-2015味精标准适用于什么产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "味精"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "1"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2720-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q065",
+      "question": "根据GB 2720-2015，谷氨酸钠（味精）、加盐味精和增鲜味精的定义分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "谷氨酸钠",
+        "碳水化合物",
+        "发酵",
+        "白色结晶",
+        "粉末",
+        "加盐味精",
+        "精制盐",
+        "增鲜味精",
+        "核苷酸二钠",
+        "GMP",
+        "IMP"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "2.1",
+        "2.2",
+        "2.3"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "definition",
+        "medium"
+      ],
+      "notes": "source=GB 2720-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q066",
+      "question": "GB 2720-2015味精的感官要求中色泽和状态有什么规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "无色至白色",
+        "结晶状颗粒",
+        "粉末状",
+        "无正常视力可见外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "表1"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2720-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q067",
+      "question": "GB 2720-2015味精中谷氨酸钠（以干基计）的指标是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "99.0",
+        "%"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "表2"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2720-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q068",
+      "question": "GB 2720-2015增鲜味精中谷氨酸钠（以干基计）的指标是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "97.0",
+        "%"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "表2"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2720-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q069",
+      "question": "GB 2720-2015味精的污染物限量应符合GB 2762中哪类食品的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "调味品",
+        "鲜味剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "3.4"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2720-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q070",
+      "question": "GB 2720-2015味精的食品添加剂使用应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "3.5"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2720-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q071",
+      "question": "GB 2720-2015味精的谷氨酸钠检验方法标准号是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 5009.43"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "表2"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2720-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q072",
+      "question": "GB 2720-2015加盐味精中谷氨酸钠（以干基计）的指标大约是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "80.0",
+        "%"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "表2"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=GB 2720-2015 page 4, OCR uncertain"
+    },
+    {
+      "id": "V2-B05-Q073",
+      "question": "GB 2721-2015食用盐标准适用于什么产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "食用盐"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "1"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2721-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q074",
+      "question": "根据GB 2721-2015，食用盐、精制盐、粉碎洗涤盐、日晒盐和低钠盐的定义分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氯化钠",
+        "真空蒸发",
+        "机械热压缩",
+        "粉碎",
+        "洗涤",
+        "日晒卤水",
+        "低钠盐",
+        "氯化钾"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "2.1-2.5"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "definition",
+        "medium"
+      ],
+      "notes": "source=GB 2721-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q075",
+      "question": "GB 2721-2015食用盐的感官要求是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "白色",
+        "味咸",
+        "无异味",
+        "结晶体",
+        "无正常视力可见外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "表1"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2721-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q076",
+      "question": "GB 2721-2015食用盐中氯化钠（以干基计）的指标是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "≥97.00",
+        "g/100g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "表2"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2721-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q077",
+      "question": "GB 2721-2015低钠盐中氯化钾（以干基计）的指标范围是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "10~35",
+        "g/100g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "表2"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2721-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q078",
+      "question": "GB 2721-2015食用盐中钡（以Ba计）的限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "≤15",
+        "mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "表2"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2721-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q079",
+      "question": "GB 2721-2015低钠盐的产品标签有什么特殊要求？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "标示钾含量",
+        "高温作业者",
+        "肾功能障碍者",
+        "慎用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "4"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "factual_lookup",
+        "hard"
+      ],
+      "notes": "source=GB 2721-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q080",
+      "question": "GB 2721-2015强化碘的食用盐碘含量应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 26878"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "表2注c"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "source=GB 2721-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q081",
+      "question": "GB 2721-2015食用盐的污染物限量和食品添加剂分别应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "3.4",
+        "3.5"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2721-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q082",
+      "question": "GB 2726-2016熟肉制品标准适用于什么产品？不适用于什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "预包装",
+        "熟肉制品",
+        "不适用于肉类罐头"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "1"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2726-2016 page 3"
+    },
+    {
+      "id": "V2-B05-Q083",
+      "question": "根据GB 2726-2016，熟肉制品包括哪些类别？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "酱卤肉制品",
+        "熏肉类",
+        "烧肉类",
+        "烤肉类",
+        "油炸肉类",
+        "西式火腿类",
+        "肉灌肠类",
+        "发酵肉制品类",
+        "熟肉干制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "2.1"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "definition",
+        "medium"
+      ],
+      "notes": "source=GB 2726-2016 page 3"
+    },
+    {
+      "id": "V2-B05-Q084",
+      "question": "GB 2726-2016熟肉制品的感官要求中状态指标有什么特殊规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "无正常视力可见外来异物",
+        "无焦斑",
+        "无霉斑"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表1"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2726-2016 page 3"
+    },
+    {
+      "id": "V2-B05-Q085",
+      "question": "GB 2726-2016熟肉制品的菌落总数限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10⁴",
+        "M=10⁵",
+        "CFU/g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表2"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2726-2016 page 4"
+    },
+    {
+      "id": "V2-B05-Q086",
+      "question": "GB 2726-2016熟肉制品的大肠菌群限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10",
+        "M=10²",
+        "CFU/g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表2"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2726-2016 page 4"
+    },
+    {
+      "id": "V2-B05-Q087",
+      "question": "GB 2726-2016熟肉制品菌落总数限量不适用于哪类产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "发酵肉制品类"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表2注b"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "factual_lookup",
+        "hard"
+      ],
+      "notes": "source=GB 2726-2016 page 4"
+    },
+    {
+      "id": "V2-B05-Q088",
+      "question": "GB 2726-2016熟肉制品的污染物限量和致病菌限量分别应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "GB 29921"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "3.3",
+        "3.4.1"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2726-2016 page 3"
+    },
+    {
+      "id": "V2-B05-Q089",
+      "question": "GB 2726-2016熟肉制品的样品采样及处理应按哪个标准执行？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 4789.1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表2注a"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2726-2016 page 4"
+    },
+    {
+      "id": "V2-B05-Q090",
+      "question": "GB 2726-2016熟肉制品与GB 2730-2015腌腊肉制品的感官要求有何异同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "熟肉制品",
+        "无焦斑",
+        "无霉斑",
+        "腌腊肉制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表1",
+        "GB 2730"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2726-2016 page 3"
+    },
+    {
+      "id": "V2-B05-Q091",
+      "question": "GB 2757-2012蒸馏酒及其配制酒标准适用于什么产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "蒸馏酒",
+        "配制酒"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "1"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q092",
+      "question": "根据GB 2757-2012，蒸馏酒和蒸馏酒的配制酒的定义分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "蒸馏酒",
+        "粮谷",
+        "薯类",
+        "水果",
+        "乳类",
+        "发酵",
+        "蒸馏",
+        "勾兑",
+        "配制酒",
+        "食用酒精",
+        "调配",
+        "混合"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "2.1",
+        "2.2"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "definition",
+        "medium"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q093",
+      "question": "GB 2757-2012粮谷类蒸馏酒中甲醇的限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "≤0.6",
+        "g/L"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "表1"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q094",
+      "question": "GB 2757-2012非粮谷类蒸馏酒中甲醇的限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "≤2.0",
+        "g/L"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "表1"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q095",
+      "question": "GB 2757-2012蒸馏酒中氰化物（以HCN计）的限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "≤8.0",
+        "mg/L"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "表1"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q096",
+      "question": "GB 2757-2012蒸馏酒的甲醇和氰化物指标按什么折算？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "100%酒精度折算"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "表1注a"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "factual_lookup",
+        "hard"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q097",
+      "question": "GB 2757-2012蒸馏酒的污染物和真菌毒素限量分别应符合哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "GB 2761"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "3.4"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q098",
+      "question": "GB 2757-2012蒸馏酒甲醇和氰化物的检验方法标准号是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB/T 5009.48"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "表1"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q099",
+      "question": "GB 2757-2012粮谷类与非粮谷类蒸馏酒的甲醇限量有何不同？为什么需要按100%酒精度折算？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "粮谷类",
+        "≤0.6",
+        "非粮谷类",
+        "≤2.0",
+        "100%酒精度折算"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "表1"
+      ],
+      "document_ids": [
+        47
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2757",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2757-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q100",
+      "question": "GB 2758-2012发酵酒及其配制酒标准适用于什么产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "发酵酒",
+        "配制酒"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "1"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2758-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q101",
+      "question": "根据GB 2758-2012，发酵酒和发酵酒的配制酒的定义分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "发酵酒",
+        "粮谷",
+        "水果",
+        "乳类",
+        "发酵",
+        "配制酒",
+        "调配",
+        "混合"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "2.1",
+        "2.2"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "definition",
+        "medium"
+      ],
+      "notes": "source=GB 2758-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q102",
+      "question": "GB 2758-2012啤酒中甲醛的限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "≤2.0",
+        "mg/L"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "表1"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "table_data",
+        "easy"
+      ],
+      "notes": "source=GB 2758-2012 page 3"
+    },
+    {
+      "id": "V2-B05-Q103",
+      "question": "GB 2758-2012发酵酒中沙门氏菌的限量要求是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=0",
+        "m=0/25mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "表2"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2758-2012 page 4"
+    },
+    {
+      "id": "V2-B05-Q104",
+      "question": "GB 2758-2012发酵酒中金黄色葡萄球菌的限量要求是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=0",
+        "m=0/25mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "表2"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2758-2012 page 4"
+    },
+    {
+      "id": "V2-B05-Q105",
+      "question": "GB 2758-2012发酵酒标签中酒精度应以什么单位标示？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "%vol"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "4.2"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2758-2012 page 4"
+    },
+    {
+      "id": "V2-B05-Q106",
+      "question": "GB 2758-2012发酵酒标签中应标示什么警示语？啤酒用玻璃瓶包装时还应标示什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "过量饮酒有害健康",
+        "切勿撞击",
+        "防止爆瓶"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "4.4"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2758-2012 page 4"
+    },
+    {
+      "id": "V2-B05-Q107",
+      "question": "GB 2758-2012哪种发酵酒可以免于标示保质期？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "葡萄酒",
+        "酒精度≥10%vol"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "4.5"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "factual_lookup",
+        "hard"
+      ],
+      "notes": "source=GB 2758-2012 page 4"
+    },
+    {
+      "id": "V2-B05-Q108",
+      "question": "GB 2758-2012啤酒的标签应标示什么浓度？用什么单位？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "原麦汁浓度",
+        "°P",
+        "柏拉图度"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "4.3"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2758-2012 page 4"
+    },
+    {
+      "id": "V2-B05-Q109",
+      "question": "GB 2759-2015冷冻饮品和制作料标准适用于什么产品？不适用于什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "冷冻饮品",
+        "制作料",
+        "不适用于现制现售"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "1"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2759-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q110",
+      "question": "根据GB 2759-2015，冷冻饮品和制作料的定义分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "冷冻饮品",
+        "饮用水",
+        "食糖",
+        "乳",
+        "冰淇淋",
+        "雪糕",
+        "雪泥",
+        "冰棍",
+        "甜味冰",
+        "食用冰",
+        "制作料",
+        "软冰淇淋浆料",
+        "软冰淇淋预拌粉"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "2.1",
+        "2.2"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "definition",
+        "medium"
+      ],
+      "notes": "source=GB 2759-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q111",
+      "question": "GB 2759-2015冷冻饮品一般产品的菌落总数限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=2.5×10⁴",
+        "M=10⁵",
+        "CFU/g或CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "表2"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q112",
+      "question": "GB 2759-2015食用冰的菌落总数限量与一般产品有什么不同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "c=0",
+        "m=10²"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "表2"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q113",
+      "question": "GB 2759-2015冷冻饮品的贮存温度要求是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-18℃",
+        "专用冷库"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "贮存"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q114",
+      "question": "GB 2759-2015冷冻饮品的销售条件是什么？低温陈列柜的温度应不超过多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "冷冻条件",
+        "≤-15℃"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "销售"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q115",
+      "question": "GB 2759-2015采用灭菌、无菌灌装工艺生产的制作料产品应符合什么要求？按什么标准检验？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "商业无菌",
+        "GB 4789.26"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "表2注"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q116",
+      "question": "GB 2759-2015冷冻饮品的食品添加剂和食品营养强化剂分别应符合哪个标准中哪类食品的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "冷冻饮品",
+        "GB 14880",
+        "冷冻饮品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "3.6"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q117",
+      "question": "GB 2759-2015冷冻饮品中大肠菌群的一般产品限量是多少？该限量不适用于含什么菌种的产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10",
+        "M=10²",
+        "活性菌种",
+        "益生菌"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "表2"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    }
+  ]
+}

@@ -1,0 +1,1206 @@
+{
+  "name": "rag-testset-v2-batch05-small-product-standards-answer-key",
+  "questions": [
+    {
+      "id": "V2-B05-Q001",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "GB 2711-2014适用于预包装面筋制品。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q002",
+      "difficulty": "easy",
+      "question_type": "definition",
+      "standard_answer": "面筋制品是以小麦粉为原料经加工去除淀粉后制得的蛋白产品，包括油面筋、水面筋和烤麸及其制品。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q003",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "状态要求：具有产品应有的形态，无霉变，无正常视力可见的外来异物。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q004",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762的规定。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q005",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "即食面筋制品大肠菌群限量：n=5，c=2，m=10² CFU/g，M=10³ CFU/g。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q006",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "致病菌限量应符合GB 29921中熟制粮食制品类的规定。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q007",
+      "difficulty": "medium",
+      "question_type": "mixed",
+      "standard_answer": "大肠菌群检验方法为GB 4789.3平板计数法；样品采样及处理按GB 4789.1执行。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q008",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "食品添加剂使用应符合GB 2760的规定。本标准部分代替了GB2711-2003《非发酵性豆制品及面筋卫生标准》。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": "3-4",
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q009",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "取适量试样置于白色瓷盘中，在自然光下观察色泽和形态。",
+      "source_file": "GB 2711-2014 面筋制品.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q010",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于预包装豆制品，不适用于大豆蛋白粉。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q011",
+      "difficulty": "easy",
+      "question_type": "definition",
+      "standard_answer": "豆制品是以大豆或杂豆为主要原料，经加工制成的食品，包括发酵豆制品、非发酵豆制品和大豆蛋白类制品。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q012",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "脲酶试验指标为阴性，仅适用于豆浆。检验方法为GB/T 5009.183。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": 3,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q013",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762的规定，真菌毒素限量应符合GB 2761的规定。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q014",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "即食豆制品大肠菌群限量：n=5，c=2，m=10² CFU/g或CFU/mL，M=10³ CFU/g或CFU/mL。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": 4,
+      "source_table": "表3",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q015",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "液体样品取适量试样置于50mL烧杯中，固体样品取适量试样置于白色瓷盘中，在自然光下观察色泽和状态，闻其气味，用温开水漱口，品其滋味。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q016",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "致病菌限量应符合GB 29921的规定，食品添加剂使用应符合GB 2760的规定。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q017",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "脲酶试验检验方法为GB/T 5009.183。本标准代替了GB2712-2003《发酵性豆制品卫生标准》，部分代替了GB2711-2003《非发酵性豆制品及面筋卫生标准》。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": "3-4",
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q018",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "状态要求：具有产品应有的状态，无霉变，无正常视力可见的外来异物。",
+      "source_file": "GB 2712-2014 豆制品.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q019",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于淀粉制品，如粉条、粉丝、粉皮、凉粉等。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q020",
+      "difficulty": "easy",
+      "question_type": "definition",
+      "standard_answer": "淀粉制品是以薯类、豆类、谷类等植物中的一种或几种制成的食用淀粉为原料，经和浆、成型、干燥（或不干燥）等工艺加工制成的产品。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q021",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "状态要求：具有产品应有的形态，不发黏、无发霉、无变质，正常视力可见外来异物，口尝无砂质。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q022",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "即食淀粉制品菌落总数限量：n=5，c=2，m=10⁵ CFU/g，M=10⁶ CFU/g。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q023",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "即食淀粉制品大肠菌群限量：n=5，c=2，m=20 CFU/g，M=10² CFU/g。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q024",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "即食淀粉制品的致病菌限量应符合GB 29921中粮食制品类的规定。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q025",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "食品添加剂使用应符合GB 2760的规定，食品营养强化剂使用应符合GB 14880的规定。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q026",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "GB 2713淀粉制品状态要求包含'不发黏、口尝无砂质'等独特规定，而GB 2711面筋制品状态要求为'具有产品应有的形态，无霉变，无正常视力可见的外来异物'。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q027",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762的规定。",
+      "source_file": "GB 2713-2015 淀粉制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q028",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于酱腌菜，包括酱渍菜、盐渍菜、酱油渍菜、糖渍菜、醋渍菜、糖醋渍菜、虾油渍菜、发酵酸菜和糟渍菜等。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q029",
+      "difficulty": "easy",
+      "question_type": "definition",
+      "standard_answer": "酱腌菜是以新鲜蔬菜为主要原料，经腌渍或酱渍加工而成的各种蔬菜制品。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q030",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "状态要求：无霉变，无霉斑白膜，无正常视力可见的外来异物。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q031",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762中腌渍蔬菜的规定。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q032",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "大肠菌群限量：n=5，c=2，m=10 CFU/g，M=10² CFU/g。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q033",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "致病菌限量应符合GB 29921中即食果蔬制品（含酱腌菜类）的规定。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q034",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "食品添加剂使用应符合GB 2760中腌渍蔬菜或发酵蔬菜制品的规定。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q035",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "大肠菌群限量不适用于非灭菌发酵型产品。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 4,
+      "source_table": "表2注b",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q036",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "酱腌菜状态要求'无霉变，无霉斑白膜，无正常视力可见的外来异物'，面筋制品状态要求'具有产品应有的形态，无霉变，无正常视力可见的外来异物'。酱腌菜多了'无霉斑白膜'，面筋制品多了'应有形态'。",
+      "source_file": "GB 2714-2015 酱腌菜.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q037",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于酱油。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q038",
+      "difficulty": "easy",
+      "question_type": "definition",
+      "standard_answer": "酱油是以大豆和/或脱脂大豆、小麦和/或小麦粉和/或麦麸为主要原料，经微生物发酵制成的具有特殊色、香、味的液体调味品。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q039",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "状态要求：不混浊，无正常视力可见外来异物，无霉花浮膜。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q040",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "氨基酸态氮限量指标为≥0.4 g/100mL。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": 3,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q041",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "酱油菌落总数限量：n=5，c=2，m=5×10³ CFU/mL，M=5×10⁴ CFU/mL。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": 4,
+      "source_table": "表3",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q042",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "酱油大肠菌群限量：n=5，c=2，m=10 CFU/mL，M=10² CFU/mL。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": 4,
+      "source_table": "表3",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q043",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762的规定，真菌毒素限量应符合GB 2761的规定。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": "3-4",
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q044",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "食品添加剂使用应符合GB 2760的规定，食品营养强化剂使用应符合GB 14880的规定。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q045",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "取混合均匀的适量试样置于直径60mm~90mm的白色瓷盘中，在自然光线下观察色泽和状态，闻其气味，并用吸管吸取适量试样进行滋味品尝。",
+      "source_file": "GB 2717-2018 酱油.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q046",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于酿造酱，不适用于半固态复合调味料。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q047",
+      "difficulty": "easy",
+      "question_type": "definition",
+      "standard_answer": "酿造酱是以谷物和（或）豆类为主要原料经微生物发酵而制成的半固态的调味品，如面酱、黄酱、蚕豆酱等。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q048",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "氨基酸态氮指标为≥0.3 g/100g，检验方法为GB/T 5009.40。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": 3,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q049",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "状态要求：无正常视力可见霉斑、外来异物。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q050",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "大肠菌群限量：n=5，c=2，m=10 CFU/g，M=10² CFU/g。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": 4,
+      "source_table": "表3",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q051",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "谷物、豆类应符合GB 2715的规定。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q052",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762的规定，真菌毒素限量应符合GB 2761的规定。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": "3-4",
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q053",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "样品的分析及处理按GB 4789.1和GB/T 4789.22执行。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": 4,
+      "source_table": "表3脚注",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q054",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "酿造酱的氨基酸态氮指标为≥0.3 g/100g，酱油的氨基酸态氮指标为≥0.4 g/100mL。酱油要求更高。",
+      "source_file": "GB 2718-2014 酿造酱.pdf",
+      "source_page": 3,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q055",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于食醋。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q056",
+      "difficulty": "medium",
+      "question_type": "definition",
+      "standard_answer": "食醋：单独或混合使用各种含有淀粉、糖的物料、食用酒精，经微生物发酵酿制而成的液体酸性调味品。甜醋：单独或混合使用糯米、大米等粮食、酒类或食用酒精，经微生物发酵后再添加食糖等辅料制成的食醋。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q057",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "食醋总酸（以乙酸计）≥3.5 g/100mL，甜醋总酸（以乙酸计）≥2.5 g/100mL。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q058",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "状态要求：不混浊，可有少量沉淀，无正常视力可见外来异物。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q059",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "食醋菌落总数限量：n=5，c=2，m=10³ CFU/mL，M=10⁴ CFU/mL。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 4,
+      "source_table": "表3",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q060",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "食醋大肠菌群限量：n=5，c=2，m=10 CFU/mL，M=10² CFU/mL。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 4,
+      "source_table": "表3",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q061",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "冰乙酸不可用于食醋。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q062",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "需标示总酸含量，醒目标出'食醋'或'甜醋'字样。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q063",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "总酸检验方法标准号为GB/T 5009.41。",
+      "source_file": "GB 2719-2018 食醋.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q064",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于味精。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q065",
+      "difficulty": "medium",
+      "question_type": "definition",
+      "standard_answer": "谷氨酸钠（味精）：以碳水化合物为原料，经微生物发酵、提取、中和、结晶、分离、干燥而制成的具有特殊鲜味的白色结晶或粉末状调味品。加盐味精：在谷氨酸钠中定量添加了精制盐的混合物。增鲜味精：在谷氨酸钠中定量添加了核苷酸二钠（GMP、IMP或IMP+GMP）等增味剂的混合物。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q066",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "色泽：无色至白色；状态：结晶状颗粒或粉末状，无正常视力可见外来异物。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q067",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "味精中谷氨酸钠（以干基计）指标为99.0%。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q068",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "增鲜味精中谷氨酸钠（以干基计）指标为97.0%。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q069",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762对调味品类别中鲜味剂的规定。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q070",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "食品添加剂使用应符合GB 2760的规定。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q071",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "谷氨酸钠检验方法标准号为GB 5009.43。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q072",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "加盐味精中谷氨酸钠（以干基计）指标约为80.0%（OCR数据待核验）。",
+      "source_file": "GB 2720-2015 味精.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q073",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于食用盐。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q074",
+      "difficulty": "medium",
+      "question_type": "definition",
+      "standard_answer": "食用盐：以氯化钠为主要成分，用于食用的盐。精制盐：以卤水或盐为原料，用真空蒸发、机械热压缩或粉碎、洗涤、干燥工艺制得。粉碎洗涤盐：以海盐、湖盐或岩盐为原料，用粉碎、洗涤工艺制得。日晒盐：以日晒卤水浓缩结晶工艺制得。低钠盐：以精制盐等为基础，添加氯化钾等降低钠离子浓度。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q075",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "色泽：白色；滋味和气味：味咸，无异味；状态：结晶体，无正常视力可见外来异物。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 4,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q076",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "氯化钠（以干基计）指标为≥97.00 g/100g。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q077",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "低钠盐中氯化钾（以干基计）指标为10~35 g/100g。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q078",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "钡（以Ba计）限量为≤15 mg/kg。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q079",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "低钠盐的产品标签中应标示钾的含量，并应清晰标示：'高温作业者、重体力劳动强度工作者、肾功能障碍者及服用降压药物的高血压患者等不适宜高钾摄入的人群应慎用'。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q080",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "强化碘的食用盐碘含量应符合GB 26878的规定。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 4,
+      "source_table": "表2注c",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q081",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762的规定，食品添加剂使用应符合GB 2760的规定。",
+      "source_file": "GB 2721-2015 食用盐.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q082",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于预包装的熟肉制品，不适用于肉类罐头。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q083",
+      "difficulty": "medium",
+      "question_type": "definition",
+      "standard_answer": "熟肉制品包括酱卤肉制品类、熏肉类、烧肉类、烤肉类、油炸肉类、西式火腿类、肉灌肠类、发酵肉制品类、熟肉干制品和其他熟肉制品。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q084",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "状态要求：具有产品应有的状态，无正常视力可见外来异物，无焦斑和霉斑。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q085",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "熟肉制品菌落总数限量：n=5，c=2，m=10⁴ CFU/g，M=10⁵ CFU/g。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q086",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "熟肉制品大肠菌群限量：n=5，c=2，m=10 CFU/g，M=10² CFU/g。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q087",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "菌落总数限量不适用于发酵肉制品类。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 4,
+      "source_table": "表2注b",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q088",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762的规定，致病菌限量应符合GB 29921的规定。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q089",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "样品的采样和处理按GB 4789.1执行。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 4,
+      "source_table": "表2注a",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q090",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "熟肉制品感官状态要求'无焦斑和霉斑'，而腌腊肉制品GB 2730无此特定要求。两者均要求无正常视力可见外来异物。",
+      "source_file": "GB 2726-2016 熟肉制品.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q091",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于蒸馏酒及其配制酒。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q092",
+      "difficulty": "medium",
+      "question_type": "definition",
+      "standard_answer": "蒸馏酒：以粮谷、薯类、水果、乳类等为主要原料，经发酵、蒸馏、勾兑而成的饮料酒。蒸馏酒的配制酒：以蒸馏酒和（或）食用酒精为酒基，加入可食用的辅料或食品添加剂，进行调配、混合或再加工制成的，已改变了其原酒基风格的饮料酒。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q093",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "粮谷类蒸馏酒中甲醇限量≤0.6 g/L。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q094",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "非粮谷类蒸馏酒中甲醇限量≤2.0 g/L。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q095",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "氰化物（以HCN计）限量≤8.0 mg/L。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q096",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "甲醇、氰化物指标均按100％酒精度折算。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": "表1注a",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q097",
+      "difficulty": "easy",
+      "question_type": "cross_reference",
+      "standard_answer": "污染物限量应符合GB 2762的规定，真菌毒素限量应符合GB 2761的规定。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q098",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "甲醇和氰化物的检验方法标准号为GB/T 5009.48。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q099",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "粮谷类蒸馏酒甲醇限量≤0.6 g/L，非粮谷类≤2.0 g/L。按100%酒精度折算是为了统一不同酒精度产品的安全评估标准。",
+      "source_file": "GB 2757-2012 蒸馏酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q100",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于发酵酒及其配制酒。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q101",
+      "difficulty": "medium",
+      "question_type": "definition",
+      "standard_answer": "发酵酒：以粮谷、水果、乳类等为主要原料，经发酵或部分发酵酿制而成的饮料酒。发酵酒的配制酒：以发酵酒为酒基，加入可食用的辅料或食品添加剂，进行调配、混合或加工制成的，已改变了其原酒基风格的饮料酒。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q102",
+      "difficulty": "easy",
+      "question_type": "table_data",
+      "standard_answer": "啤酒中甲醛限量≤2.0 mg/L。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 3,
+      "source_table": "表1",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q103",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "沙门氏菌限量：n=5，c=0，m=0/25 mL，检验方法为GB/T 4789.25。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q104",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "金黄色葡萄球菌限量：n=5，c=0，m=0/25 mL。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q105",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "酒精度应以'%vol'为单位标示。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q106",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "应标示'过量饮酒有害健康'警示语。啤酒用玻璃瓶包装时应标示'切勿撞击，防止爆瓶'等警示语。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q107",
+      "difficulty": "hard",
+      "question_type": "factual_lookup",
+      "standard_answer": "葡萄酒和其他酒精度大于等于10%vol的发酵酒及其配制酒可免于标示保质期。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q108",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "啤酒应标示原麦汁浓度，以柏拉图度符号'°P'为单位。",
+      "source_file": "GB 2758-2012 发酵酒及其配制酒.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q109",
+      "difficulty": "easy",
+      "question_type": "factual_lookup",
+      "standard_answer": "适用于冷冻饮品和制作料，不适用于现制现售的冷冻饮品。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q110",
+      "difficulty": "medium",
+      "question_type": "definition",
+      "standard_answer": "冷冻饮品：以饮用水、食糖、乳、乳制品、果蔬制品、豆类、食用油脂等为主要原料，经配料、巴氏杀菌或灭菌、凝冻或冷冻等工艺制成的固态或半固态食品，包括冰淇淋、雪糕、雪泥、冰棍、甜味冰、食用冰等。制作料：按照终产品配方进行复配，用于经凝冻制作软冰淇淋或软雪糕等产品的液态、固态或粉状产品。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 3,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q111",
+      "difficulty": "medium",
+      "question_type": "table_data",
+      "standard_answer": "一般产品菌落总数限量：n=5，c=2，m=2.5×10⁴ CFU/g或CFU/mL，M=10⁵ CFU/g或CFU/mL。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q112",
+      "difficulty": "hard",
+      "question_type": "table_data",
+      "standard_answer": "食用冰菌落总数：c=0（一般产品c=2），m=10² CFU/g（一般产品m=2.5×10⁴）。食用冰要求更严格。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q113",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "冷冻饮品产品应贮存在-18℃的专用冷库内。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q114",
+      "difficulty": "medium",
+      "question_type": "factual_lookup",
+      "standard_answer": "应在冷冻条件下销售，低温陈列柜的温度应≤-15℃。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q115",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "采用灭菌、无菌灌装工艺生产的制作料产品应符合商业无菌的要求，按GB 4789.26规定的方法检验。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 4,
+      "source_table": "表2注",
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q116",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "食品添加剂使用应符合GB 2760中冷冻饮品的规定，食品营养强化剂使用应符合GB 14880中冷冻饮品的规定。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 4,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B05-Q117",
+      "difficulty": "hard",
+      "question_type": "mixed",
+      "standard_answer": "一般产品大肠菌群限量：n=5，c=2，m=10 CFU/g或CFU/mL，M=10² CFU/g或CFU/mL。该限量不适用于终产品含有活性菌种（好氧和兼性厌氧益生菌）的产品。",
+      "source_file": "GB 2759-2015 冷冻饮品和制作料.pdf",
+      "source_page": 4,
+      "source_table": "表2",
+      "expected_found": true
+    }
+  ],
+  "version": "v2.0-batch05",
+  "created": "2026-05-21",
+  "description": "Batch05 covers small product standards, including definitions, sensory/physicochemical indicators, labels, and referenced standards.",
+  "total_questions": 117,
+  "difficulty_distribution": {
+    "easy": 47,
+    "hard": 20,
+    "medium": 50
+  },
+  "type_distribution": {
+    "cross_reference": 22,
+    "definition": 13,
+    "factual_lookup": 33,
+    "mixed": 10,
+    "table_data": 39
+  },
+  "document_distribution": {
+    "(33,)": 9,
+    "(34,)": 9,
+    "(35,)": 9,
+    "(36,)": 9,
+    "(37,)": 9,
+    "(38,)": 9,
+    "(39,)": 9,
+    "(40,)": 9,
+    "(44,)": 9,
+    "(45,)": 9,
+    "(47,)": 9,
+    "(48,)": 9,
+    "(49,)": 9
+  }
+}

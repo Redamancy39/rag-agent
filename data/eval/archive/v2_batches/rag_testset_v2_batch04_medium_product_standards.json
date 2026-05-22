@@ -1,0 +1,1636 @@
+{
+  "name": "rag-testset-v2-batch04-medium-product-standards",
+  "cases": [
+    {
+      "id": "V2-B04-Q001",
+      "question": "GB 2715-2016粮食标准适用于哪些食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "原粮",
+        "成品粮",
+        "谷物",
+        "豆类",
+        "薯类"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "1"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q002",
+      "question": "根据GB 2715-2016，原粮的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "未经加工",
+        "谷物",
+        "豆类",
+        "薯类",
+        "统称"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "2.1"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q003",
+      "question": "GB 2715-2016中成品粮的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "原粮经机械",
+        "加工",
+        "初级产品",
+        "大米",
+        "小麦粉"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "2.2"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q004",
+      "question": "GB 2715-2016中热损伤粒的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "微生物",
+        "产热",
+        "受热",
+        "改变正常颜色",
+        "受到损伤",
+        "籽粒"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "2.3"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q005",
+      "question": "根据GB 2715-2016，麦角是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "麦角菌",
+        "黑麦",
+        "小麦",
+        "大麦",
+        "燕麦",
+        "菌核"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "2.4"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q006",
+      "question": "GB 2715-2016中霉变粒的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "粒面明显生霉",
+        "伤及胚",
+        "胚乳",
+        "子叶",
+        "无食用价值"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "2.6"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q007",
+      "question": "GB 2715-2016中粮食的感官要求应符合哪张表的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "表1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "表1"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q008",
+      "question": "根据GB 2715-2016，粮食的理化指标应符合哪张表的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "表2"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "表2"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 4"
+    },
+    {
+      "id": "V2-B04-Q009",
+      "question": "GB 2715-2016中有毒有害菌类、植物种子限量应符合哪张表的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "表3"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "表3"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 4"
+    },
+    {
+      "id": "V2-B04-Q010",
+      "question": "根据GB 2715-2016，粮食的污染物限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "3.4.1"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2715-2016 page 5"
+    },
+    {
+      "id": "V2-B04-Q011",
+      "question": "GB 2715-2016中粮食的真菌毒素限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2761"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "3.4.2"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2715-2016 page 5"
+    },
+    {
+      "id": "V2-B04-Q012",
+      "question": "根据GB 2715-2016，粮食的农药残留限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2763"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "3.5"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2715-2016 page 5"
+    },
+    {
+      "id": "V2-B04-Q013",
+      "question": "GB 2715-2016中粮食的食品添加剂使用应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "3.6.1"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2715-2016 page 5"
+    },
+    {
+      "id": "V2-B04-Q014",
+      "question": "根据GB 2715-2016，粮食的食品营养强化剂使用应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 14880"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "3.6.2"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2715-2016 page 5"
+    },
+    {
+      "id": "V2-B04-Q015",
+      "question": "GB 2715-2016规定原粮类粮食的污染物限量应分别符合GB 2762中对哪些食品类别的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "谷物",
+        "豆类",
+        "薯类"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "3.4.1"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "source=GB 2715-2016 page 5"
+    },
+    {
+      "id": "V2-B04-Q016",
+      "question": "GB 2715-2016规定成品粮类粮食的污染物限量应分别符合GB 2762中对哪些食品类别的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "谷物碾磨加工品",
+        "豆类",
+        "干制薯类"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "3.4.1"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "source=GB 2715-2016 page 5"
+    },
+    {
+      "id": "V2-B04-Q017",
+      "question": "GB 2715-2016规定粮食的储存仓库应具备哪些条件？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "清洁",
+        "干燥",
+        "防雨",
+        "防潮",
+        "防虫",
+        "防鼠",
+        "无异味"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "4"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2715-2016 page 5"
+    },
+    {
+      "id": "V2-B04-Q018",
+      "question": "GB 2715-2016标准不适用于什么食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "加工食用油的原料"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "1"
+      ],
+      "document_ids": [
+        46
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2715",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2715-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q019",
+      "question": "GB 2749-2015蛋与蛋制品标准适用于哪些食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "鲜蛋",
+        "蛋制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2749-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q020",
+      "question": "根据GB 2749-2015，鲜蛋的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "各种家禽",
+        "未经加工",
+        "带壳蛋",
+        "冷藏",
+        "液浸",
+        "涂膜",
+        "消毒"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "2.1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2749-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q021",
+      "question": "GB 2749-2015中蛋制品包括哪几类？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "液蛋制品",
+        "干蛋制品",
+        "冰蛋制品",
+        "再制蛋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "2.2"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2749-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q022",
+      "question": "根据GB 2749-2015，再制蛋包括哪些产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "皮蛋",
+        "咸蛋",
+        "咸蛋黄",
+        "糟蛋",
+        "卤蛋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "2.2.4"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2749-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q023",
+      "question": "GB 2749-2015中鲜蛋的感官要求应符合哪张表的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "表1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "表1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2749-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q024",
+      "question": "GB 2749-2015中鲜蛋灯光透视时整个蛋应呈什么颜色？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "微红色"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "表1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2749-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q025",
+      "question": "根据GB 2749-2015，鲜蛋去壳后蛋黄应呈什么颜色？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "橘黄色",
+        "橙色"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "表1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2749-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q026",
+      "question": "GB 2749-2015中鲜蛋的蛋壳状态有什么要求？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "清洁完整",
+        "无裂纹",
+        "无霉斑",
+        "无黑点",
+        "无异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "表1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2749-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q027",
+      "question": "根据GB 2749-2015，蛋制品的污染物限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "3.3"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2749-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q028",
+      "question": "GB 2749-2015中蛋制品的农药残留限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2763"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "3.4.1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2749-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q029",
+      "question": "根据GB 2749-2015，蛋制品的食品添加剂使用应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "3.6.1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2749-2015 page 5"
+    },
+    {
+      "id": "V2-B04-Q030",
+      "question": "GB 2749-2015中蛋制品的致病菌限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 29921"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "3.5.1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2749-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q031",
+      "question": "根据GB 2749-2015，符合罐头食品加工工艺的再制蛋制品应符合什么要求？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "商业无菌"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "3.5.2"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=GB 2749-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q032",
+      "question": "GB 2716-2018植物油标准适用于哪些食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "植物原油",
+        "食用植物油",
+        "食用植物调和油",
+        "煎炸"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "1"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2716-2018 page 3"
+    },
+    {
+      "id": "V2-B04-Q033",
+      "question": "GB 2716-2018标准不适用于什么食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "食用油脂制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "1"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2716-2018 page 3"
+    },
+    {
+      "id": "V2-B04-Q034",
+      "question": "根据GB 2716-2018，植物原油的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "食用植物油料",
+        "原料制取",
+        "不直接食用",
+        "原料油"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "2.1"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2716-2018 page 3"
+    },
+    {
+      "id": "V2-B04-Q035",
+      "question": "GB 2716-2018中食用植物调和油的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "两种",
+        "两种以上",
+        "食用植物油",
+        "调配",
+        "食用油脂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "2.3"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2716-2018 page 3"
+    },
+    {
+      "id": "V2-B04-Q036",
+      "question": "根据GB 2716-2018，米糠油的酸价限量指标是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "25",
+        "mg/g",
+        "KOH"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q037",
+      "question": "GB 2716-2018中棕榈仁油、玉米油、橄榄油、棉籽油、椰子油的食用植物油酸价限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "3",
+        "mg/g",
+        "KOH"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q038",
+      "question": "根据GB 2716-2018，食用植物油的过氧化值限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "0.25",
+        "g/100g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q039",
+      "question": "GB 2716-2018中煎炸过程中的食用植物油极性组分限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "27",
+        "%"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q040",
+      "question": "根据GB 2716-2018，食用植物油的溶剂残留量限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "20",
+        "mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q041",
+      "question": "GB 2716-2018中棉籽油的游离棉酚限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "200",
+        "mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q042",
+      "question": "根据GB 2716-2018，压榨油溶剂残留量不得检出，检出值小于多少时视为未检出？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "10",
+        "mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q043",
+      "question": "GB 2716-2018中植物油的污染物限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "3.4.1"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q044",
+      "question": "根据GB 2716-2018，植物油的真菌毒素限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2761"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "3.4.2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q045",
+      "question": "GB 2716-2018中植物油的食品添加剂使用应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "3.6.1"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2716-2018 page 4"
+    },
+    {
+      "id": "V2-B04-Q046",
+      "question": "根据GB 2716-2018，食用植物调和油中脂肪酸组成含量≥10%时，允许误差范围是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "85%",
+        "115%",
+        "标识值"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表A.2"
+      ],
+      "document_ids": [
+        42
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2716",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=GB 2716-2018 page 5"
+    },
+    {
+      "id": "V2-B04-Q047",
+      "question": "GB 2730-2015腌腊肉制品标准适用于哪些食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "腌腊肉制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "1"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2730-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q048",
+      "question": "根据GB 2730-2015，腌腊肉制品的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "鲜冻畜禽肉",
+        "可食副产品",
+        "腌制",
+        "烘干",
+        "晒干",
+        "风干",
+        "非即食"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "2.1"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2730-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q049",
+      "question": "GB 2730-2015中火腿的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "鲜冻猪后腿",
+        "修整",
+        "腌制",
+        "洗刷脱盐",
+        "风干发酵",
+        "非即食"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "2.2"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=GB 2730-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q050",
+      "question": "根据GB 2730-2015，腊肉的加工工艺包括哪些？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "腌制",
+        "烘干",
+        "晒干",
+        "风干",
+        "烟熏",
+        "不烟熏"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "2.3"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "definition",
+        "medium"
+      ],
+      "notes": "source=GB 2730-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q051",
+      "question": "GB 2730-2015中火腿、腊肉、咸肉、香腊肠的过氧化值限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "0.5",
+        "g/100g",
+        "脂肪计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "表2"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2730-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q052",
+      "question": "根据GB 2730-2015，腌腊禽制品的过氧化值限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "1.5",
+        "g/100g",
+        "脂肪计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "表2"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2730-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q053",
+      "question": "GB 2730-2015中火腿的三甲胺氮限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "2.5",
+        "mg/100g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "表2"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=GB 2730-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q054",
+      "question": "根据GB 2730-2015，腌腊肉制品的污染物限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2730-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q055",
+      "question": "GB 2730-2015中腌腊肉制品的食品添加剂使用应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730"
+      ],
+      "document_ids": [
+        41
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2730",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2730-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q056",
+      "question": "GB 2733-2015鲜冻动物性水产品标准适用于哪些食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "鲜",
+        "冻",
+        "动物性水产品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2733",
+        "1"
+      ],
+      "document_ids": [
+        43
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2733",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2733-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q057",
+      "question": "根据GB 2733-2015，鲜冻动物性水产品的感官要求应符合哪张表的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "表1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2733",
+        "表1"
+      ],
+      "document_ids": [
+        43
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2733",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2733-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q058",
+      "question": "GB 2733-2015中水产品的污染物限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2733"
+      ],
+      "document_ids": [
+        43
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2733",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2733-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q059",
+      "question": "根据GB 2733-2015，水产品的食品添加剂使用应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2733"
+      ],
+      "document_ids": [
+        43
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2733",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2733-2015 page 4"
+    },
+    {
+      "id": "V2-B04-Q060",
+      "question": "GB 2733-2015中鲜冻动物性水产品的挥发性盐基氮限量应符合哪张表的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "表2"
+      ],
+      "expected_citation_keywords": [
+        "GB 2733",
+        "表2"
+      ],
+      "document_ids": [
+        43
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2733",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2733-2015 page 3"
+    },
+    {
+      "id": "V2-B04-Q061",
+      "question": "GB 2707-2016鲜冻畜禽产品标准适用于哪些食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "鲜",
+        "冻",
+        "畜禽产品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707",
+        "1"
+      ],
+      "document_ids": [
+        32
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2707",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2707-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q062",
+      "question": "根据GB 2707-2016，鲜冻畜禽产品的感官要求应符合哪张表的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "表1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707",
+        "表1"
+      ],
+      "document_ids": [
+        32
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2707",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=GB 2707-2016 page 3"
+    },
+    {
+      "id": "V2-B04-Q063",
+      "question": "GB 2707-2016中鲜冻畜禽产品的污染物限量应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707"
+      ],
+      "document_ids": [
+        32
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2707",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2707-2016 page 4"
+    },
+    {
+      "id": "V2-B04-Q064",
+      "question": "根据GB 2707-2016，鲜冻畜禽产品的食品添加剂使用应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707"
+      ],
+      "document_ids": [
+        32
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2707",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=GB 2707-2016 page 4"
+    }
+  ]
+}

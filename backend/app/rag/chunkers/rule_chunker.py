@@ -1,5 +1,11 @@
 from app.rag.chunkers.base_chunker import BaseChunker
 from app.rag.schemas import DocumentChunk, LoadedDocumentPart
+from app.rag.table_utils import (
+    augment_text_with_table_reference,
+    is_table_like_text,
+    metadata_with_table_reference,
+    split_table_text,
+)
 
 
 class RuleChunker(BaseChunker):
@@ -25,8 +31,20 @@ class RuleChunker(BaseChunker):
     def split_documents(self, parts: list[LoadedDocumentPart]) -> list[DocumentChunk]:
         chunks: list[DocumentChunk] = []
         for part in parts:
-            for local_index, text in enumerate(self.split_text(part.text)):
-                metadata = dict(part.metadata)
-                metadata["local_chunk_index"] = local_index
-                chunks.append(DocumentChunk(text=text, metadata=metadata))
+            metadata = metadata_with_table_reference(part.metadata, part.text)
+            text = augment_text_with_table_reference(part.text, metadata)
+            split_texts = (
+                split_table_text(text, chunk_size=self.chunk_size)
+                if is_table_like_text(text, metadata)
+                else self.split_text(text)
+            )
+            segment_count = len(split_texts)
+            for local_index, chunk_text in enumerate(split_texts):
+                chunk_metadata = dict(metadata)
+                if segment_count > 1 and is_table_like_text(text, metadata):
+                    chunk_metadata["table_segment_index"] = local_index + 1
+                    chunk_metadata["table_segment_count"] = segment_count
+                    chunk_metadata["table_chunking_strategy"] = "row_aware"
+                chunk_metadata["local_chunk_index"] = local_index
+                chunks.append(DocumentChunk(text=chunk_text, metadata=chunk_metadata))
         return chunks

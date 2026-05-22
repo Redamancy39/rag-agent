@@ -125,7 +125,7 @@ const chatTurns = ref<ChatTurn[]>([])
 const chatHistoryItems = ref<ChatTurn[]>([])
 const evidenceCollapseNames = ref<string[]>([])
 const chatThreadRef = ref<HTMLElement | null>(null)
-const enableLlmChunkNormalization = ref(false)
+const enableLlmChunkNormalization = ref(true)
 
 const authForm = reactive({
   username: '',
@@ -158,6 +158,51 @@ const isLoggedIn = computed(() => Boolean(token.value && currentUser.value))
 const indexedCount = computed(() => documents.value.filter((item) => item.status === 'indexed').length)
 const failedCount = computed(() => documents.value.filter((item) => item.status === 'failed').length)
 const indexedDocuments = computed(() => documents.value.filter((item) => item.status === 'indexed'))
+const processingCount = computed(() =>
+  documents.value.filter((item) => !['indexed', 'failed'].includes(item.status)).length
+)
+const totalChunkCount = computed(() =>
+  documents.value.reduce((total, item) => total + Number(item.chunk_count || 0), 0)
+)
+const totalFileSize = computed(() =>
+  documents.value.reduce((total, item) => total + Number(item.file_size || 0), 0)
+)
+const demoOverviewCards = computed(() => [
+  { label: '可访问文档', value: documents.value.length, note: '按登录用户权限过滤' },
+  { label: '已入库文档', value: indexedCount.value, note: '可参与 RAG 检索' },
+  { label: '总切块数', value: totalChunkCount.value, note: '含页码与来源 metadata' },
+  { label: '处理中', value: processingCount.value, note: '队列 / OCR / LLM / Embedding' }
+])
+const ragPipelineStages = [
+  {
+    title: '1. Ingestion Agent 探测',
+    detail: '识别文件类型、PDF 可读性、表格密度、OCR 与 LLM 整理需求。'
+  },
+  {
+    title: '2. 解析与预处理',
+    detail: '优先 PyMuPDF / 文本层解析，必要时 PaddleOCR fallback，并保留页码。'
+  },
+  {
+    title: '3. 表格与切块质量增强',
+    detail: '表格行转事实文本，低质量 OCR / 表格块可由 LLM 归一化。'
+  },
+  {
+    title: '4. 向量化与混合检索',
+    detail: 'BGE Embedding 写入 ChromaDB，问答阶段融合向量、BM25、关键词和 Reranker。'
+  },
+  {
+    title: '5. 权限感知问答',
+    detail: '后端计算可访问文档范围，证据不足时返回未找到，并记录日志。'
+  }
+]
+const capabilityCards = [
+  { title: '权限控制', value: 'JWT + 用户 / 部门权限', status: '已接入' },
+  { title: '文档入库', value: 'PDF / Markdown / TXT + OCR fallback', status: '已跑通' },
+  { title: '检索增强', value: '向量 + BM25 + 关键词 + Reranker', status: '已接入' },
+  { title: 'Agent 化', value: '轻量 Ingestion Agent，LangGraph 预留', status: '演示版' },
+  { title: '可观测性', value: '任务表、质量报告、审计日志', status: '已接入' },
+  { title: '评测闭环', value: '500 条 v2 测试集，离线重判 90.40%', status: '基线可用' }
+]
 const chatHistory = computed(() => [...chatHistoryItems.value].reverse())
 const pageTitle = computed(() => {
   if (activeView.value === 'documents') return '文档列表'
@@ -941,6 +986,36 @@ function formatPercentScore(value: number | null) {
   return `${Math.round(value * 100)}%`
 }
 
+function riskLevelLabel(level: string) {
+  if (level === 'low') return '低风险'
+  if (level === 'medium') return '中风险'
+  if (level === 'high') return '高风险'
+  return '未评估'
+}
+
+function riskLevelType(level: string) {
+  if (level === 'low') return 'success'
+  if (level === 'medium') return 'warning'
+  if (level === 'high') return 'danger'
+  return 'info'
+}
+
+function stageStateLabel(state: string) {
+  if (state === 'done') return '完成'
+  if (state === 'running') return '进行中'
+  if (state === 'failed') return '失败'
+  if (state === 'optional') return '按需'
+  return '待处理'
+}
+
+function stageStateType(state: string) {
+  if (state === 'done') return 'success'
+  if (state === 'running') return 'warning'
+  if (state === 'failed') return 'danger'
+  if (state === 'optional') return 'info'
+  return 'info'
+}
+
 function formatReportCountMap(value: Record<string, number>) {
   return Object.entries(value)
     .sort((a, b) => b[1] - a[1])
@@ -1220,6 +1295,7 @@ function parseLogCitations(value: string | null): Citation[] {
         filename: item.filename as string,
         chunk_id: item.chunk_id ?? null,
         page: typeof item.page === 'number' ? item.page : null,
+        table: typeof item.table === 'string' ? item.table : null,
         chunk_type: item.chunk_type ?? null,
         score: typeof item.score === 'number' ? item.score : null,
         text: typeof item.text === 'string' ? item.text : ''
@@ -1682,6 +1758,55 @@ async function scrollChatToBottom() {
         </section>
 
         <template v-else>
+          <section class="settings-card settings-card-wide demo-overview-card">
+            <div class="settings-card-head">
+              <div>
+                <h2>面试演示总览</h2>
+                <p>用一屏说明系统已经从“文档上传”走到“权限感知 RAG 问答”，便于现场展示项目完整度。</p>
+              </div>
+              <el-tag type="success" effect="plain">RAG Agent Demo</el-tag>
+            </div>
+
+            <div class="demo-metric-grid">
+              <div v-for="card in demoOverviewCards" :key="card.label" class="demo-metric">
+                <span>{{ card.label }}</span>
+                <strong>{{ card.label === '总切块数' ? card.value : card.value }}</strong>
+                <small>{{ card.note }}</small>
+              </div>
+              <div class="demo-metric">
+                <span>文件体量</span>
+                <strong>{{ formatFileSize(totalFileSize) }}</strong>
+                <small>本地 data/uploads 管理原文</small>
+              </div>
+            </div>
+
+            <div class="pipeline-strip">
+              <div v-for="(stage, index) in ragPipelineStages" :key="stage.title" class="pipeline-step">
+                <div class="pipeline-index">{{ index + 1 }}</div>
+                <strong>{{ stage.title }}</strong>
+                <p>{{ stage.detail }}</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-card settings-card-wide">
+            <div class="settings-card-head">
+              <div>
+                <h2>能力矩阵</h2>
+                <p>这部分可以作为面试时的功能边界说明，区分已跑通、演示版和后续规划。</p>
+              </div>
+            </div>
+            <div class="capability-grid">
+              <div v-for="item in capabilityCards" :key="item.title" class="capability-card">
+                <div>
+                  <strong>{{ item.title }}</strong>
+                  <el-tag size="small" effect="plain">{{ item.status }}</el-tag>
+                </div>
+                <p>{{ item.value }}</p>
+              </div>
+            </div>
+          </section>
+
           <section class="settings-card">
             <div class="settings-card-head">
               <div>
@@ -2158,6 +2283,18 @@ async function scrollChatToBottom() {
         <div v-loading="loadingQualityReport" class="quality-report-body">
           <template v-if="selectedQualityReport">
             <section class="quality-summary-grid">
+              <div class="quality-score-card">
+                <span>健康分</span>
+                <strong>{{ selectedQualityReport.health_score }}</strong>
+              </div>
+              <div>
+                <span>风险等级</span>
+                <strong>
+                  <el-tag :type="riskLevelType(selectedQualityReport.risk_level)" effect="plain">
+                    {{ riskLevelLabel(selectedQualityReport.risk_level) }}
+                  </el-tag>
+                </strong>
+              </div>
               <div>
                 <span>总分块</span>
                 <strong>{{ selectedQualityReport.total_chunks }}</strong>
@@ -2190,6 +2327,14 @@ async function scrollChatToBottom() {
                 <span>LLM归一化</span>
                 <strong>{{ selectedQualityReport.llm_normalized_count }}</strong>
               </div>
+              <div>
+                <span>修复提示</span>
+                <strong>{{ selectedQualityReport.preprocess_repair_count }}</strong>
+              </div>
+              <div>
+                <span>可疑上标</span>
+                <strong>{{ selectedQualityReport.suspicious_power_notation_count }}</strong>
+              </div>
             </section>
 
             <section class="quality-section">
@@ -2203,6 +2348,26 @@ async function scrollChatToBottom() {
                 :percentage="selectedQualityReport.latest_job_progress_percent"
                 :stroke-width="8"
               />
+            </section>
+
+            <section class="quality-section">
+              <h3>处理阶段概览</h3>
+              <div class="quality-stage-list">
+                <div
+                  v-for="stage in selectedQualityReport.stage_overview"
+                  :key="stage.name"
+                  class="quality-stage-item"
+                >
+                  <el-tag :type="stageStateType(stage.state)" size="small" effect="plain">
+                    {{ stageStateLabel(stage.state) }}
+                  </el-tag>
+                  <div>
+                    <strong>{{ stage.name }}</strong>
+                    <p>{{ stage.detail }}</p>
+                    <small v-if="stage.metric">{{ stage.metric }}</small>
+                  </div>
+                </div>
+              </div>
             </section>
 
             <section class="quality-section">
@@ -2225,6 +2390,9 @@ async function scrollChatToBottom() {
 
             <section class="quality-section">
               <h3>优化建议</h3>
+              <div class="quality-pill-grid quality-risk-grid">
+                <span v-for="item in selectedQualityReport.risk_items" :key="item">{{ item }}</span>
+              </div>
               <ul class="quality-recommendations">
                 <li v-for="item in selectedQualityReport.recommendations" :key="item">{{ item }}</li>
               </ul>

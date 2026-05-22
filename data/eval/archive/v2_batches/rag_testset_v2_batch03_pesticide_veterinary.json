@@ -1,0 +1,1930 @@
+{
+  "name": "rag-testset-v2-batch03-pesticide-veterinary",
+  "cases": [
+    {
+      "id": "V2-B03-Q001",
+      "question": "GB 2763.1-2018 的适用范围和规定对象是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "43种农药",
+        "302项",
+        "最大残留限量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=5; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q002",
+      "question": "GB 2763.1-2018 与 GB 2763-2016 是什么关系？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2763-2016",
+        "增补版",
+        "配套使用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=4; page=4; table="
+    },
+    {
+      "id": "V2-B03-Q003",
+      "question": "GB 2763.1-2018 中残留物的定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "使用农药",
+        "食品",
+        "代谢物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=5; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q004",
+      "question": "GB 2763.1-2018 中最大残留限量用什么单位表示？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "最大残留限量",
+        "mg/kg",
+        "农药残留"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=5; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q005",
+      "question": "GB 2763.1-2018 中 ADI 的含义和单位是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "每日允许摄入量",
+        "mg/kg bw",
+        "健康"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "definition",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=7; page=6; table="
+    },
+    {
+      "id": "V2-B03-Q006",
+      "question": "GB/T 20769 在 GB 2763.1-2018 中主要对应哪类检测方法？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "水果",
+        "蔬菜",
+        "液相色谱串联质谱"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=5; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q007",
+      "question": "GB/T 20771 在 GB 2763.1-2018 中对应什么食品的农药残留测定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "蜂蜜",
+        "486种",
+        "液相色谱串联质谱"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=5; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q008",
+      "question": "百草枯相关残留检测在 GB 2763.1-2018 中引用哪个方法标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "百草枯",
+        "SN/T 0293",
+        "液相色谱"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=7; page=6; table=表1"
+    },
+    {
+      "id": "V2-B03-Q009",
+      "question": "丙溴磷残留检测在 GB 2763.1-2018 中引用哪个方法标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丙溴磷",
+        "SN/T 2234",
+        "检测方法"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表6"
+    },
+    {
+      "id": "V2-B03-Q010",
+      "question": "虫酰肼相关残留检测在 GB 2763.1-2018 中引用哪个方法标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "虫酰肼||虫酰",
+        "GB/T 23211",
+        "检测方法"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表8"
+    },
+    {
+      "id": "V2-B03-Q011",
+      "question": "百草枯的主要用途、ADI 和残留物定义分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "除草剂",
+        "0.005",
+        "百草枯阳离子"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=7; page=6; table=表1"
+    },
+    {
+      "id": "V2-B03-Q012",
+      "question": "GB 2763.1-2018 中百草枯在稻谷中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "百草枯",
+        "稻谷",
+        "0.05||0.05 mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=7; page=6; table=表1"
+    },
+    {
+      "id": "V2-B03-Q013",
+      "question": "GB 2763.1-2018 中百草枯在茶叶中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "百草枯",
+        "茶叶",
+        "0.2||0.2 mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=7; page=6; table=表1"
+    },
+    {
+      "id": "V2-B03-Q014",
+      "question": "吡唑醚菌酯的主要用途、ADI 和残留物是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "杀菌剂",
+        "0.03",
+        "吡唑醚菌酯"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=7; page=6; table=表2"
+    },
+    {
+      "id": "V2-B03-Q015",
+      "question": "吡唑醚菌酯在生乳中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "吡唑醚菌酯",
+        "生乳",
+        "0.03"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=7; page=6; table=表2"
+    },
+    {
+      "id": "V2-B03-Q016",
+      "question": "吡唑醚菌酯在蛋类（鲜蛋）中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "吡唑醚菌酯",
+        "蛋类",
+        "0.05"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=7; page=6; table=表2"
+    },
+    {
+      "id": "V2-B03-Q017",
+      "question": "吡唑萘菌胺在蛋类（鲜蛋）中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "吡唑萘菌胺",
+        "蛋类",
+        "0.01"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=8; page=7; table=表3"
+    },
+    {
+      "id": "V2-B03-Q018",
+      "question": "丙硫菌唑的残留物是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丙硫菌唑",
+        "脱硫丙硫菌唑"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=8; page=7; table=表5"
+    },
+    {
+      "id": "V2-B03-Q019",
+      "question": "丙硫菌唑在生乳中的临时最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丙硫菌唑",
+        "生乳",
+        "0.004"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=8; page=7; table=表5"
+    },
+    {
+      "id": "V2-B03-Q020",
+      "question": "丙溴磷的主要用途、ADI 和残留物分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "杀虫剂",
+        "0.03",
+        "丙溴磷"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=8; page=7; table=表6"
+    },
+    {
+      "id": "V2-B03-Q021",
+      "question": "丙溴磷在蛋类（鲜蛋）中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丙溴磷",
+        "蛋类",
+        "0.02"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表6"
+    },
+    {
+      "id": "V2-B03-Q022",
+      "question": "丙溴磷在生乳中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丙溴磷",
+        "生乳",
+        "0.01"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表6"
+    },
+    {
+      "id": "V2-B03-Q023",
+      "question": "草铵膦的主要用途、ADI 和残留物定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "草铵膦||草铵麟",
+        "除草剂",
+        "0.01",
+        "MPP",
+        "NAG"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表7"
+    },
+    {
+      "id": "V2-B03-Q024",
+      "question": "草铵膦在哺乳动物内脏中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "草铵膦||草铵麟",
+        "哺乳动物内脏",
+        "3||3 mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表7"
+    },
+    {
+      "id": "V2-B03-Q025",
+      "question": "草铵膦在生乳中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "草铵膦||草铵麟",
+        "生乳",
+        "0.02"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表7"
+    },
+    {
+      "id": "V2-B03-Q026",
+      "question": "虫酰肼的主要用途、ADI 和残留物是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "虫酰肼||虫酰",
+        "杀虫剂",
+        "0.02"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表8"
+    },
+    {
+      "id": "V2-B03-Q027",
+      "question": "虫酰肼在牛乳中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "虫酰肼||虫酰",
+        "牛乳",
+        "0.05"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表8"
+    },
+    {
+      "id": "V2-B03-Q028",
+      "question": "除虫脲的残留物和 ADI 是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "除虫脲||除脲",
+        "0.02",
+        "残留物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=12; page=9; table=表9"
+    },
+    {
+      "id": "V2-B03-Q029",
+      "question": "除虫脲在生乳中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "除虫脲||除脲",
+        "生乳",
+        "0.02"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=12; page=9; table=表9"
+    },
+    {
+      "id": "V2-B03-Q030",
+      "question": "丁苯吗啉在猪、牛、羊肝中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丁苯吗啉",
+        "肝",
+        "0.3"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=14; page=10; table=表12"
+    },
+    {
+      "id": "V2-B03-Q031",
+      "question": "丁苯吗啉在生乳中的检测方法引用哪个标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丁苯吗啉",
+        "生乳",
+        "GB/T 23210"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=14; page=10; table=表12"
+    },
+    {
+      "id": "V2-B03-Q032",
+      "question": "丁硫克百威的主要用途、ADI 和残留物是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丁硫克百威",
+        "杀虫剂",
+        "0.01"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=14; page=10; table=表13"
+    },
+    {
+      "id": "V2-B03-Q033",
+      "question": "丁硫克百威在蛋类（鲜蛋）中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丁硫克百威",
+        "蛋类",
+        "0.05"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=14; page=10; table=表13"
+    },
+    {
+      "id": "V2-B03-Q034",
+      "question": "多杀霉素在牛脂肪和牛肝中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "多杀霉素",
+        "牛脂肪",
+        "3",
+        "牛肝",
+        "2"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=17; page=12; table=表18"
+    },
+    {
+      "id": "V2-B03-Q035",
+      "question": "二苯胺的主要用途、ADI 和残留物是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二苯胺",
+        "杀菌剂",
+        "0.08"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=19; page=13; table=表20"
+    },
+    {
+      "id": "V2-B03-Q036",
+      "question": "二嗪磷在猪、牛、羊肉中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二嗪磷",
+        "猪、牛、羊肉||猪牛羊肉",
+        "2"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=19; page=13; table=表21"
+    },
+    {
+      "id": "V2-B03-Q037",
+      "question": "粉唑醇在大豆和花生中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "粉唑醇",
+        "大豆",
+        "0.4",
+        "花生",
+        "0.15"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=20; page=14; table=表22"
+    },
+    {
+      "id": "V2-B03-Q038",
+      "question": "氟吡菌胺在葡萄干和干辣椒中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氟吡菌胺",
+        "葡萄干",
+        "10",
+        "干辣椒",
+        "7"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=22; page=15; table=表25"
+    },
+    {
+      "id": "V2-B03-Q039",
+      "question": "氟虫腈的 ADI 和残留物定义是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氟虫腈",
+        "0.0002",
+        "MB46136",
+        "MB45950"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=22; page=15; table=表26"
+    },
+    {
+      "id": "V2-B03-Q040",
+      "question": "氟硅唑在蛋类（鲜蛋）和生乳中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氟硅唑",
+        "蛋类",
+        "0.1",
+        "生乳",
+        "0.05"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=23; page=16; table=表28"
+    },
+    {
+      "id": "V2-B03-Q041",
+      "question": "甲氨基阿维菌素苯甲酸盐在生乳中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "甲氨基阿维菌素",
+        "生乳",
+        "0.002"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=25; page=17; table=表30"
+    },
+    {
+      "id": "V2-B03-Q042",
+      "question": "甲萘威在猪、牛、羊肾中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "甲萘威||甲蔡威",
+        "肾",
+        "3"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=29; page=19; table=表35"
+    },
+    {
+      "id": "V2-B03-Q043",
+      "question": "肟菌酯在啤酒花中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "肟菌酯",
+        "啤酒花",
+        "40"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=32; page=21; table=表40"
+    },
+    {
+      "id": "V2-B03-Q044",
+      "question": "乙螨唑在茶叶和啤酒花中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "乙螨唑",
+        "茶叶",
+        "15",
+        "啤酒花"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=33; page=22; table=表42"
+    },
+    {
+      "id": "V2-B03-Q045",
+      "question": "唑螨酯在黄瓜和干辣椒中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "唑螨酯",
+        "黄瓜",
+        "0.3",
+        "干辣椒",
+        "1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=34; page=23; table=表43"
+    },
+    {
+      "id": "V2-B03-Q046",
+      "question": "GB 31650.1-2022 的规定对象和适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "41种兽药",
+        "最大残留限量",
+        "动物性食品"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=30; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q047",
+      "question": "GB 31650.1-2022 中术语和定义引用了哪个基础标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 31650-2019",
+        "术语和定义"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "cross_reference",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=30; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q048",
+      "question": "阿莫西林在 GB 31650.1-2022 中属于哪类兽药？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阿莫西林",
+        "β-内酰胺类抗生素"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=30; page=5; table=表2"
+    },
+    {
+      "id": "V2-B03-Q049",
+      "question": "二氟沙星在 GB 31650.1-2022 中属于哪类兽药？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二氟沙星",
+        "喹诺酮类合成抗菌药"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=35; page=8; table=表13"
+    },
+    {
+      "id": "V2-B03-Q050",
+      "question": "阿莫西林在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阿莫西林",
+        "家禽",
+        "蛋",
+        "4||4 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=30; page=5; table=表2"
+    },
+    {
+      "id": "V2-B03-Q051",
+      "question": "氨苄西林在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氨苄西林",
+        "家禽",
+        "蛋",
+        "4||4 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=32; page=6; table=表3"
+    },
+    {
+      "id": "V2-B03-Q052",
+      "question": "安普霉素在鸡蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "安普霉素",
+        "鸡蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=31; page=6; table=表4"
+    },
+    {
+      "id": "V2-B03-Q053",
+      "question": "阿维拉霉素的残留标志物是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阿维拉霉素",
+        "二氯异苔酸||DIA"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=31; page=6; table=表6"
+    },
+    {
+      "id": "V2-B03-Q054",
+      "question": "阿维拉霉素在鸡或火鸡蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阿维拉霉素",
+        "鸡",
+        "火鸡",
+        "蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=31; page=6; table=表6"
+    },
+    {
+      "id": "V2-B03-Q055",
+      "question": "青霉素在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "青霉素",
+        "家禽",
+        "蛋",
+        "4||4 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=32; page=6; table=表7"
+    },
+    {
+      "id": "V2-B03-Q056",
+      "question": "氯唑西林在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氯唑西林",
+        "家禽",
+        "蛋",
+        "4||4 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=33; page=7; table=表8"
+    },
+    {
+      "id": "V2-B03-Q057",
+      "question": "地克珠利在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "地克珠利",
+        "家禽",
+        "蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=33; page=7; table=表11"
+    },
+    {
+      "id": "V2-B03-Q058",
+      "question": "双氯芬酸在猪肌肉和猪肾中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "双氯芬酸",
+        "猪",
+        "肌肉",
+        "5",
+        "肾",
+        "10"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=35; page=8; table=表12"
+    },
+    {
+      "id": "V2-B03-Q059",
+      "question": "二氟沙星在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二氟沙星",
+        "家禽",
+        "蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=35; page=8; table=表13"
+    },
+    {
+      "id": "V2-B03-Q060",
+      "question": "氟苯尼考的残留标志物是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氟苯尼考",
+        "氟苯尼考胺",
+        "之和"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=36; page=9; table=表17"
+    },
+    {
+      "id": "V2-B03-Q061",
+      "question": "氟苯尼考在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氟苯尼考",
+        "家禽",
+        "蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=36; page=9; table=表17"
+    },
+    {
+      "id": "V2-B03-Q062",
+      "question": "氟甲喹在鸡蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氟甲喹",
+        "鸡蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=36; page=9; table=表18"
+    },
+    {
+      "id": "V2-B03-Q063",
+      "question": "氟尼辛在牛奶中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氟尼辛",
+        "牛奶||奶",
+        "40||40 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=36; page=9; table=表19"
+    },
+    {
+      "id": "V2-B03-Q064",
+      "question": "加米霉素在猪肌肉、猪肝和猪肾中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "加米霉素",
+        "猪",
+        "肌肉",
+        "100",
+        "肝",
+        "100",
+        "肾",
+        "300"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=38; page=10; table=表20"
+    },
+    {
+      "id": "V2-B03-Q065",
+      "question": "洛美沙星在所有食品动物组织和蜂蜜中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "洛美沙星",
+        "所有食品动物",
+        "2",
+        "蜂蜜",
+        "5"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=38; page=10; table=表23"
+    },
+    {
+      "id": "V2-B03-Q066",
+      "question": "氯芬新在鱼皮+肉中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氯芬新",
+        "鱼",
+        "皮+肉||皮十肉",
+        "1350"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=40; page=11; table=表24"
+    },
+    {
+      "id": "V2-B03-Q067",
+      "question": "美洛昔康在牛奶、牛肝和猪肝中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "美洛昔康",
+        "牛",
+        "奶",
+        "15",
+        "肝",
+        "65",
+        "猪"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=39; page=11; table=表26"
+    },
+    {
+      "id": "V2-B03-Q068",
+      "question": "莫奈太尔在牛肌肉、牛脂肪、牛肝和牛肾中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "莫奈太尔",
+        "牛",
+        "肌肉",
+        "300",
+        "脂肪",
+        "7000",
+        "肝",
+        "2000",
+        "肾",
+        "1000"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=41; page=12; table=表27"
+    },
+    {
+      "id": "V2-B03-Q069",
+      "question": "氧氟沙星在所有食品动物组织和蜂蜜中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氧氟沙星",
+        "所有食品动物",
+        "2",
+        "蜂蜜",
+        "5"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=41; page=12; table=表29"
+    },
+    {
+      "id": "V2-B03-Q070",
+      "question": "苯唑西林在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "苯唑西林",
+        "家禽",
+        "蛋",
+        "4||4 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=42; page=13; table=表30"
+    },
+    {
+      "id": "V2-B03-Q071",
+      "question": "噁喹酸在鸡蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "噁喹酸",
+        "鸡",
+        "蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=42; page=13; table=表31"
+    },
+    {
+      "id": "V2-B03-Q072",
+      "question": "培氟沙星在所有食品动物组织和蜂蜜中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "培氟沙星",
+        "所有食品动物",
+        "2",
+        "蜂蜜",
+        "5"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=42; page=13; table=表32"
+    },
+    {
+      "id": "V2-B03-Q073",
+      "question": "沙拉沙星在鸡/火鸡蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "沙拉沙星",
+        "鸡",
+        "火鸡",
+        "蛋",
+        "5||5 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=42; page=13; table=表33"
+    },
+    {
+      "id": "V2-B03-Q074",
+      "question": "磺胺二甲嘧啶在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "磺胺二甲嘧啶",
+        "家禽",
+        "蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=43; page=14; table=表34"
+    },
+    {
+      "id": "V2-B03-Q075",
+      "question": "托曲珠利在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "托曲珠利",
+        "家禽",
+        "蛋",
+        "10||10 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=44; page=15; table=表39"
+    }
+  ]
+}

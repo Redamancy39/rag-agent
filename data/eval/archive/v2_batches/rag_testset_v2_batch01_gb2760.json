@@ -1,0 +1,3263 @@
+{
+  "name": "rag-testset-v2-batch01-gb2760",
+  "cases": [
+    {
+      "id": "V2-B01-Q001",
+      "question": "GB 2760-2024中，4-己基间苯二酚用于食品分类号09.01（鲜水产(仅限虾类)）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "4-己基间苯二酚",
+        "09.01",
+        "鲜水产(仅限虾类",
+        "按生产需要适量使用",
+        "残留量≤1mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=1; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q002",
+      "question": "GB 2760-2024中，蓝锭果红在经表面处理的鲜水果(仅限柑橘类)中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "蓝锭果红",
+        "经表面处理的鲜水果(仅限柑橘类)",
+        "3.0 g/kg",
+        "残留量≤12mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=2; page=72; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q003",
+      "question": "GB 2760-2024中，硫酸铝钾在豆类制品中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "硫酸铝钾",
+        "豆类制品",
+        "按生产需要适量使用",
+        "铝的残留量≤100mg/kg（干样"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=3; page=80; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q004",
+      "question": "GB 2760-2024中，木松香甘油酯在（糖果和巧克力制品包衣）中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "木松香甘油酯",
+        "（糖果和巧克力制品包衣）",
+        "0.32 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=4; page=86; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q005",
+      "question": "GB 2760-2024中，D-甘露糖醇用于食品分类号05.02（糖果）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "D-甘露糖醇",
+        "05.02",
+        "糖果",
+        "按生产需要适量使用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=1; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q006",
+      "question": "GB 2760-2024中，木糖醇酐单硬脂酸酯用于食品分类号02.01.01.02（氢化植物油）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "木糖醇酐单硬脂酸酯",
+        "02.01.01.02",
+        "氢化植物油",
+        "5.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=4; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q007",
+      "question": "GB 2760-2024中，苋菜红在碳酸饮料中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "苋菜红",
+        "碳酸饮料",
+        "0.05 g/kg",
+        "以苋菜红计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=7; page=124; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q008",
+      "question": "GB 2760-2024中，纳他霉素用于食品分类号01.06（干酪、再制干酪、干酪制品及干酪类似品）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "纳他霉素",
+        "01.06",
+        "干酪、再制干酪、干酪制品及干酪类似品",
+        "0.3 g/kg",
+        "表面使用，残留量10mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=4; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q009",
+      "question": "GB 2760-2024中，日落黄用于食品分类号06.11（面糊（如用于鱼和禽肉的拖面糊）、裹粉、煎炸粉）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "06.11",
+        "面糊（如用于鱼和禽肉的拖面糊）、裹粉、煎炸粉",
+        "0.3 g/kg",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=6; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q010",
+      "question": "GB 2760-2024中，日落黄用于食品分类号07.02.04（糕点上彩装）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "07.02.04",
+        "糕点上彩装",
+        "0.1 g/kg",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=6; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q011",
+      "question": "GB 2760-2024中，铵磷脂在巧克力和巧克力制品（除05.01.01以外的可可制品）中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "铵磷脂",
+        "巧克力和巧克力制品（除05.01.0",
+        "10.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=11; page=23; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q012",
+      "question": "GB 2760-2024中，日落黄用于食品分类号07.04（焙烤食品馅料及表面用挂浆（仅限饼干夹心））时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "07.04",
+        "焙烤食品馅料及表面用挂浆（仅限饼干夹心",
+        "0.1 g/kg",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=6; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q013",
+      "question": "GB 2760-2024中，二氧化硫残留量的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二氧化硫残留量",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=13; page=37; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q014",
+      "question": "GB 2760-2024中，日落黄用于食品分类号07.04（焙烤食品馅料及表面用挂浆（仅限布丁、糕点用馅料及表面用挂浆））时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "07.04",
+        "焙烤食品馅料及表面用挂浆（仅限布丁、糕点用馅料及",
+        "0.3 g/kg",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=6; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q015",
+      "question": "GB 2760-2024中，己二酸在胶基糖果中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "己二酸",
+        "胶基糖果",
+        "4.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=15; page=54; table=表A.1; cleaned_expected_keywords_removed_unrelated_jelly_powder_remark"
+    },
+    {
+      "id": "V2-B01-Q016",
+      "question": "GB 2760-2024中，日落黄用于食品分类号09.03.03（鱼子制品）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "09.03.03",
+        "鱼子制品",
+        "0.2 g/kg",
+        "仅限使用日落黄"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=6; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q017",
+      "question": "GB 2760-2024中，磷脂（phospholipid）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "磷脂（phospholipid）",
+        "04.010",
+        "抗氧化剂、乳化剂",
+        "322"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=17; page=78; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q018",
+      "question": "GB 2760-2024中，硫酸钙在豆类制品中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "硫酸钙",
+        "豆类制品",
+        "按生产需要适量使用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=18; page=79; table=表A.1; cleaned_expected_keywords_removed_unrelated_noodle_exception"
+    },
+    {
+      "id": "V2-B01-Q019",
+      "question": "GB 2760-2024中，罗望子多糖胶在的风味饮料（仅限果味饮料）中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "罗望子多糖胶",
+        "的风味饮料（仅限果味饮料）",
+        "按生产需要适量使用",
+        "相应的固体饮料也可使用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=19; page=81; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q020",
+      "question": "GB 2760-2024中，、植酸钠在基本不含水的脂肪和油中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "、植酸钠",
+        "基本不含水的脂肪和油",
+        "0.2 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=20; page=145; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q021",
+      "question": "GB 2760-2024表C.2中，阿拉伯胶作为食品工业用加工助剂的功能和使用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阿拉伯胶",
+        "澄清剂",
+        "葡萄酒加工工艺"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=21; page=228; table=表C.2"
+    },
+    {
+      "id": "V2-B01-Q022",
+      "question": "GB 2760-2024表C.2中，滑石粉作为食品工业用加工助剂的功能和使用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "滑石粉",
+        "为脱模剂、防黏剂",
+        "为糖果的加工工艺、发酵提取工艺"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=22; page=229; table=表C.2"
+    },
+    {
+      "id": "V2-B01-Q023",
+      "question": "GB 2760-2024表C.2中，维生素B族作为食品工业用加工助剂的功能和使用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "维生素B族",
+        "发酵用营养物质",
+        "发酵工艺"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=23; page=232; table=表C.2"
+    },
+    {
+      "id": "V2-B01-Q024",
+      "question": "GB 2760-2024中，日落黄用于食品分类号11.05.01（水果调味糖浆）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "11.05.01",
+        "水果调味糖浆",
+        "0.5 g/kg",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=6; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q025",
+      "question": "GB 2760-2024中，tartrazine aluminum lake色淀）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "tartrazine aluminum lake色淀）",
+        "08.005",
+        "着色剂",
+        "102"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=25; page=87; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q026",
+      "question": "GB 2760-2024中，苋菜红在果蔬汁(浆)类饮料中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "苋菜红",
+        "果蔬汁(浆)类饮料",
+        "0.05",
+        "最大使用量为按稀释倍数稀释后液体中的"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=26; page=124; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q027",
+      "question": "GB 2760-2024中，亚硝酸钠在熏、烧、烤肉类（熏肉、叉烧肉、烤鸭、肉脯等）中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "亚硝酸钠",
+        "熏、烧、烤肉类（熏肉、叉烧肉、烤鸭、",
+        "0.15 g/kg",
+        "以亚硝酸钠计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=27; page=127; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q028",
+      "question": "GB 2760-2024中，植酸钠在基本不含水的脂肪和油中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "植酸钠",
+        "基本不含水的脂肪和油",
+        "0.2 g/kg",
+        "以植酸计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=28; page=145; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q029",
+      "question": "GB 2760-2024中，日落黄用于食品分类号11.05.02（其他调味糖浆）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "11.05.02",
+        "其他调味糖浆",
+        "0.3 g/kg",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=6; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q030",
+      "question": "GB 2760-2024中，新红用于食品分类号14.02.03（果蔬汁(浆)类饮料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "新红",
+        "14.02.03",
+        "果蔬汁(浆)类饮料",
+        "0.05 g/kg",
+        "以新红计，以即饮状态计，相应的固体饮料按稀释倍数增加使用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=8; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q031",
+      "question": "GB 2760-2024中，亚硝酸钠用于食品分类号08.02.02（腌腊肉制品类（如咸肉、腊肉、板鸭、中式火腿、腊肠等））时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "亚硝酸钠",
+        "08.02.02",
+        "腌腊肉制品类（如咸肉、腊肉、板鸭、中式火腿、腊肠",
+        "0.15 g/kg",
+        "以亚硝酸钠计，残留量≤30 mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=8; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q032",
+      "question": "GB 2760-2024中，亚硝酸钠用于食品分类号08.03.01（酱卤肉制品类）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "亚硝酸钠",
+        "08.03.01",
+        "酱卤肉制品类",
+        "0.15 g/kg",
+        "以亚硝酸钠计，残留量≤30 mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=8; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q033",
+      "question": "GB 2760-2024中，抗坏血酸棕榈酸酯的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "抗坏血酸棕榈酸酯",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=35; page=66; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q034",
+      "question": "GB 2760-2024中，亚硝酸钠用于食品分类号08.03.02（熏、烧、烤肉类）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "亚硝酸钠",
+        "08.03.02",
+        "熏、烧、烤肉类",
+        "0.15 g/kg",
+        "以亚硝酸钠计||残留量≤30 mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=9; page=; table=表A.1; cleaned_long_food_name_keyword"
+    },
+    {
+      "id": "V2-B01-Q035",
+      "question": "GB 2760-2024中，磷脂（phospholipid）的CNS号、INS号和功能是什么（来源页约第78页）？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "磷脂（phospholipid）",
+        "04.010",
+        "抗氧化剂、乳化剂",
+        "322"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=37; page=78; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q036",
+      "question": "GB 2760-2024中，罗汉果甜苷的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "罗汉果甜苷",
+        "19.015",
+        "甜味剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=38; page=81; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q037",
+      "question": "GB 2760-2024中，亚硝酸钠用于食品分类号08.03.03（油炸肉类）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "亚硝酸钠",
+        "08.03.03",
+        "油炸肉类",
+        "0.15 g/kg",
+        "以亚硝酸钠计，残留量≤30 mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=9; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q038",
+      "question": "GB 2760-2024中，新红在果蔬汁(浆)类饮料中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "新红",
+        "果蔬汁(浆)类饮料",
+        "0.05"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=40; page=126; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q039",
+      "question": "GB 2760-2024表C.2中，阿拉伯胶作为食品工业用加工助剂的功能和使用范围是什么（来源页约第228页）？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阿拉伯胶",
+        "澄清剂",
+        "葡萄酒加工工艺"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=41; page=228; table=表C.2"
+    },
+    {
+      "id": "V2-B01-Q040",
+      "question": "GB 2760-2024中，聚二甲基硅氧烷的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "聚二甲基硅氧烷",
+        "使用范围"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=42; page=229; table=表C.2"
+    },
+    {
+      "id": "V2-B01-Q041",
+      "question": "GB 2760-2024中，-酒石酸和dl-酒石酸的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-酒石酸和dl-酒石酸",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=44; page=10; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q042",
+      "question": "GB 2760-2024中，胭脂红酸用于食品分类号05.01.03（代可可脂巧克力及其制品）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "胭脂红酸",
+        "05.01.03",
+        "代可可脂巧克力及其制品",
+        "0.3 g/kg",
+        "以胭脂红酸计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=9; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q043",
+      "question": "GB 2760-2024中，胭脂红酸用于食品分类号05.02（糖果）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "胭脂红酸",
+        "05.02",
+        "糖果",
+        "0.3 g/kg",
+        "以胭脂红酸计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=9; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q044",
+      "question": "GB 2760-2024中，胭脂红酸用于食品分类号06.05.02.04（粉圆）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "胭脂红酸",
+        "06.05.02.04",
+        "粉圆",
+        "1.0 g/kg",
+        "以胭脂红酸计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=9; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q045",
+      "question": "GB 2760-2024中，皂荚糖胶的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "皂荚糖胶",
+        "20.029",
+        "增稠剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=48; page=141; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q046",
+      "question": "GB 2760-2024中，使用规定索引的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "使用规定索引",
+        "使用范围"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=49; page=2; table=表C.2"
+    },
+    {
+      "id": "V2-B01-Q047",
+      "question": "GB 2760-2024中，国际编码系统（INS）在食品添加剂编码中表示什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "国际编码系统||INS",
+        "食品添加剂编码",
+        "CAC"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=50; page=4; table=表C.2; cleaned_broken_ins_question"
+    },
+    {
+      "id": "V2-B01-Q048",
+      "question": "GB 2760-2024中，DL-苹果酸的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "DL-苹果酸",
+        "01.309",
+        "酸度调节剂",
+        "296"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=51; page=9; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q049",
+      "question": "GB 2760-2024中，抗坏血酸的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "抗坏血酸",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=52; page=9; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q050",
+      "question": "GB 2760-2024中，-酒石酸、dl-酒石酸在腌渍的蔬菜中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-酒石酸、dl-酒石酸",
+        "腌渍的蔬菜",
+        "3.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=53; page=10; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q051",
+      "question": "GB 2760-2024中，胭脂红酸用于食品分类号06.07（方便米面制品）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "胭脂红酸",
+        "06.07",
+        "方便米面制品",
+        "0.3 g/kg",
+        "以胭脂红酸计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=9; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q052",
+      "question": "GB 2760-2024中，植酸用于食品分类号02.01（基本不含水的脂肪和油）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "植酸",
+        "02.01",
+        "基本不含水的脂肪和油",
+        "0.2 g/kg",
+        "以植酸计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=28; page=; table=表A.1; cleaned_runon_remark_keyword"
+    },
+    {
+      "id": "V2-B01-Q053",
+      "question": "GB 2760-2024中，-胡萝卜素在调制乳中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-胡萝卜素",
+        "调制乳",
+        "1.0"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=56; page=12; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q054",
+      "question": "GB 2760-2024中，-胡萝卜素的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-胡萝卜素",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=57; page=12; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q055",
+      "question": "GB 2760-2024中，日落黄用于食品分类号06.11（面糊、裹粉、煎炸粉）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "06.11",
+        "面糊||裹粉||煎炸粉",
+        "0.3",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1; cleaned_long_food_name_keyword"
+    },
+    {
+      "id": "V2-B01-Q056",
+      "question": "GB 2760-2024中，-环状糊精在腌渍的蔬菜中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-环状糊精",
+        "腌渍的蔬菜",
+        "0.5 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=61; page=15; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q057",
+      "question": "GB 2760-2024中，β-环状糊精的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "20.024",
+        "增稠剂、其他",
+        "459"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=62; page=15; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q058",
+      "question": "GB 2760-2024中，ε-聚赖氨酸的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "ε-聚赖氨酸",
+        "17.037",
+        "防腐剂",
+        "无||未给出||—"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=63; page=16; table=表A.1; cleaned_missing_ins_alias"
+    },
+    {
+      "id": "V2-B01-Q059",
+      "question": "GB 2760-2024中，ε-聚赖氨酸（ε-polylysine）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "ε-聚赖氨酸（ε-polylysine）",
+        "17.037",
+        "为防腐剂",
+        "未给出"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=64; page=16; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q060",
+      "question": "GB 2760-2024中，阿拉伯胶的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阿拉伯胶",
+        "20.008",
+        "增稠剂、其他",
+        "414"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=65; page=17; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q061",
+      "question": "GB 2760-2024中，阿拉伯胶的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "阿拉伯胶",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=66; page=17; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q062",
+      "question": "GB 2760-2024中，日落黄用于食品分类号07.02.04（糕点上彩装）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "07.02.04",
+        "糕点上彩装",
+        "0.1",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q063",
+      "question": "GB 2760-2024中，日落黄用于食品分类号07.04（焙烤食品馅料及表面用挂浆（仅限饼干夹心））时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "07.04",
+        "焙烤食品馅料及表面用挂浆（仅限饼干夹心",
+        "0.1",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q064",
+      "question": "GB 2760-2024中，日落黄用于食品分类号07.04（焙烤食品馅料及表面用挂浆（仅限布丁、糕点用馅料及表面用挂浆））时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "07.04",
+        "焙烤食品馅料及表面用挂浆（仅限布丁、糕点用馅料及",
+        "0.3",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q065",
+      "question": "GB 2760-2024中，日落黄用于食品分类号09.03.03（鱼子制品）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "09.03.03",
+        "鱼子制品",
+        "0.2",
+        "仅限使用日落黄"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q066",
+      "question": "GB 2760-2024中，氨基乙酸（又名甘氨酸）5) | glycine的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "氨基乙酸（又名甘氨酸）5) | glycine",
+        "12.007",
+        "增味剂",
+        "640"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=74; page=22; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q067",
+      "question": "GB 2760-2024中，日落黄用于食品分类号11.05.01（水果调味糖浆）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "11.05.01",
+        "水果调味糖浆",
+        "0.5",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q068",
+      "question": "GB 2760-2024中，日落黄用于食品分类号11.05.02（其他调味糖浆）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "11.05.02",
+        "其他调味糖浆",
+        "0.3",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q069",
+      "question": "GB 2760-2024中，日落黄用于食品分类号12.10（复合调味料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "12.10",
+        "复合调味料",
+        "0.2",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q070",
+      "question": "GB 2760-2024中，油脂中儿茶素的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "油脂中儿茶素",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=78; page=27; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q071",
+      "question": "GB 2760-2024中，茶黄素的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "茶黄素",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=79; page=28; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q072",
+      "question": "GB 2760-2024中，赤藓红铝色淀）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "赤藓红铝色淀）",
+        "08.003",
+        "着色剂",
+        "127"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=80; page=29; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q073",
+      "question": "GB 2760-2024中，赤藓红的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "赤藓红",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=81; page=29; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q074",
+      "question": "GB 2760-2024中，日落黄用于食品分类号12.10.02（半固体复合调味料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "12.10.02",
+        "半固体复合调味料",
+        "0.5",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q075",
+      "question": "GB 2760-2024中，刺梧桐胶的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "刺梧桐胶",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=83; page=30; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q076",
+      "question": "GB 2760-2024中，达瓦树胶（ghatti gum）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "达瓦树胶（ghatti gum）",
+        "10.043",
+        "乳化剂",
+        "419"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=84; page=31; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q077",
+      "question": "GB 2760-2024中，单淀粉磷酸酯）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "单淀粉磷酸酯）",
+        "20.013",
+        "增稠剂",
+        "1410"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=85; page=32; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q078",
+      "question": "GB 2760-2024中，单淀粉磷酸酯）的CNS号、INS号和功能是什么（来源页约第32页）？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "单淀粉磷酸酯）",
+        "20.013",
+        "增稠剂",
+        "1410"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=86; page=32; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q079",
+      "question": "GB 2760-2024中，靛蓝在碳酸饮料中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "靛蓝",
+        "碳酸饮料",
+        "0.1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=87; page=33; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q080",
+      "question": "GB 2760-2024中，日落黄用于食品分类号14.02.03（果蔬汁(浆)类饮料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "14.02.03",
+        "果蔬汁(浆)类饮料",
+        "0.1",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q081",
+      "question": "GB 2760-2024中，日落黄用于食品分类号14.03.01（含乳饮料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "14.03.01",
+        "含乳饮料",
+        "0.05",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q082",
+      "question": "GB 2760-2024中，日落黄用于食品分类号14.03.01.03（乳酸菌饮料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "14.03.01.03",
+        "乳酸菌饮料",
+        "0.1",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q083",
+      "question": "GB 2760-2024中，二甲基二碳酸盐（又名维果灵）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二甲基二碳酸盐（又名维果灵）",
+        "17.033",
+        "防腐剂",
+        "242"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=91; page=35; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q084",
+      "question": "GB 2760-2024中，二氧化硅的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二氧化硅",
+        "02.004",
+        "抗结剂",
+        "551"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=92; page=35; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q085",
+      "question": "GB 2760-2024中，二氧化碳的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二氧化碳",
+        "17.014",
+        "防腐剂、其他",
+        "290"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=93; page=39; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q086",
+      "question": "GB 2760-2024中，番茄红（tomato red）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "番茄红（tomato red）",
+        "08.150",
+        "着色剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=94; page=40; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q087",
+      "question": "GB 2760-2024中，番茄红在饮料类（14.01包装饮用水、14.02.01果蔬汁(浆)、14.02.02浓缩果蔬汁(浆)除外）中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "番茄红",
+        "饮料类",
+        "14.0",
+        "0.006 g/kg",
+        "以即饮状态计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=95; page=40; table=表A.1; cleaned_broken_tomato_red_question_and_value"
+    },
+    {
+      "id": "V2-B01-Q088",
+      "question": "GB 2760-2024中，日落黄用于食品分类号14.03.02（植物蛋白饮料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "14.03.02",
+        "植物蛋白饮料",
+        "0.1",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q089",
+      "question": "GB 2760-2024中，日落黄用于食品分类号14.04（碳酸饮料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "14.04",
+        "碳酸饮料",
+        "0.1",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q090",
+      "question": "GB 2760-2024中，甘草酸盐类的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "甘草酸盐类",
+        "19.012",
+        "甜味剂",
+        "958"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=98; page=43; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q091",
+      "question": "GB 2760-2024中，甘草酸在（酱卤肉制品类）中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "甘草酸",
+        "（酱卤肉制品类）",
+        "0.2 g/kg",
+        "以甘草酸计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=99; page=43; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q092",
+      "question": "GB 2760-2024中，β-环状糊精用于食品分类号04.02.02.03（腌渍的蔬菜）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "04.02.02.03",
+        "腌渍的蔬菜",
+        "0.5 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=61; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q093",
+      "question": "GB 2760-2024中，β-环状糊精用于食品分类号05.02.01（胶基糖果）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "05.02.01",
+        "胶基糖果",
+        "20.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=61; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q094",
+      "question": "GB 2760-2024中，β-环状糊精用于食品分类号05.02.02（除胶基糖果以外的其他糖果（仅限压片糖果））时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "05.02.02",
+        "除胶基糖果以外的其他糖果（仅限压片糖果",
+        "15.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=61; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q095",
+      "question": "GB 2760-2024中，） 海藻酸丙二醇酯（propylene glycol alginate）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "） 海藻酸丙二醇酯（propylene glycol alginate）",
+        "20.010",
+        "增稠剂、乳化剂、稳定剂",
+        "405"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=103; page=46; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q096",
+      "question": "GB 2760-2024中，【海藻酸钙（又名褐藻酸钙）】的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "【海藻酸钙（又名褐藻酸钙）】",
+        "20.046",
+        "增稠剂、稳定剂和凝固剂",
+        "404"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=104; page=47; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q097",
+      "question": "GB 2760-2024中，β-环状糊精用于食品分类号06.07（方便米面制品）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "06.07",
+        "方便米面制品",
+        "1.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=61; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q098",
+      "question": "GB 2760-2024中，β-环状糊精用于食品分类号08.02（预制肉制品）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "08.02",
+        "预制肉制品",
+        "1.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=61; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q099",
+      "question": "GB 2760-2024中，红米红在碳酸饮料中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "红米红",
+        "碳酸饮料",
+        "0.2 g/kg",
+        "以即饮状态计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=107; page=50; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q100",
+      "question": "GB 2760-2024中，β-环状糊精用于食品分类号08.03（熟肉制品）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "08.03",
+        "熟肉制品",
+        "1.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=61; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q101",
+      "question": "GB 2760-2024中，）琥珀酸单甘油酯（succinylated monoglycerides的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "）琥珀酸单甘油酯（succinylated monoglycerides",
+        "10.038",
+        "乳化剂",
+        "472g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=110; page=52; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q102",
+      "question": "GB 2760-2024中，β-环状糊精用于食品分类号14.02.03（果蔬汁(浆)类饮料）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "14.02.03",
+        "果蔬汁(浆)类饮料",
+        "0.5 g/kg",
+        "以即饮状态计，相应的固体饮料按稀释倍数增加使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=61; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q103",
+      "question": "GB 2760-2024中，花生衣红的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "花生衣红",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=112; page=53; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q104",
+      "question": "GB 2760-2024中，姜黄在冷冻饮品（03.04食用冰除外）中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "姜黄",
+        "冷冻饮品（03.04食用冰除外）",
+        "按生产需要适量使用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=114; page=55; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q105",
+      "question": "GB 2760-2024中，同时规定焦糖色(加氨生产）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "同时规定焦糖色(加氨生产）",
+        "08.110",
+        "着色剂",
+        "150c"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=115; page=56; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q106",
+      "question": "GB 2760-2024中，焦糖色(普通法)在果酱 ——中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "焦糖色(普通法)",
+        "果酱 ——",
+        "1.5 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=117; page=58; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q107",
+      "question": "GB 2760-2024中，焦糖色（亚硫酸铵法）的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "焦糖色（亚硫酸铵法）",
+        "08.109",
+        "着色剂",
+        "150d"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=119; page=59; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q108",
+      "question": "GB 2760-2024中，明胶的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "明胶",
+        "20.002",
+        "增稠剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=86; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q109",
+      "question": "GB 2760-2024中，木糖醇的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "木糖醇",
+        "19.007",
+        "甜味剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=86; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q110",
+      "question": "GB 2760-2024中，木糖醇酐单硬脂酸酯的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "木糖醇酐单硬脂酸酯",
+        "10.007",
+        "乳化剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=86; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q111",
+      "question": "GB 2760-2024中，纳他霉素的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "纳他霉素",
+        "17.030",
+        "防腐剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=86; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q112",
+      "question": "GB 2760-2024中，己二酸的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "己二酸",
+        "01.109",
+        "酸度调节剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=54; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q113",
+      "question": "GB 2760-2024中，甲基纤维素的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "甲基纤维素",
+        "20.043",
+        "增稠剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=54; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q114",
+      "question": "GB 2760-2024中，甲壳素的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "甲壳素",
+        "20.018",
+        "增稠剂、稳定剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=54; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q115",
+      "question": "GB 2760-2024中，罗汉果甜苷的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "罗汉果甜苷",
+        "19.015",
+        "甜味剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=81; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q116",
+      "question": "GB 2760-2024中，罗望子多糖胶的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "罗望子多糖胶",
+        "20.011",
+        "增稠剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=81; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q117",
+      "question": "GB 2760-2024中，萝卜红的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "萝卜红",
+        "08.117",
+        "着色剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=81; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q118",
+      "question": "GB 2760-2024中，皂荚糖胶的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "皂荚糖胶",
+        "20.029",
+        "增稠剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=141; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q119",
+      "question": "GB 2760-2024中，皂树皮提取物的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "皂树皮提取物",
+        "10.042",
+        "乳化剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=141; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q120",
+      "question": "GB 2760-2024中，β-环状糊精的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "β-环状糊精",
+        "20.024",
+        "增稠剂、其他"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy"
+      ],
+      "notes": "extra_cns_case; page=15; table=表A.1"
+    }
+  ]
+}

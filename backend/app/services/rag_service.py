@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 from sqlalchemy.orm import Session
@@ -7,6 +8,7 @@ from app.core.logger import get_logger
 from app.models.user import User
 from app.rag.llm_client import LLMConfigError, OpenAICompatibleLLM
 from app.rag.retriever import PermissionAwareRetriever
+from app.rag.table_utils import infer_table_reference
 from app.rag.text_quality import is_text_usable
 from app.schemas.chat import AnswerSections, ChatResponse, Citation, EvidenceRow
 from app.services import document_service, log_service
@@ -23,7 +25,8 @@ SYSTEM_PROMPT = """你是一个严谨的企业知识库 RAG 问答助手，只�
 3. 如果证据只是主题相近但无法支撑结论，也必须返回 found=false。
 4. 需要给出结构化答案，字段包括分类判断、结论、依据、引用。
 5. 检索依据表只输出关键字眼或短摘要，不要复制完整原文切块。
-6. 只输出 JSON，不要输出 Markdown 或额外解释。
+6. 如果证据中给出表号或条款能推断表号，引用字段必须包含表号。
+7. 只输出 JSON，不要输出 Markdown 或额外解释。
 
 JSON 格式：
 {
@@ -104,6 +107,7 @@ class RagService:
 
     def _generate_answer(self, question: str, citations: list[Citation]) -> ChatResponse:
         context = _build_context(citations, max_chars=self.settings.RAG_CONTEXT_MAX_CHARS)
+        strategy_hint = _build_strategy_hint(question, citations)
         if not self.settings.OPENAI_API_KEY:
             sections = AnswerSections(
                 classification="已检索，未生成",
@@ -122,7 +126,7 @@ class RagService:
         try:
             payload = OpenAICompatibleLLM().complete_json(
                 SYSTEM_PROMPT,
-                f"用户问题：{question}\n\n检索证据：\n{context}",
+                f"用户问题：{question}\n\n{strategy_hint}\n\n检索证据：\n{context}",
             )
             return _parse_answer_payload(payload, citations)
         except LLMConfigError as exc:
@@ -190,11 +194,13 @@ class RagService:
 
 def _hit_to_citation(hit: dict) -> Citation:
     metadata = hit.get("metadata") or {}
+    table_label = _table_label_from_metadata_or_text(metadata, str(hit.get("text") or ""))
     return Citation(
         document_id=int(metadata.get("document_id") or 0),
         filename=str(metadata.get("filename") or ""),
         chunk_id=hit.get("id"),
         page=_to_int_or_none(metadata.get("page")),
+        table=table_label,
         chunk_type=str(metadata.get("chunk_type") or "") or None,
         score=hit.get("score"),
         text=str(hit.get("text") or ""),
@@ -206,10 +212,11 @@ def _build_context(citations: list[Citation], max_chars: int) -> str:
     total = 0
     for index, citation in enumerate(citations, start=1):
         page = f"第 {citation.page} 页" if citation.page else "无页码"
+        table = f"；表：{citation.table}" if citation.table else ""
         score = f"{citation.score:.3f}" if citation.score is not None else "-"
         block = (
             f"[{index}] 文件：{citation.filename}；来源：{page}；"
-            f"类型：{citation.chunk_type or '-'}；分数：{score}\n"
+            f"类型：{citation.chunk_type or '-'}{table}；分数：{score}\n"
             f"{citation.text}"
         )
         if total + len(block) > max_chars:
@@ -217,6 +224,26 @@ def _build_context(citations: list[Citation], max_chars: int) -> str:
         blocks.append(block)
         total += len(block)
     return "\n\n".join(blocks)
+
+
+def _build_strategy_hint(question: str, citations: list[Citation]) -> str:
+    if not _looks_like_cross_document_question(question):
+        return ""
+    filenames = {citation.filename for citation in citations if citation.filename}
+    if len(filenames) < 2:
+        return ""
+    return (
+        "检索策略提示：这是跨文档或跨标准问题。若证据分别来自产品标准和通用标准，"
+        "可以综合多个证据作答；不要仅因为答案分散在不同文档中就返回未找到。"
+        "如果只能回答部分内容，classification 使用“部分匹配”，并在 basis 中明确哪些部分有证据、哪些部分无证据。"
+    )
+
+
+def _looks_like_cross_document_question(question: str) -> bool:
+    markers = ("应符合", "引用", "参照", "同时符合", "有何不同", "分别", "都引用")
+    if any(marker in question for marker in markers):
+        return True
+    return len(re.findall(r"\bGB(?:/T)?\s*\d+(?:\.\d+)?(?:[-—]\d{4})?\b", question, flags=re.I)) >= 2
 
 
 def _parse_answer_payload(payload: dict[str, Any], citations: list[Citation]) -> ChatResponse:
@@ -232,6 +259,7 @@ def _parse_answer_payload(payload: dict[str, Any], citations: list[Citation]) ->
         basis=_clean_text(payload.get("basis")) or "未找到可支撑结论的依据。",
         citation=_clean_text(payload.get("citation")) or "无",
     )
+    sections.citation = _ensure_citation_reference(sections.citation, citations)
     evidence_indices = payload.get("evidence_indices")
     if (
         not sections.conclusion
@@ -316,18 +344,37 @@ def _citation_to_evidence_row(index: int, citation: Citation, keywords: str) -> 
         score=citation.score,
         filename=citation.filename,
         page=citation.page,
-        table=_table_label_from_text(citation.text),
+        table=citation.table or _table_label_from_text(citation.text),
         chunk_id=citation.chunk_id,
         keywords=keywords,
     )
 
 
 def _table_label_from_text(text: str) -> str | None:
+    label, _ = infer_table_reference(text)
+    if label:
+        return label
     for marker in ("表号：", "表：", "表 "):
         if marker in text:
             tail = text.split(marker, 1)[1].strip()
             return tail.splitlines()[0][:30] if tail else None
     return None
+
+
+def _table_label_from_metadata_or_text(metadata: dict, text: str) -> str | None:
+    label, _ = infer_table_reference(text, metadata)
+    return label
+
+
+def _ensure_citation_reference(citation_text: str, citations: list[Citation]) -> str:
+    if not citations:
+        return citation_text
+    first_table = next((citation.table for citation in citations if citation.table), None)
+    if not first_table or first_table in citation_text:
+        return citation_text
+    if citation_text and citation_text != "无":
+        return f"{citation_text}，{first_table}"
+    return _format_citation_reference(citations[0])
 
 
 def _short_keywords(text: str, max_chars: int = 120) -> str:
@@ -337,7 +384,8 @@ def _short_keywords(text: str, max_chars: int = 120) -> str:
 
 def _format_citation_reference(citation: Citation) -> str:
     page = f"，第 {citation.page} 页" if citation.page else ""
-    return f"{citation.filename}{page}"
+    table = f"，{citation.table}" if citation.table else ""
+    return f"{citation.filename}{page}{table}"
 
 
 def _sections_to_answer(sections: AnswerSections) -> str:

@@ -106,7 +106,7 @@ def read_document_quality_report(
 async def upload_document(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    enable_llm_chunk_normalization: bool | None = Form(default=None),
+    enable_llm_chunk_normalization: bool | None = Form(default=True),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> Document:

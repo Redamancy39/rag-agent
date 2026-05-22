@@ -17,6 +17,17 @@ TABLE_KEYWORDS = (
     "ADI",
 )
 NUMBER_ONLY_PATTERN = re.compile(r"^[0-9０-９.．,，\-~～]+$")
+SUSPICIOUS_POWER_PATTERN = re.compile(
+    r"(?<!\d)(?:[1-9]\s*[×xX]\s*10[1-6]|10[1-6])(?!\d)"
+)
+LLM_REPAIR_FLAGS = {
+    "residue_unit_hint",
+    "residue_unit_repaired",
+    "microbe_power_hint",
+    "microbe_power_repaired",
+    "common_unit_mojibake_repaired",
+    "standard_specific_hint",
+}
 
 
 def annotate_chunk_quality(chunks: list[DocumentChunk]) -> list[DocumentChunk]:
@@ -54,6 +65,8 @@ def score_chunk(
     numeric_line_ratio = numeric_line_count / line_count if line_count else 1.0
     repeated_line_ratio = repeated_line_count / line_count if line_count else 0.0
     table_like = _is_table_like(stripped, metadata, lines, short_line_ratio, numeric_line_ratio)
+    preprocess_flags = _split_flags(metadata.get("preprocess_quality_flags"))
+    repair_flags = _split_flags(metadata.get("preprocess_repair_flags"))
 
     score = 1.0
     flags: list[str] = []
@@ -70,6 +83,18 @@ def score_chunk(
     if float(quality["mojibake_marker_ratio"]) > 0.02:
         score -= 0.2
         flags.append("mojibake")
+    if float(quality["hangul_char_ratio"]) > 0.015:
+        score -= 0.24
+        flags.append("hangul_noise")
+    if float(quality["private_use_char_ratio"]) > 0.002:
+        score -= 0.24
+        flags.append("private_use_noise")
+    if float(quality["replacement_char_ratio"]) > 0.002:
+        score -= 0.18
+        flags.append("replacement_char_noise")
+    if float(quality["question_mark_run_ratio"]) > 0.02:
+        score -= 0.12
+        flags.append("question_mark_noise")
     if short_line_ratio > 0.55 and line_count >= 6:
         score -= 0.08
         flags.append("fragmented_lines")
@@ -87,11 +112,26 @@ def score_chunk(
 
     if table_like:
         flags.append("table_like")
+    if metadata.get("bad_text_layer") or "unusable_text" in preprocess_flags:
+        score -= 0.2
+        flags.append("bad_text_layer")
+    if repair_flags & LLM_REPAIR_FLAGS:
+        score -= 0.04
+        flags.append("preprocess_repair_hint")
+    if _has_suspicious_power_notation(stripped):
+        score -= 0.06
+        flags.append("suspicious_power_notation")
 
     score = max(0.0, min(1.0, score))
     metrics: dict[str, float | int | bool] = {
         "text_length": int(quality["length"]),
         "readable_chars": int(quality["readable_chars"]),
+        "readable_char_ratio": round(float(quality["readable_char_ratio"]), 4),
+        "cjk_char_ratio": round(float(quality["cjk_char_ratio"]), 4),
+        "hangul_char_ratio": round(float(quality["hangul_char_ratio"]), 4),
+        "private_use_char_ratio": round(float(quality["private_use_char_ratio"]), 4),
+        "replacement_char_ratio": round(float(quality["replacement_char_ratio"]), 4),
+        "question_mark_run_ratio": round(float(quality["question_mark_run_ratio"]), 4),
         "line_count": line_count,
         "short_line_ratio": round(short_line_ratio, 4),
         "numeric_line_ratio": round(numeric_line_ratio, 4),
@@ -115,7 +155,19 @@ def _needs_llm_normalization(
     if metadata.get("llm_normalized"):
         return False
     is_ocr = chunk_type.startswith("ocr") or metadata.get("extraction_method") == "paddleocr"
-    is_candidate = is_ocr or "table_like" in flags or score < settings.CHUNK_LLM_MIN_QUALITY_SCORE
+    high_value_flags = {
+        "preprocess_repair_hint",
+        "suspicious_power_notation",
+        "bad_text_layer",
+        "hangul_noise",
+        "private_use_noise",
+    }
+    is_candidate = (
+        is_ocr
+        or "table_like" in flags
+        or bool(set(flags) & high_value_flags)
+        or score < settings.CHUNK_LLM_MIN_QUALITY_SCORE
+    )
     return bool(is_candidate and metadata.get("text_length", 0) >= settings.CHUNK_LLM_MIN_INPUT_CHARS)
 
 
@@ -141,6 +193,19 @@ def _metadata_float(value: object) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def _split_flags(value: object) -> set[str]:
+    if not value:
+        return set()
+    return {item.strip() for item in str(value).split(",") if item.strip()}
+
+
+def _has_suspicious_power_notation(text: str) -> bool:
+    if not SUSPICIOUS_POWER_PATTERN.search(text):
+        return False
+    context_keywords = ("菌落总数", "大肠菌群", "微生物", "CFU", "霉菌", "酵母")
+    return any(keyword in text for keyword in context_keywords)
 
 
 def _quality_label(score: float) -> str:

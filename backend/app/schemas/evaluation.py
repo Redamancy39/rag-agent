@@ -9,6 +9,8 @@ class RagEvalCase(BaseModel):
     expected_found: bool = True
     expected_answer_keywords: list[str] = Field(default_factory=list)
     expected_citation_keywords: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
+    notes: str | None = None
     document_ids: list[int] | None = None
     top_k: int = Field(default=5, ge=1, le=20)
 

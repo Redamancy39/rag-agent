@@ -25,7 +25,12 @@ from app.rag.chunk_quality import annotate_chunk_quality
 from app.rag.embeddings import BgeEmbeddingModel
 from app.rag.file_types import detect_file_type, sanitize_filename
 from app.rag.loaders.factory import get_loader
-from app.rag.normalizers.llm_normalizer import normalize_chunks_with_llm
+from app.rag.normalizers.llm_normalizer import (
+    dedupe_llm_normalized_chunks,
+    merge_llm_normalized_chunks,
+    normalize_chunks_with_llm,
+    select_llm_normalization_candidates,
+)
 from app.rag.preprocessor import DocumentPreprocessor
 from app.rag.schemas import DocumentChunk
 from app.rag.vector_store import ChromaVectorStore
@@ -211,6 +216,23 @@ def get_document_quality_report(db: Session, document_id: int, user: User) -> di
         "low_quality_count": quality_counts.get("low", 0),
         "ocr_chunk_count": sum(1 for metadata in metadata_items if _is_ocr_chunk(metadata)),
         "ocr_average_score": _average(ocr_scores),
+        "bad_text_layer_count": sum(
+            1 for metadata in metadata_items if bool(metadata.get("bad_text_layer"))
+        ),
+        "ocr_replaced_bad_text_layer_count": sum(
+            1
+            for metadata in metadata_items
+            if bool(metadata.get("ocr_replaced_bad_text_layer"))
+        ),
+        "preprocess_repair_count": sum(
+            1 for metadata in metadata_items if bool(metadata.get("preprocess_repair_flags"))
+        ),
+        "suspicious_power_notation_count": sum(
+            1
+            for metadata in metadata_items
+            if "suspicious_power_notation"
+            in str(metadata.get("chunk_quality_flags") or "")
+        ),
         "table_chunk_count": sum(1 for metadata in metadata_items if _is_table_chunk(metadata)),
         "llm_normalized_count": sum(1 for metadata in metadata_items if _is_llm_normalized(metadata)),
         "llm_candidate_count": sum(
@@ -226,6 +248,10 @@ def get_document_quality_report(db: Session, document_id: int, user: User) -> di
         "latest_job_progress_total": latest_job.progress_total if latest_job else 0,
         "latest_job_progress_percent": latest_job.progress_percent if latest_job else 0,
     }
+    report["health_score"] = _quality_health_score(document, report)
+    report["risk_level"] = _quality_risk_level(document, report)
+    report["risk_items"] = _quality_risk_items(document, report)
+    report["stage_overview"] = _quality_stage_overview(document, report)
     report["recommendations"] = _quality_recommendations(document, report)
     return report
 
@@ -259,7 +285,7 @@ async def create_document_record(
     user: User,
     upload_file: UploadFile,
     *,
-    enable_llm_chunk_normalization: bool | None = None,
+    enable_llm_chunk_normalization: bool | None = True,
 ) -> Document:
     settings = get_settings()
     original_filename = sanitize_filename(upload_file.filename or "uploaded_file")
@@ -504,7 +530,9 @@ def _index_document(db: Session, document: Document) -> None:
             ),
         )
         if normalized_chunks:
-            chunks = annotate_chunk_quality([*chunks, *normalized_chunks])
+            chunks = annotate_chunk_quality(
+                merge_llm_normalized_chunks(chunks, normalized_chunks)
+            )
 
     indexed_chunks = _attach_document_metadata(document, chunks)
 
@@ -556,12 +584,26 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
             for item in raw_chunks
         ]
     )
-    candidate_count = sum(
-        1 for chunk in chunks if bool(chunk.metadata.get("needs_llm_normalization"))
-    )
-    if candidate_count == 0:
+    original_chunk_count = len(chunks)
+    chunks = dedupe_llm_normalized_chunks(chunks)
+    deduped_count = original_chunk_count - len(chunks)
+    selection = select_llm_normalization_candidates(chunks)
+    if selection.eligible_count == 0:
+        if deduped_count > 0:
+            _rewrite_document_vectors(
+                db,
+                document,
+                chunks,
+                status_message=f"LLM 整理完成，已清理 {deduped_count} 个重复归一化切块",
+            )
+            return
         document.status = "indexed"
-        document.status_message = "未发现需要 LLM 整理的低质量 OCR / 表格切块"
+        if selection.skipped_existing_count:
+            document.status_message = (
+                "可疑切块已存在 LLM 归一化结果，本次无需重复整理"
+            )
+        else:
+            document.status_message = "未发现需要 LLM 整理的低质量 OCR / 表格切块"
         document.error_message = None
         db.add(document)
         _update_processing_job(
@@ -580,7 +622,11 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
         db,
         document,
         "llm_preprocessing",
-        f"正在对 {min(candidate_count, settings.CHUNK_LLM_MAX_CHUNKS_PER_DOCUMENT)} 个候选切块进行 LLM 结构化归一化",
+        (
+            f"正在对 {len(selection.candidates)} 个候选切块进行 LLM 结构化归一化"
+            f"（可补充候选 {selection.eligible_count} 个，"
+            f"已跳过已整理 {selection.skipped_existing_count} 个）"
+        ),
     )
     normalized_chunks = normalize_chunks_with_llm(
         chunks,
@@ -610,17 +656,52 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
         db.refresh(document)
         return
 
-    merged_chunks = annotate_chunk_quality([*chunks, *normalized_chunks])
-    indexed_chunks = _attach_document_metadata(document, merged_chunks)
-    _set_document_status(db, document, "embedding", "正在为 LLM 整理后的切块重新生成向量")
+    merged_chunks = annotate_chunk_quality(
+        merge_llm_normalized_chunks(chunks, normalized_chunks)
+    )
+    replaced_count = max(0, len(chunks) + len(normalized_chunks) - len(merged_chunks))
+    _rewrite_document_vectors(
+        db,
+        document,
+        merged_chunks,
+        status_message=(
+            f"LLM 整理完成，生成 {len(normalized_chunks)} 个归一化切块"
+            + (f"，替换 {replaced_count} 个原始切块" if replaced_count else "")
+            + (f"，清理 {deduped_count} 个重复归一化切块" if deduped_count else "")
+        ),
+    )
+
+
+def _rewrite_document_vectors(
+    db: Session,
+    document: Document,
+    chunks: list[DocumentChunk],
+    *,
+    status_message: str,
+) -> None:
+    indexed_chunks = _attach_document_metadata(document, chunks)
+
+    _set_document_status(
+        db,
+        document,
+        "embedding",
+        "正在为 LLM 整理后的切块重新生成向量",
+    )
     embeddings = BgeEmbeddingModel().embed_texts([chunk.text for chunk in indexed_chunks])
-    _set_document_status(db, document, "indexing", "正在重写 ChromaDB 中该文档的向量切块")
+
+    _set_document_status(
+        db,
+        document,
+        "indexing",
+        "正在重写 ChromaDB 中该文档的向量切块",
+    )
+    vector_store = ChromaVectorStore()
     vector_store.delete_document(document.id)
     chunk_ids = [f"doc:{document.id}:chunk:{index}" for index in range(len(indexed_chunks))]
     vector_store.add_documents(chunk_ids, indexed_chunks, embeddings)
 
     document.status = "indexed"
-    document.status_message = f"LLM 整理完成，新增 {len(normalized_chunks)} 个归一化切块"
+    document.status_message = status_message
     document.chunk_count = len(indexed_chunks)
     document.error_message = None
     db.add(document)
@@ -984,6 +1065,9 @@ def _quality_recommendations(document: Document, report: dict) -> list[str]:
     low_quality_count = int(report.get("low_quality_count") or 0)
     table_chunk_count = int(report.get("table_chunk_count") or 0)
     llm_normalized_count = int(report.get("llm_normalized_count") or 0)
+    bad_text_layer_count = int(report.get("bad_text_layer_count") or 0)
+    preprocess_repair_count = int(report.get("preprocess_repair_count") or 0)
+    suspicious_power_count = int(report.get("suspicious_power_notation_count") or 0)
     ocr_average_score = report.get("ocr_average_score")
 
     if document.status == "failed":
@@ -996,8 +1080,143 @@ def _quality_recommendations(document: Document, report: dict) -> list[str]:
         recommendations.append("低质量切块占比较高，建议开启 LLM 切块整理或检查 OCR 输出。")
     if isinstance(ocr_average_score, (int, float)) and ocr_average_score < 0.85:
         recommendations.append("OCR 平均置信度偏低，建议检查扫描清晰度、版面方向和 OCR 模型。")
+    if bad_text_layer_count:
+        recommendations.append("检测到 PDF 文本层异常页，建议确认是否已启用 OCR fallback 并重新入库受影响文档。")
+    if preprocess_repair_count:
+        recommendations.append("检测到单位或 OCR 形态修复提示，建议查看引用页确认 μg/kg、10 的上标等关键值。")
+    if suspicious_power_count:
+        recommendations.append("检测到疑似微生物表格上标丢失，建议优先使用 LLM 整理并人工抽查该页。")
     if table_chunk_count and llm_normalized_count == 0:
         recommendations.append("检测到表格型内容但没有 LLM 归一化结果，建议对表格多的标准文档开启整理开关。")
     if not recommendations:
         recommendations.append("当前文档处理质量未发现明显异常，可进入问答阶段验证引用准确率。")
     return recommendations
+
+
+def _quality_health_score(document: Document, report: dict) -> int:
+    if document.status == "failed":
+        return 0
+
+    total_chunks = int(report.get("total_chunks") or 0)
+    low_quality_count = int(report.get("low_quality_count") or 0)
+    suspicious_power_count = int(report.get("suspicious_power_notation_count") or 0)
+    bad_text_layer_count = int(report.get("bad_text_layer_count") or 0)
+    preprocess_repair_count = int(report.get("preprocess_repair_count") or 0)
+    table_chunk_count = int(report.get("table_chunk_count") or 0)
+    llm_normalized_count = int(report.get("llm_normalized_count") or 0)
+    average_quality_score = report.get("average_quality_score")
+    ocr_average_score = report.get("ocr_average_score")
+
+    if isinstance(average_quality_score, (int, float)):
+        score = float(average_quality_score) * 100
+    elif document.status == "indexed" and total_chunks:
+        score = 76.0
+    else:
+        score = 45.0
+
+    if document.status != "indexed":
+        score -= 18
+    if total_chunks:
+        score -= min(35.0, (low_quality_count / total_chunks) * 70)
+    if isinstance(ocr_average_score, (int, float)) and ocr_average_score < 0.9:
+        score -= min(18.0, (0.9 - float(ocr_average_score)) * 100)
+    score -= min(14.0, bad_text_layer_count * 2.0)
+    score -= min(12.0, suspicious_power_count * 4.0)
+    score -= min(8.0, preprocess_repair_count * 0.7)
+
+    if table_chunk_count and llm_normalized_count:
+        score += 5
+
+    return max(0, min(100, round(score)))
+
+
+def _quality_risk_level(document: Document, report: dict) -> str:
+    score = int(report.get("health_score") or 0)
+    total_chunks = int(report.get("total_chunks") or 0)
+    low_quality_count = int(report.get("low_quality_count") or 0)
+    suspicious_power_count = int(report.get("suspicious_power_notation_count") or 0)
+
+    if document.status == "failed" or score < 60:
+        return "high"
+    if document.status != "indexed":
+        return "medium"
+    if total_chunks and low_quality_count / total_chunks >= 0.2:
+        return "medium"
+    if suspicious_power_count:
+        return "medium"
+    return "low"
+
+
+def _quality_risk_items(document: Document, report: dict) -> list[str]:
+    items: list[str] = []
+    total_chunks = int(report.get("total_chunks") or 0)
+    low_quality_count = int(report.get("low_quality_count") or 0)
+    bad_text_layer_count = int(report.get("bad_text_layer_count") or 0)
+    preprocess_repair_count = int(report.get("preprocess_repair_count") or 0)
+    suspicious_power_count = int(report.get("suspicious_power_notation_count") or 0)
+    table_chunk_count = int(report.get("table_chunk_count") or 0)
+    llm_normalized_count = int(report.get("llm_normalized_count") or 0)
+    ocr_average_score = report.get("ocr_average_score")
+
+    if document.status == "failed":
+        items.append("入库失败")
+    elif document.status != "indexed":
+        items.append("仍在处理中")
+    if total_chunks and low_quality_count / total_chunks >= 0.2:
+        items.append("低质量切块占比较高")
+    if isinstance(ocr_average_score, (int, float)) and ocr_average_score < 0.85:
+        items.append("OCR 平均置信度偏低")
+    if bad_text_layer_count:
+        items.append("PDF 文本层存在异常页")
+    if preprocess_repair_count:
+        items.append("存在单位或 OCR 形态修复提示")
+    if suspicious_power_count:
+        items.append("疑似存在 10 的上标或微生物限量表误读")
+    if table_chunk_count and llm_normalized_count == 0:
+        items.append("表格内容尚未 LLM 归一化")
+    return items or ["未发现明显风险"]
+
+
+def _quality_stage_overview(document: Document, report: dict) -> list[dict[str, object]]:
+    status = document.status
+    latest_stage = str(report.get("latest_job_stage") or status or "")
+    latest_message = str(report.get("latest_job_message") or document.status_message or "")
+    total_chunks = int(report.get("total_chunks") or 0)
+    ocr_chunk_count = int(report.get("ocr_chunk_count") or 0)
+    table_chunk_count = int(report.get("table_chunk_count") or 0)
+    llm_normalized_count = int(report.get("llm_normalized_count") or 0)
+
+    def item(name: str, state: str, detail: str, metric: str = "") -> dict[str, object]:
+        return {
+            "name": name,
+            "state": state,
+            "detail": detail,
+            "metric": metric,
+        }
+
+    return [
+        item(
+            "Agent 探测",
+            "done" if latest_stage else "pending",
+            "识别文件类型、可读性、OCR 与 LLM 整理需求",
+            latest_message if latest_stage == "agent_planning" else "",
+        ),
+        item(
+            "解析 / OCR",
+            "done" if total_chunks or status in {"chunking", "embedding", "indexing", "indexed"} else "running",
+            "优先文本层与表格解析，必要时进入 PaddleOCR",
+            f"OCR 块 {ocr_chunk_count}",
+        ),
+        item(
+            "表格归一化",
+            "done" if llm_normalized_count else ("running" if status == "llm_preprocessing" else "optional"),
+            "将表格行转为可检索事实，低质量块可调用 LLM 整理",
+            f"表格块 {table_chunk_count} / LLM {llm_normalized_count}",
+        ),
+        item(
+            "分块与入库",
+            "done" if status == "indexed" else ("failed" if status == "failed" else "running"),
+            "写入来源页码、质量评分和 ChromaDB 向量索引",
+            f"切块 {total_chunks}",
+        ),
+    ]

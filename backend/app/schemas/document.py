@@ -75,9 +75,16 @@ class DocumentQualityReportRead(BaseModel):
     chunk_type_counts: dict[str, int]
     quality_counts: dict[str, int]
     average_quality_score: float | None = None
+    health_score: int = 0
+    risk_level: str = "unknown"
+    risk_items: list[str] = []
     low_quality_count: int
     ocr_chunk_count: int
     ocr_average_score: float | None = None
+    bad_text_layer_count: int = 0
+    ocr_replaced_bad_text_layer_count: int = 0
+    preprocess_repair_count: int = 0
+    suspicious_power_notation_count: int = 0
     table_chunk_count: int
     llm_normalized_count: int
     llm_candidate_count: int
@@ -86,4 +93,5 @@ class DocumentQualityReportRead(BaseModel):
     latest_job_progress_current: int = 0
     latest_job_progress_total: int = 0
     latest_job_progress_percent: int = 0
+    stage_overview: list[dict[str, Any]] = []
     recommendations: list[str]

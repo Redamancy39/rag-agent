@@ -1,12 +1,19 @@
 {
-  "name": "rag-food-safety-standards-v1",
+  "name": "rag-food-safety-standards-v1.1",
   "cases": [
     {
       "id": "Q001",
       "question": "鲜(冻)畜、禽产品中挥发性盐基氮的限量指标是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["15", "mg/100g", "挥发性盐基氮"],
-      "expected_citation_keywords": ["GB 2707", "表2"],
+      "expected_answer_keywords": [
+        "15",
+        "mg/100g",
+        "挥发性盐基氮"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -14,8 +21,13 @@
       "id": "Q002",
       "question": "GB 2707-2016标准中冻畜、禽肉的定义是什么？",
       "expected_found": true,
-      "expected_answer_keywords": ["-18", "冷冻处理"],
-      "expected_citation_keywords": ["GB 2707"],
+      "expected_answer_keywords": [
+        "-18",
+        "冷冻处理"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -23,8 +35,14 @@
       "id": "Q003",
       "question": "鲜(冻)畜、禽产品的感官要求中，对气味有什么要求？",
       "expected_found": true,
-      "expected_answer_keywords": ["应有的气味", "无异味"],
-      "expected_citation_keywords": ["GB 2707", "表1"],
+      "expected_answer_keywords": [
+        "应有的气味",
+        "无异味"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707",
+        "表1"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -32,8 +50,12 @@
       "id": "Q004",
       "question": "GB 2707-2016标准是否适用于即食生肉制品？",
       "expected_found": true,
-      "expected_answer_keywords": ["不适用"],
-      "expected_citation_keywords": ["GB 2707"],
+      "expected_answer_keywords": [
+        "不适用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -41,8 +63,15 @@
       "id": "Q005",
       "question": "酱油中氨基酸态氮的最低限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["0.4", "g/100mL", "氨基酸态氮"],
-      "expected_citation_keywords": ["GB 2717", "表2"],
+      "expected_answer_keywords": [
+        "0.4",
+        "g/100mL",
+        "氨基酸态氮"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -50,8 +79,15 @@
       "id": "Q006",
       "question": "酱油的微生物限量中，菌落总数的m值和M值分别是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["5×10³", "5×10⁴", "菌落总数"],
-      "expected_citation_keywords": ["GB 2717", "表3"],
+      "expected_answer_keywords": [
+        "5×10³",
+        "5×10⁴",
+        "菌落总数"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "表3"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -59,8 +95,16 @@
       "id": "Q007",
       "question": "食醋中总酸(以乙酸计)的最低限量是多少？甜醋呢？",
       "expected_found": true,
-      "expected_answer_keywords": ["3.5", "2.5", "食醋", "甜醋"],
-      "expected_citation_keywords": ["GB 2719", "表2"],
+      "expected_answer_keywords": [
+        "3.5",
+        "2.5",
+        "食醋",
+        "甜醋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -68,8 +112,14 @@
       "id": "Q008",
       "question": "食醋中禁止使用哪种食品添加剂？",
       "expected_found": true,
-      "expected_answer_keywords": ["冰乙酸", "冰醋酸", "不可用于食醋"],
-      "expected_citation_keywords": ["GB 2719"],
+      "expected_answer_keywords": [
+        "冰乙酸",
+        "冰醋酸",
+        "不可用于食醋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -77,17 +127,32 @@
       "id": "Q009",
       "question": "预包装食醋的标签应标示什么含量？",
       "expected_found": true,
-      "expected_answer_keywords": ["总酸含量", "食醋", "甜醋"],
-      "expected_citation_keywords": ["GB 2719"],
+      "expected_answer_keywords": [
+        "总酸含量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719"
+      ],
       "document_ids": null,
-      "top_k": 5
+      "top_k": 5,
+      "notes": "题干只问应标示什么含量，因此不强制答案同时写出“食醋/甜醋”字样。",
+      "tags": [
+        "labeling",
+        "gb2719",
+        "eval-fixed"
+      ]
     },
     {
       "id": "Q010",
       "question": "粮食中麦角在小麦、燕麦中的限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["0.01"],
-      "expected_citation_keywords": ["GB 2715", "表3"],
+      "expected_answer_keywords": [
+        "0.01"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "表3"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -95,8 +160,15 @@
       "id": "Q011",
       "question": "粮食中霉变粒的限量指标，大豆和其他粮食分别是什么？",
       "expected_found": true,
-      "expected_answer_keywords": ["1.0", "2.0", "大豆"],
-      "expected_citation_keywords": ["GB 2715", "表1"],
+      "expected_answer_keywords": [
+        "1.0",
+        "2.0",
+        "大豆"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "表1"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -104,8 +176,15 @@
       "id": "Q012",
       "question": "木薯粉中总氢氰酸的限量指标是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["10", "mg/kg", "总氢氰酸"],
-      "expected_citation_keywords": ["GB 2715", "表2"],
+      "expected_answer_keywords": [
+        "10",
+        "mg/kg",
+        "总氢氰酸"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -113,8 +192,13 @@
       "id": "Q013",
       "question": "粮食中麦角在大米、玉米、豆类中的限量要求是什么？",
       "expected_found": true,
-      "expected_answer_keywords": ["不得检出"],
-      "expected_citation_keywords": ["GB 2715", "表3"],
+      "expected_answer_keywords": [
+        "不得检出"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "表3"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -122,8 +206,16 @@
       "id": "Q014",
       "question": "熟肉制品的微生物限量中，大肠菌群的n、c、m、M值分别是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["5", "2", "10", "10²"],
-      "expected_citation_keywords": ["GB 2726", "表2"],
+      "expected_answer_keywords": [
+        "5",
+        "2",
+        "10",
+        "10²"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -131,8 +223,13 @@
       "id": "Q015",
       "question": "熟肉制品标准是否适用于肉类罐头？",
       "expected_found": true,
-      "expected_answer_keywords": ["不适用", "肉类罐头"],
-      "expected_citation_keywords": ["GB 2726"],
+      "expected_answer_keywords": [
+        "不适用",
+        "肉类罐头"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -140,8 +237,15 @@
       "id": "Q016",
       "question": "熟肉制品的感官要求中，对状态有什么具体要求？",
       "expected_found": true,
-      "expected_answer_keywords": ["无正常视力可见外来异物", "无焦斑", "无霉斑"],
-      "expected_citation_keywords": ["GB 2726", "表1"],
+      "expected_answer_keywords": [
+        "无正常视力可见外来异物",
+        "无焦斑",
+        "无霉斑"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表1"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -149,8 +253,15 @@
       "id": "Q017",
       "question": "调制肉制品的定义是什么？",
       "expected_found": true,
-      "expected_answer_keywords": ["鲜(冻)畜、禽产品", "主要原料", "非即食", "调理肉制品"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "鲜(冻)畜、禽产品",
+        "主要原料",
+        "非即食",
+        "调理肉制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -158,8 +269,12 @@
       "id": "Q018",
       "question": "调制肉制品生产中，解冻后畜禽产品中心温度不应高于多少度？",
       "expected_found": true,
-      "expected_answer_keywords": ["4"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "4"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -167,8 +282,13 @@
       "id": "Q019",
       "question": "调制肉制品生产中，采用空气解冻时，静态气流解冻的环境温度不应高于多少度？流动气体解冻呢？",
       "expected_found": true,
-      "expected_answer_keywords": ["18", "21"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "18",
+        "21"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -176,8 +296,12 @@
       "id": "Q020",
       "question": "调制肉制品生产中，腌制环境温度不应高于多少度？",
       "expected_found": true,
-      "expected_answer_keywords": ["4"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "4"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -185,8 +309,13 @@
       "id": "Q021",
       "question": "冷藏调制肉制品冷却后产品中心温度应降至多少度及以下？冷冻调制肉制品冻结后产品中心温度应降至多少度及以下？",
       "expected_found": true,
-      "expected_answer_keywords": ["4", "-18"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "4",
+        "-18"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -194,8 +323,12 @@
       "id": "Q022",
       "question": "调制肉制品煎炸过程中的食用植物油应符合哪个标准的要求？",
       "expected_found": true,
-      "expected_answer_keywords": ["GB 2716"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "GB 2716"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -203,8 +336,13 @@
       "id": "Q023",
       "question": "调制肉制品生产中，消毒用水的温度不应低于多少度？清洁用水呢？",
       "expected_found": true,
-      "expected_answer_keywords": ["82", "40"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "82",
+        "40"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -212,8 +350,14 @@
       "id": "Q024",
       "question": "运输冷藏调制肉制品的运输工具厢体内温度应控制在什么范围？冷冻的呢？",
       "expected_found": true,
-      "expected_answer_keywords": ["0", "4", "-18"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "0",
+        "4",
+        "-18"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -221,8 +365,14 @@
       "id": "Q025",
       "question": "GB 31650.1-2022中恩诺沙星的残留标志物是什么？",
       "expected_found": true,
-      "expected_answer_keywords": ["恩诺沙星", "环丙沙星", "之和"],
-      "expected_citation_keywords": ["GB 31650.1"],
+      "expected_answer_keywords": [
+        "恩诺沙星",
+        "环丙沙星",
+        "之和"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -230,8 +380,12 @@
       "id": "Q026",
       "question": "GB 31650.1-2022中诺氟沙星对所有食品动物的残留限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["不得检出"],
-      "expected_citation_keywords": ["GB 31650.1"],
+      "expected_answer_keywords": [
+        "不得检出"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -239,8 +393,14 @@
       "id": "Q027",
       "question": "GB 31650.1-2022中培氟沙星在所有食品动物肌肉中的最大残留限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["2", "μg/kg"],
-      "expected_citation_keywords": ["GB 31650.1", "表32"],
+      "expected_answer_keywords": [
+        "2",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1",
+        "表32"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -248,8 +408,14 @@
       "id": "Q028",
       "question": "GB 31650.1-2022中氯芬新(lufenuron)在鱼皮+肉中的最大残留限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["1350", "μg/kg"],
-      "expected_citation_keywords": ["GB 31650.1", "表24"],
+      "expected_answer_keywords": [
+        "1350",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1",
+        "表24"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -257,8 +423,14 @@
       "id": "Q029",
       "question": "GB 31650.1-2022中氟苯尼考的残留标志物是什么？",
       "expected_found": true,
-      "expected_answer_keywords": ["氟苯尼考", "氟苯尼考胺", "之和"],
-      "expected_citation_keywords": ["GB 31650.1"],
+      "expected_answer_keywords": [
+        "氟苯尼考",
+        "氟苯尼考胺",
+        "之和"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -266,8 +438,14 @@
       "id": "Q030",
       "question": "GB 31650.1-2022中加米霉素(gamithromycin)在猪肾中的最大残留限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["300", "μg/kg"],
-      "expected_citation_keywords": ["GB 31650.1", "表20"],
+      "expected_answer_keywords": [
+        "300",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1",
+        "表20"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -275,8 +453,15 @@
       "id": "Q031",
       "question": "酿造酱中氨基酸态氮的最低限量是多少？检验方法是什么？",
       "expected_found": true,
-      "expected_answer_keywords": ["0.3", "g/100g", "GB/T 5009.40"],
-      "expected_citation_keywords": ["GB 2718", "表2"],
+      "expected_answer_keywords": [
+        "0.3",
+        "g/100g",
+        "GB/T 5009.40"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -284,8 +469,12 @@
       "id": "Q032",
       "question": "酿造酱标准是否适用于半固态复合调味料？",
       "expected_found": true,
-      "expected_answer_keywords": ["不适用"],
-      "expected_citation_keywords": ["GB 2718"],
+      "expected_answer_keywords": [
+        "不适用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -293,8 +482,12 @@
       "id": "Q033",
       "question": "酿造酱的原料要求中，谷物和豆类应符合哪个标准？",
       "expected_found": true,
-      "expected_answer_keywords": ["GB 2715"],
-      "expected_citation_keywords": ["GB 2718"],
+      "expected_answer_keywords": [
+        "GB 2715"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -302,8 +495,14 @@
       "id": "Q034",
       "question": "豆制品中脲酶试验的指标要求是什么？适用于哪种产品？",
       "expected_found": true,
-      "expected_answer_keywords": ["阴性", "豆浆"],
-      "expected_citation_keywords": ["GB 2712", "表2"],
+      "expected_answer_keywords": [
+        "阴性",
+        "豆浆"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -311,8 +510,13 @@
       "id": "Q035",
       "question": "豆制品标准是否适用于大豆蛋白粉？",
       "expected_found": true,
-      "expected_answer_keywords": ["不适用", "大豆蛋白粉"],
-      "expected_citation_keywords": ["GB 2712"],
+      "expected_answer_keywords": [
+        "不适用",
+        "大豆蛋白粉"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -320,26 +524,53 @@
       "id": "Q036",
       "question": "即食豆制品中大肠菌群的m值和M值分别是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["10²", "10³"],
-      "expected_citation_keywords": ["GB 2712", "表3"],
+      "expected_answer_keywords": [
+        "10²",
+        "10³"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表3"
+      ],
       "document_ids": null,
       "top_k": 5
     },
     {
       "id": "Q037",
-      "question": "食用盐中氯化钠的含量应不低于多少？水分含量应不高于多少？",
+      "question": "食用盐中氯化钠的含量应不低于多少？低钠盐中氯化钾含量范围是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["97.00", "氯化钠", "10~35", "水分"],
-      "expected_citation_keywords": ["GB 2721", "表2"],
+      "expected_answer_keywords": [
+        "97.00",
+        "氯化钠",
+        "10~35",
+        "氯化钾"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "表2"
+      ],
       "document_ids": null,
-      "top_k": 5
+      "top_k": 5,
+      "notes": "原题误把低钠盐的氯化钾指标写成水分指标，已按当前标准表2修正。",
+      "tags": [
+        "table_data",
+        "gb2721",
+        "eval-fixed"
+      ]
     },
     {
       "id": "Q038",
       "question": "食用盐中钡的限量指标是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["15", "mg/kg", "钡"],
-      "expected_citation_keywords": ["GB 2721", "表2"],
+      "expected_answer_keywords": [
+        "15",
+        "mg/kg",
+        "钡"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -347,35 +578,76 @@
       "id": "Q039",
       "question": "味精中谷氨酸钠的含量应不低于多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["99.0"],
-      "expected_citation_keywords": ["GB 2720", "表2"],
+      "expected_answer_keywords": [
+        "99.0"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
     {
       "id": "Q040",
-      "question": "蜂蜜中果糖和葡萄糖的含量合计应不低于多少？",
+      "question": "GB 2730-2015中火腿、腊肉、咸肉、香（腊）肠的过氧化值限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["60", "果糖", "葡萄糖"],
-      "expected_citation_keywords": ["GB 2730", "表2"],
+      "expected_answer_keywords": [
+        "0.5",
+        "过氧化值",
+        "火腿",
+        "腊肉",
+        "咸肉",
+        "香（腊）肠"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "表2"
+      ],
       "document_ids": null,
-      "top_k": 5
+      "top_k": 5,
+      "notes": "原题为蜂蜜指标，但当前库中的GB 2730-2015是腌腊肉制品，已改为同文档内可验证问题。",
+      "tags": [
+        "table_data",
+        "gb2730",
+        "eval-fixed"
+      ]
     },
     {
       "id": "Q041",
       "question": "鲜、冻动物性水产品中挥发性盐基氮的限量，海水鱼和淡水鱼分别是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["30", "25", "20", "15"],
-      "expected_citation_keywords": ["GB 2733", "表2"],
+      "expected_answer_keywords": [
+        "30",
+        "20",
+        "海水鱼",
+        "淡水鱼"
+      ],
+      "expected_citation_keywords": [
+        "GB 2733",
+        "表2"
+      ],
       "document_ids": null,
-      "top_k": 5
+      "top_k": 5,
+      "notes": "题干只问海水鱼和淡水鱼，去除虾/贝类对应的25和15。",
+      "tags": [
+        "table_data",
+        "gb2733",
+        "eval-fixed"
+      ]
     },
     {
       "id": "Q042",
       "question": "鲜、冻动物性水产品中麻痹性贝类毒素(PSP)的限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["4", "MU/g"],
-      "expected_citation_keywords": ["GB 2733", "表3"],
+      "expected_answer_keywords": [
+        "4",
+        "MU/g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2733",
+        "表3"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -383,8 +655,15 @@
       "id": "Q043",
       "question": "植物油中酸价(kOH)的限量指标，食用植物油(含调和油)和食用植物调和油分别是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["3", "食用植物油", "调和油"],
-      "expected_citation_keywords": ["GB 2716", "表2"],
+      "expected_answer_keywords": [
+        "3",
+        "食用植物油",
+        "调和油"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -392,8 +671,15 @@
       "id": "Q044",
       "question": "植物油中过氧化值的限量指标是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["0.25", "过氧化值", "g/100g"],
-      "expected_citation_keywords": ["GB 2716", "表2"],
+      "expected_answer_keywords": [
+        "0.25",
+        "过氧化值",
+        "g/100g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "表2"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -401,8 +687,13 @@
       "id": "Q045",
       "question": "调制肉制品生产中，剔骨、分割等操作的环境温度不应高于多少度？原料肉温度应控制在多少度以下？",
       "expected_found": true,
-      "expected_answer_keywords": ["12", "7"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "12",
+        "7"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -410,8 +701,12 @@
       "id": "Q046",
       "question": "调制肉制品运输中，装卸货期间食品温度升高幅度不应超过多少度？",
       "expected_found": true,
-      "expected_answer_keywords": ["3"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "3"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -419,8 +714,13 @@
       "id": "Q047",
       "question": "调制肉制品中猪肉原料应具有什么证明文件？",
       "expected_found": true,
-      "expected_answer_keywords": ["检疫证明", "肉品品质检验合格证"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "检疫证明",
+        "肉品品质检验合格证"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -428,8 +728,16 @@
       "id": "Q048",
       "question": "蛋制品中菌落总数，再制蛋和干蛋类的m值和M值分别是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["5×10⁴", "10⁶", "10⁴", "10⁵"],
-      "expected_citation_keywords": ["GB 2749", "表3"],
+      "expected_answer_keywords": [
+        "5×10⁴",
+        "10⁶",
+        "10⁴",
+        "10⁵"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "表3"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -437,8 +745,14 @@
       "id": "Q049",
       "question": "粮食中毒麦在小麦、大麦中的限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["1", "粒/kg"],
-      "expected_citation_keywords": ["GB 2715", "表3"],
+      "expected_answer_keywords": [
+        "1",
+        "粒/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "表3"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -446,8 +760,19 @@
       "id": "Q050",
       "question": "粮食应如何储存？有哪些储存要求？",
       "expected_found": true,
-      "expected_answer_keywords": ["专储", "专运", "清洁", "干燥", "防雨", "防潮", "防虫", "防鼠"],
-      "expected_citation_keywords": ["GB 2715"],
+      "expected_answer_keywords": [
+        "专储",
+        "专运",
+        "清洁",
+        "干燥",
+        "防雨",
+        "防潮",
+        "防虫",
+        "防鼠"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -455,8 +780,14 @@
       "id": "Q051",
       "question": "GB 31650.1-2022中莫奈太尔(monepantel)在牛脂肪中的最大残留限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["7000", "μg/kg"],
-      "expected_citation_keywords": ["GB 31650.1", "表27"],
+      "expected_answer_keywords": [
+        "7000",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1",
+        "表27"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -464,8 +795,14 @@
       "id": "Q052",
       "question": "GB 31650.1-2022中磺胺类(sulfonamides)在家禽组织中的最大残留限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["10", "μg/kg"],
-      "expected_citation_keywords": ["GB 31650.1", "表35"],
+      "expected_answer_keywords": [
+        "10",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1",
+        "表35"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -473,26 +810,51 @@
       "id": "Q053",
       "question": "GB 31650.1-2022中氧氟沙星(ofloxacin)在所有食品动物中的残留限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["2", "μg/kg"],
-      "expected_citation_keywords": ["GB 31650.1", "表29"],
+      "expected_answer_keywords": [
+        "2",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1",
+        "表29"
+      ],
       "document_ids": null,
       "top_k": 5
     },
     {
       "id": "Q054",
-      "question": "蜂蜜中蔗糖的含量限量是多少？",
+      "question": "GB 2730-2015中腌腊禽制品的过氧化值限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["5"],
-      "expected_citation_keywords": ["GB 2730", "表2"],
+      "expected_answer_keywords": [
+        "1.5",
+        "腌腊禽制品",
+        "过氧化值",
+        "g/100g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "表2"
+      ],
       "document_ids": null,
-      "top_k": 5
+      "top_k": 5,
+      "notes": "原题为蜂蜜蔗糖限量，但当前库中的GB 2730-2015是腌腊肉制品，已改为同文档内可验证问题。",
+      "tags": [
+        "table_data",
+        "gb2730",
+        "eval-fixed"
+      ]
     },
     {
       "id": "Q055",
       "question": "调制肉制品生产车间，滚揉过程的环境温度不应高于多少度？搅拌和滚揉后的产品中心温度不应高于多少度？",
       "expected_found": true,
-      "expected_answer_keywords": ["4", "12"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "4",
+        "12"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -500,8 +862,12 @@
       "id": "Q056",
       "question": "调制肉制品冻结处理应在多少度以下环境中进行？",
       "expected_found": true,
-      "expected_answer_keywords": ["-23"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "-23"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -509,8 +875,12 @@
       "id": "Q057",
       "question": "鲜(冻)畜、禽产品中，畜禽内脏的污染物限量应符合哪个标准？",
       "expected_found": true,
-      "expected_answer_keywords": ["GB 2762"],
-      "expected_citation_keywords": ["GB 2707"],
+      "expected_answer_keywords": [
+        "GB 2762"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -518,8 +888,13 @@
       "id": "Q058",
       "question": "调制肉制品的穿串用签应符合哪些标准？",
       "expected_found": true,
-      "expected_answer_keywords": ["GB 4806.9", "GB 4806.12"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "GB 4806.9",
+        "GB 4806.12"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
@@ -527,19 +902,37 @@
       "id": "Q059",
       "question": "调制肉制品生产用水应符合哪个标准？",
       "expected_found": true,
-      "expected_answer_keywords": ["GB 5749"],
-      "expected_citation_keywords": ["GB 31661"],
+      "expected_answer_keywords": [
+        "GB 5749"
+      ],
+      "expected_citation_keywords": [
+        "GB 31661"
+      ],
       "document_ids": null,
       "top_k": 5
     },
     {
       "id": "Q060",
-      "question": "蜂蜜中锌的含量限量是多少？",
+      "question": "GB 2730-2015中火腿的三甲胺氮限量是多少？",
       "expected_found": true,
-      "expected_answer_keywords": ["25", "mg/kg"],
-      "expected_citation_keywords": ["GB 2730", "表2"],
+      "expected_answer_keywords": [
+        "2.5",
+        "三甲胺氮",
+        "火腿",
+        "mg/100g"
+      ],
+      "expected_citation_keywords": [
+        "GB 2730",
+        "表2"
+      ],
       "document_ids": null,
-      "top_k": 5
+      "top_k": 5,
+      "notes": "原题为蜂蜜锌限量，但当前库中的GB 2730-2015是腌腊肉制品，已改为同文档内可验证问题。",
+      "tags": [
+        "table_data",
+        "gb2730",
+        "eval-fixed"
+      ]
     },
     {
       "id": "N001",

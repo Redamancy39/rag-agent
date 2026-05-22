@@ -43,7 +43,11 @@ class PaddleOcrEngine:
                 use_textline_orientation=settings.PADDLEOCR_USE_TEXTLINE_ORIENTATION,
             )
 
-    def extract_pdf(self, path: str | Path) -> list[LoadedDocumentPart]:
+    def extract_pdf(
+        self,
+        path: str | Path,
+        page_numbers: set[int] | None = None,
+    ) -> list[LoadedDocumentPart]:
         try:
             import fitz
         except ImportError as exc:
@@ -54,15 +58,22 @@ class PaddleOcrEngine:
         settings = get_settings()
         file_path = Path(path)
         if self.use_subprocess:
-            return _extract_pdf_via_subprocess(file_path, settings.OCR_MAX_PAGES)
+            return _extract_pdf_via_subprocess(
+                file_path,
+                settings.OCR_MAX_PAGES,
+                page_numbers=page_numbers,
+            )
 
         parts: list[LoadedDocumentPart] = []
+        page_filter = set(page_numbers or set())
         with TemporaryDirectory(prefix="rag_ocr_") as temp_dir:
             with fitz.open(str(file_path)) as pdf:
                 max_pages = settings.OCR_MAX_PAGES or len(pdf)
                 for page_index, page in enumerate(pdf, start=1):
                     if page_index > max_pages:
                         break
+                    if page_filter and page_index not in page_filter:
+                        continue
                     image_path = Path(temp_dir) / f"page_{page_index}.png"
                     pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
                     pixmap.save(str(image_path))
@@ -490,12 +501,16 @@ def _should_use_subprocess(settings: Any) -> bool:
 def _extract_pdf_via_subprocess(
     path: Path,
     max_pages: int | None,
+    *,
+    page_numbers: set[int] | None = None,
 ) -> list[LoadedDocumentPart]:
     env = os.environ.copy()
     env["PADDLEOCR_FORCE_IN_PROCESS"] = "1"
     env["PYTHONIOENCODING"] = "utf-8"
     if max_pages is not None:
         env["OCR_MAX_PAGES"] = str(max_pages)
+    if page_numbers:
+        env["OCR_PAGE_NUMBERS"] = ",".join(str(page) for page in sorted(page_numbers))
     backend_dir = Path(__file__).resolve().parents[3]
     command = [
         sys.executable,

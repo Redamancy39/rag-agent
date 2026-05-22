@@ -20,7 +20,7 @@
 
 - `LangGraph` 问答 Agent 目前只是预留目录，尚未真正接入 `/chat/` 问答链路。
 - 当前 Ingestion Agent 更准确地说是「轻量文档处理调度模块」，主要是规则探测 + 可选 LLM 规划，不是完整多步 LangGraph Agent。
-- 混合检索已实现「向量 + 关键词召回」，但不是严格 BM25。
+- 混合检索已实现「向量 + 关键词召回 + BM25 召回」，并加入标准号、单位、上标数字等归一化 tokenizer。
 - OCR fallback、LLM 切块归一化、Reranker 都有代码接入，但稳定性取决于本地模型、GPU/PaddleOCR 环境和 `.env` 配置。
 - 任务队列是进程内 semaphore 控制，不是 Celery/RQ 这类生产级持久化队列。
 
@@ -374,40 +374,44 @@
 
 ## 8. 混合检索目前是否实现？
 
-**当前是否已实现：部分完成。向量 + 关键词混合已完成，严格 BM25 未实现。**
+**当前是否已实现：已完成基础版。向量 + 关键词 + BM25 混合召回已接入。**
 
 **相关代码文件路径：**
 
 - 检索编排：`backend/app/rag/retriever.py`
 - 关键词检索：`backend/app/rag/keyword_retriever.py`
+- BM25 检索：`backend/app/rag/bm25_retriever.py`
+- 归一化 tokenizer：`backend/app/rag/search_tokenizer.py`
 - Chroma 检索：`backend/app/rag/vector_store.py`
 - 配置：`backend/app/core/config.py`
 
 **当前实现逻辑简述：**
 
 - 首先对 query 生成 embedding，在 ChromaDB 中做向量召回。
-- 如果 `HYBRID_RETRIEVAL_ENABLED=true`，同时执行关键词召回。
-- 关键词召回会从允许访问的文档 chunk 中抽取候选，按 query term 命中、数字、英文、中文 ngram 等规则计算 `keyword_score`。
-- 合并时按 chunk id 去重，融合 `vector_score` 和 `keyword_score`。
-- 默认权重：`HYBRID_VECTOR_WEIGHT=0.72`，`HYBRID_KEYWORD_WEIGHT=0.28`。
+- 如果 `HYBRID_RETRIEVAL_ENABLED=true`，同时执行轻量关键词召回和 BM25 召回。
+- 归一化 tokenizer 会处理 GB 标准号空格差异、`μg/ug/渭g` 单位差异、`10³/10^3` 上标差异、全角字符和中文 ngram。
+- BM25 会在当前用户可访问的 chunk 范围内计算词频、文档频率和长度归一化分数。
+- 合并时按 chunk id 去重，融合 `vector_score`、`keyword_score` 和 `bm25_score`。
+- 默认权重：`HYBRID_VECTOR_WEIGHT=0.62`，`HYBRID_KEYWORD_WEIGHT=0.08`，`HYBRID_BM25_WEIGHT=0.30`。
+- 纯关键词/BM25 召回不会直接把分数顶到 1.0，默认通过 `HYBRID_LEXICAL_ONLY_MAX_SCORE=0.82` 限制上限，避免干扰可靠的向量召回结果。
 
 **是否可以稳定运行：**
 
-- 关键词混合召回可以演示，对标准号、数值、单位、专有名词有帮助。
+- BM25 和关键词混合召回可以演示，对标准号、数值、单位、专有名词有帮助。
 
 **目前存在的问题或限制：**
 
-- 当前不是严格 BM25，没有倒排索引和文档频率 IDF 统计。
-- 关键词召回会从 ChromaDB 拉取一定数量 chunk 后本地打分，默认上限 `HYBRID_KEYWORD_MAX_CHUNKS=3000`，文档规模变大后需要优化。
+- 当前 BM25 是请求时从 ChromaDB 拉取权限范围内 chunk 后本地建索引打分，默认上限 `HYBRID_BM25_MAX_CHUNKS=3000`。
+- 还没有持久化倒排索引，文档规模变大后需要迁移到 SQLite FTS5、专门搜索引擎或缓存索引。
 
 **面试时建议如何表述：**
 
-> 向量检索适合语义匹配，但标准号、添加剂名称、限量值、单位这类查询对关键词更敏感，所以系统实现了向量召回和关键词召回的混合检索。严格 BM25 还没有接入，当前是轻量关键词打分版本。
+> 向量检索适合语义匹配，但标准号、添加剂名称、限量值、单位这类查询对关键词更敏感，所以系统实现了向量召回、关键词召回和 BM25 召回的混合检索，并在 tokenizer 中对标准号、单位和上标数字做归一化。
 
 **下一步建议优化内容：**
 
-- 接入真正 BM25，例如 `rank-bm25` 或 SQLite FTS5。
-- 对 GB 标准号、化学名、单位、上标数字做 normalize。
+- 将当前请求时 BM25 升级为持久化倒排索引或 SQLite FTS5。
+- 继续扩展化学名、别名、单位换算和食品分类词典。
 - 增加检索召回诊断页。
 
 ---
@@ -734,8 +738,8 @@
 | ChromaDB 入库 | 已完成 | `backend/app/rag/vector_store.py` | 是 | 向量和 metadata 持久化到 ChromaDB collection。 |
 | 权限过滤检索 | 已完成 | `backend/app/services/rag_service.py`、`backend/app/rag/vector_store.py` | 是 | 先算可访问 document_id，再传入 ChromaDB where filter。 |
 | 向量检索 | 已完成 | `backend/app/rag/retriever.py` | 是 | Query embedding 后在 ChromaDB 检索。 |
-| 关键词混合检索 | 已完成轻量版 | `backend/app/rag/keyword_retriever.py` | 是 | 已实现关键词打分召回，与向量结果融合。 |
-| 严格 BM25 | 未完成 | 暂无 | 否 | 当前不是 BM25，是轻量关键词检索，后续可接 rank-bm25/FTS5。 |
+| 关键词混合检索 | 已完成 | `backend/app/rag/keyword_retriever.py` | 是 | 已实现轻量关键词打分召回，与向量和 BM25 结果融合。 |
+| BM25 | 已完成基础版 | `backend/app/rag/bm25_retriever.py`、`backend/app/rag/search_tokenizer.py` | 是 | 已实现请求时 BM25 和归一化 tokenizer，后续可升级为持久化倒排索引/FTS5。 |
 | BGE Reranker | 部分完成 | `backend/app/rag/reranker.py` | 部分 | 可配置本地 reranker，失败自动降级。 |
 | RAG 问答 | 已完成 | `backend/app/api/chat.py`、`backend/app/services/rag_service.py` | 是 | 已完成权限过滤、检索、生成、未找到 fallback、日志记录。 |
 | sources 引用 | 已完成 | `backend/app/schemas/chat.py`、`rag_service.py` | 是 | 返回 citations 和 evidence_rows，包含文件名、页码、chunk_id。 |
@@ -774,6 +778,6 @@
 
 - 已完整实现 LangGraph Agent。
 - 已实现生产级任务队列。
-- 已实现严格 BM25。
+- 已实现生产级持久化 BM25/倒排索引。
 - OCR 和复杂表格解析已完全稳定。
 - 已完成企业级多租户权限系统。

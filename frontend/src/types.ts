@@ -65,9 +65,16 @@ export interface DocumentQualityReportRead {
   chunk_type_counts: Record<string, number>
   quality_counts: Record<string, number>
   average_quality_score: number | null
+  health_score: number
+  risk_level: string
+  risk_items: string[]
   low_quality_count: number
   ocr_chunk_count: number
   ocr_average_score: number | null
+  bad_text_layer_count: number
+  ocr_replaced_bad_text_layer_count: number
+  preprocess_repair_count: number
+  suspicious_power_notation_count: number
   table_chunk_count: number
   llm_normalized_count: number
   llm_candidate_count: number
@@ -76,6 +83,12 @@ export interface DocumentQualityReportRead {
   latest_job_progress_current: number
   latest_job_progress_total: number
   latest_job_progress_percent: number
+  stage_overview: Array<{
+    name: string
+    state: string
+    detail: string
+    metric: string
+  }>
   recommendations: string[]
 }
 
@@ -133,6 +146,7 @@ export interface Citation {
   filename: string
   chunk_id: string | null
   page: number | null
+  table: string | null
   chunk_type: string | null
   score: number | null
   text: string

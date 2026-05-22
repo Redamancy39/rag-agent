@@ -14,6 +14,7 @@ class Citation(BaseModel):
     filename: str
     chunk_id: str | None = None
     page: int | None = None
+    table: str | None = None
     chunk_type: str | None = None
     score: float | None = None
     text: str

@@ -1,9 +1,8 @@
 import math
-import re
-import unicodedata
 from collections import Counter
 
 from app.core.config import get_settings
+from app.rag.search_tokenizer import compact_for_search, normalize_for_search, tokenize_for_search
 from app.rag.vector_store import ChromaVectorStore
 
 
@@ -18,15 +17,17 @@ class KeywordRetriever:
         *,
         allowed_document_ids: list[int],
         top_k: int,
+        chunks: list[dict] | None = None,
     ) -> list[dict]:
-        terms = _query_terms(question)
+        terms = tokenize_for_search(question)
         if not terms:
             return []
 
-        chunks = self.vector_store.get_chunks_for_documents(
-            allowed_document_ids,
-            limit=self.settings.HYBRID_KEYWORD_MAX_CHUNKS,
-        )
+        if chunks is None:
+            chunks = self.vector_store.get_chunks_for_documents(
+                allowed_document_ids,
+                limit=self.settings.HYBRID_KEYWORD_MAX_CHUNKS,
+            )
         scored_hits: list[dict] = []
         for chunk in chunks:
             score, matched_terms = _score_text(question, terms, str(chunk.get("text") or ""))
@@ -48,29 +49,10 @@ class KeywordRetriever:
         return scored_hits[:top_k]
 
 
-def _query_terms(question: str) -> list[str]:
-    normalized = _normalize_text(question)
-    raw_terms = re.findall(
-        r"[a-z0-9]+(?:[./_-][a-z0-9]+)*|[\u4e00-\u9fff]{2,}|[μµ]g|mg|kg|ml",
-        normalized,
-    )
-    terms: list[str] = []
-    for term in raw_terms:
-        if len(term) <= 1:
-            continue
-        if _is_cjk(term) and len(term) > 8:
-            terms.extend(_cjk_ngrams(term, min_n=2, max_n=4))
-            terms.append(term[:8])
-            terms.append(term[-8:])
-        else:
-            terms.append(term)
-    return list(dict.fromkeys(terms))[:80]
-
-
 def _score_text(question: str, terms: list[str], text: str) -> tuple[float, list[str]]:
-    normalized_text = _normalize_text(text)
-    compact_question = _normalize_text(question).replace(" ", "")
-    compact_text = normalized_text.replace(" ", "")
+    normalized_text = normalize_for_search(text)
+    compact_question = compact_for_search(question)
+    compact_text = compact_for_search(text)
 
     raw_score = 0.0
     matched: list[str] = []
@@ -94,27 +76,10 @@ def _score_text(question: str, terms: list[str], text: str) -> tuple[float, list
 
 
 def _term_weight(term: str) -> float:
-    if re.search(r"\d", term):
+    if any(char.isdigit() for char in term):
         return 3.0
-    if re.search(r"[a-z]", term):
+    if any("a" <= char <= "z" for char in term):
         return 2.2
     if len(term) >= 4:
         return 1.6
     return 0.75
-
-
-def _normalize_text(value: str) -> str:
-    return unicodedata.normalize("NFKC", value or "").lower()
-
-
-def _is_cjk(value: str) -> bool:
-    return bool(re.fullmatch(r"[\u4e00-\u9fff]+", value))
-
-
-def _cjk_ngrams(value: str, *, min_n: int, max_n: int) -> list[str]:
-    grams: list[str] = []
-    for n in range(min_n, max_n + 1):
-        if len(value) < n:
-            continue
-        grams.extend(value[index : index + n] for index in range(0, len(value) - n + 1))
-    return grams

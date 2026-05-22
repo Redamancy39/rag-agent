@@ -1,0 +1,718 @@
+{
+  "name": "rag-testset-v2-batch06-negative-crossdoc-answer-key",
+  "questions": [
+    {
+      "id": "V2-B06-Q001",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q002",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q003",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q004",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q005",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q006",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q007",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q008",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q009",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q010",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q011",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q012",
+      "difficulty": "easy",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q013",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q014",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q015",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q016",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q017",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q018",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q019",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q020",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q021",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q022",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q023",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q024",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q025",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q026",
+      "difficulty": "medium",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q027",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q028",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q029",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q030",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q031",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q032",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q033",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q034",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q035",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q036",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q037",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q038",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q039",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q040",
+      "difficulty": "hard",
+      "question_type": "negative",
+      "standard_answer": "（负例：当前知识库中不应找到该问题的答案，期望返回未找到）",
+      "source_file": null,
+      "source_page": null,
+      "source_table": null,
+      "expected_found": false
+    },
+    {
+      "id": "V2-B06-Q041",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2715粮食的镉限量应符合GB 2762的规定，GB 2762中谷物（稻谷以外）镉限量为0.1 mg/kg，稻谷（以糙米计）镉限量为0.2 mg/kg。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q042",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "粮食的真菌毒素限量应符合GB 2761的规定。GB 2761表1中，小麦的黄曲霉毒素B1限量为5.0 μg/kg。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q043",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2712豆制品的污染物限量应符合GB 2762的规定。GB 2762中豆类的铅限量需查阅该标准相应表格。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q044",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2714酱腌菜的污染物限量应符合GB 2762中腌渍蔬菜的规定。GB 2762中腌渍蔬菜的铅限量需查阅该标准。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q045",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2717酱油的真菌毒素限量应符合GB 2761的规定。GB 2761表1调味品类别中，酱油的黄曲霉毒素B1限量为5.0 μg/kg。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q046",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2719食醋的真菌毒素限量应符合GB 2761的规定。GB 2761表1调味品类别中，食醋（醋）的黄曲霉毒素B1限量为5.0 μg/kg。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q047",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2757蒸馏酒的污染物限量应符合GB 2762的规定。GB 2762中蒸馏酒的铅限量需查阅该标准相应表格。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q048",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2759冷冻饮品的污染物限量应符合GB 2762中冷冻饮品的规定。GB 2762中冷冻饮品的铅限量需查阅该标准。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q049",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2718酿造酱的真菌毒素限量应符合GB 2761的规定。GB 2761表1调味品类别中，酿造酱的黄曲霉毒素B1限量为5.0 μg/kg。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q050",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2726熟肉制品的污染物限量应符合GB 2762的规定。GB 2762中肉制品的镉限量需查阅该标准相应表格。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q051",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2713淀粉制品的污染物限量应符合GB 2762的规定。GB 2762中淀粉制品的铅限量需查阅该标准。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q052",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2720味精的污染物限量应符合GB 2762对调味品类别中鲜味剂的规定。GB 2762中鲜味剂/调味品的铅限量需查阅该标准。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q053",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2716植物油的污染物限量应符合GB 2762的规定。GB 2762中植物油的黄曲霉毒素B1限量需查阅该标准（注：黄曲霉毒素属于GB 2761管辖范围，GB 2762管污染物）。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q054",
+      "difficulty": "medium",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2758发酵酒的污染物限量应符合GB 2762的规定。GB 2762中发酵酒的铅限量需查阅该标准相应表格。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q055",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2715粮食引用GB 2762和GB 2761。GB 2762中粮食的铅限量需查阅该标准；GB 2761中粮食的脱氧雪腐镰刀菌烯醇（DON）限量：小麦为1000 μg/kg，玉米为1000 μg/kg。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q056",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2719食醋引用GB 2760，规定食品添加剂的使用应符合GB 2760，但冰乙酸不可用于食醋。GB 2760中食醋的防腐剂品种需查阅该标准。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q057",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2761表1调味品类别中，酱油、醋、酿造酱的黄曲霉毒素B1限量均为5.0 μg/kg。三者限量相同。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q058",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2760中面筋制品属于粮食制品大类，其食品分类号需查阅GB 2760附录食品分类系统。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q059",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2762中蒸馏酒和发酵酒分别有各自的铅限量规定，两者可能不同，需查阅GB 2762酒类相关表格。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q060",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2763.1-2018涵盖百草枯等43种农药的最大残留限量，其中涉及粮食作物的农药品种需查阅该标准各表格。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q061",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2762中熟肉制品和腌腊肉制品的铅限量可能不同，需查阅该标准肉制品相关类别。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q062",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2760中腌渍蔬菜的食品分类号需查阅GB 2760附录食品分类系统，一般属于04.04蔬菜制品类。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q063",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2760中冷冻饮品的食品分类号需查阅GB 2760附录食品分类系统，一般属于03.0冷冻饮品。甜味剂品种需查阅GB 2760表A.1。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q064",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2712豆制品额外引用了GB 2761。GB 2761表1中，发酵豆制品的黄曲霉毒素B1限量为5.0 μg/kg。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q065",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2762中畜禽产品、水产品和熟肉制品的铅限量需分别查阅该标准相应食品类别，三者可能不同。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q066",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2711面筋制品致病菌应符合GB 29921中熟制粮食制品类的规定；GB 2712豆制品致病菌应符合GB 29921的规定（标准未指定具体类别，需查阅GB 29921确定豆制品对应类别）。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    },
+    {
+      "id": "V2-B06-Q067",
+      "difficulty": "hard",
+      "question_type": "cross_reference",
+      "standard_answer": "GB 2760中酱油和酿造酱的食品分类号不同（酱油属于液体调味品，酿造酱属于半固态调味品）。GB 2761中酱油、醋、酿造酱的黄曲霉毒素B1限量均为5.0 μg/kg，三者相同。",
+      "source_file": "多个文档（跨文档引用）",
+      "source_page": null,
+      "source_table": null,
+      "expected_found": true
+    }
+  ],
+  "version": "v2.0-batch06",
+  "created": "2026-05-21",
+  "description": "Batch06 covers out-of-corpus negative cases and cross-document questions that require following product-standard references into general limit standards.",
+  "total_questions": 67,
+  "difficulty_distribution": {
+    "easy": 12,
+    "hard": 27,
+    "medium": 28
+  },
+  "type_distribution": {
+    "cross_reference": 27,
+    "negative": 40
+  },
+  "document_distribution": {
+    "()": 40,
+    "(32, 43, 45, 52)": 1,
+    "(33, 36, 50, 51)": 1,
+    "(33, 37, 36, 51)": 1,
+    "(33, 51)": 1,
+    "(34, 35)": 1,
+    "(34, 50)": 1,
+    "(35, 51)": 1,
+    "(35, 52)": 1,
+    "(36, 51)": 1,
+    "(37, 50)": 1,
+    "(37, 51)": 1,
+    "(38, 50)": 1,
+    "(38, 52)": 1,
+    "(39, 52)": 1,
+    "(40, 52)": 1,
+    "(42, 52)": 1,
+    "(45, 41, 52)": 1,
+    "(45, 52)": 1,
+    "(46, 51)": 1,
+    "(46, 52)": 1,
+    "(46, 52, 51)": 1,
+    "(46, 53)": 1,
+    "(47, 48, 52)": 1,
+    "(47, 52)": 1,
+    "(48, 52)": 1,
+    "(49, 50)": 1,
+    "(49, 52)": 1
+  }
+}

@@ -24,6 +24,7 @@ data/app.db
 data/logs/*.log
 data/uploads/*
 data/chroma/*
+data/chroma_db/
 data/models/*
 
 !data/uploads/.gitkeep
@@ -43,3 +44,8 @@ data/models/ocr/*
 !data/models/llm/
 data/models/llm/*
 !data/models/llm/.gitkeep
+
+# Local one-off analysis files
+eval_questions_easy.json
+pdf_analysis.py
+data/eval/archive/tmp/

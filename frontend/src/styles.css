@@ -730,6 +730,127 @@ textarea {
   grid-column: 1 / -1;
 }
 
+.demo-overview-card {
+  background:
+    linear-gradient(180deg, rgba(15, 118, 110, 0.06), rgba(255, 255, 255, 0) 42%),
+    #ffffff;
+}
+
+.demo-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.demo-metric {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 13px 14px;
+}
+
+.demo-metric span,
+.demo-metric small {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.demo-metric strong {
+  overflow-wrap: anywhere;
+  color: #111827;
+  font-size: 23px;
+  font-weight: 780;
+  line-height: 1.1;
+}
+
+.pipeline-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.pipeline-step {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  border-right: 1px solid #e2e8f0;
+  padding: 14px;
+}
+
+.pipeline-step:last-child {
+  border-right: 0;
+}
+
+.pipeline-index {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 999px;
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.pipeline-step strong {
+  color: #111827;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.pipeline-step p {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.capability-card {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 12px;
+}
+
+.capability-card div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.capability-card strong {
+  color: #111827;
+  font-size: 13px;
+  font-weight: 740;
+}
+
+.capability-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
 .group-admin-form {
   display: grid;
   grid-template-columns: minmax(180px, 0.8fr) minmax(240px, 1.2fr) 92px;
@@ -1172,6 +1293,10 @@ textarea {
   font-weight: 760;
 }
 
+.quality-score-card {
+  background: #f0fdfa !important;
+}
+
 .quality-section {
   display: grid;
   gap: 10px;
@@ -1204,6 +1329,41 @@ textarea {
   font-size: 12px;
   font-weight: 650;
   padding: 6px 8px;
+}
+
+.quality-risk-grid {
+  margin-bottom: 2px;
+}
+
+.quality-stage-list {
+  display: grid;
+  gap: 10px;
+}
+
+.quality-stage-item {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.quality-stage-item strong {
+  display: block;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 740;
+}
+
+.quality-stage-item p,
+.quality-stage-item small {
+  display: block;
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .quality-recommendations {
@@ -1291,6 +1451,21 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .demo-metric-grid,
+  .pipeline-strip,
+  .capability-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pipeline-step {
+    border-right: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .pipeline-step:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
   .group-admin-grid {
     grid-template-columns: 1fr;
   }
@@ -1371,13 +1546,16 @@ textarea {
 
   .auth-form,
   .chat-form,
-  .group-admin-form,
-  .group-member-form,
-  .job-detail-grid,
-  .metric-grid,
-  .nav-list,
-  .permission-form,
-  .quality-summary-grid,
+    .group-admin-form,
+    .group-member-form,
+    .job-detail-grid,
+    .metric-grid,
+    .demo-metric-grid,
+    .pipeline-strip,
+    .capability-grid,
+    .nav-list,
+    .permission-form,
+    .quality-summary-grid,
   .settings-kv-grid,
   .qa-sidebar,
   .chat-composer,
@@ -1405,5 +1583,9 @@ textarea {
 
   .answer-line span {
     text-align: left;
+  }
+
+  .quality-stage-item {
+    grid-template-columns: 1fr;
   }
 }

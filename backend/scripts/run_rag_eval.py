@@ -29,6 +29,16 @@ def main() -> None:
         help="Username whose document permissions are used for evaluation.",
     )
     parser.add_argument(
+        "--password",
+        default="",
+        help="Accepted for CLI compatibility; local evaluation uses database permissions directly.",
+    )
+    parser.add_argument(
+        "--base-url",
+        default="",
+        help="Accepted for CLI compatibility; local evaluation does not call the HTTP API.",
+    )
+    parser.add_argument(
         "--output",
         default="",
         help="Optional output JSON path. Defaults to data/eval/results/rag_eval_<timestamp>.json.",

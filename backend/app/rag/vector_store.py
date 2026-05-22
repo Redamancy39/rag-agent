@@ -169,7 +169,15 @@ def _get_collection(path: str, name: str):
             "Install: pip install -r requirements-rag.txt"
         ) from exc
 
-    client = chromadb.PersistentClient(path=path)
+    try:
+        from chromadb.config import Settings
+
+        client = chromadb.PersistentClient(
+            path=path,
+            settings=Settings(anonymized_telemetry=False),
+        )
+    except TypeError:
+        client = chromadb.PersistentClient(path=path)
     return client.get_or_create_collection(
         name=name,
         metadata={"hnsw:space": "cosine"},

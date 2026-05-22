@@ -1,0 +1,1414 @@
+{
+  "name": "rag-testset-v2-batch06-negative-crossdoc",
+  "cases": [
+    {
+      "id": "V2-B06-Q001",
+      "question": "GB 14881-2013食品生产通用卫生规范中对车间照明有什么具体要求？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 14881不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q002",
+      "question": "根据GB 7718-2011，预包装食品的营养标签必须标示哪些营养成分？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 7718不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q003",
+      "question": "GB 28050-2011预包装食品营养标签通则中对钠的标示有什么要求？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 28050不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q004",
+      "question": "GB 5749-2022生活饮用水卫生标准中浑浊度的限值是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 5749不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q005",
+      "question": "GB 29921-2021食品中致病菌限量标准中沙门氏菌的采样方案是什么？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 29921不在当前知识库中（仅被产品标准引用）"
+    },
+    {
+      "id": "V2-B06-Q006",
+      "question": "GB 4789.2-2022食品微生物学检验菌落总数测定的具体操作步骤是什么？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 4789系列检验方法标准不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q007",
+      "question": "GB 13102-2022浓缩乳制品的蛋白质含量要求是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 13102不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q008",
+      "question": "GB 19301-2010生乳的体细胞数限量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 19301不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q009",
+      "question": "GB 7099-2015糕点面包的酸价限量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 7099不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q010",
+      "question": "GB 7101-2022饮料通则中对果汁含量的最低要求是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 7101不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q011",
+      "question": "GB 16740-2014保健食品通用标准中对功效成分有什么要求？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 16740不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q012",
+      "question": "GB 31607-2023食品安全国家标准散装即食食品中致病菌限量的具体规定是什么？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "easy"
+      ],
+      "notes": "库外问题：GB 31607不在当前知识库中"
+    },
+    {
+      "id": "V2-B06-Q013",
+      "question": "根据GB 14880-2012，酿造酱中允许添加的营养强化剂有哪些？各自的添加量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：GB 14880不在知识库中，虽然被产品标准引用但无法查询具体内容"
+    },
+    {
+      "id": "V2-B06-Q014",
+      "question": "GB 2763-2024食品中农药最大残留限量标准中，大米中吡虫啉的残留限量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：库中只有GB 2763.1(43种农药)，不含完整GB 2763"
+    },
+    {
+      "id": "V2-B06-Q015",
+      "question": "GB 5009.235-2016食品中氨基酸态氮的测定方法中，甲醛值法的原理是什么？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：检验方法标准不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q016",
+      "question": "根据GB 26878-2016食品安全国家标准食用盐碘含量，不同地区的碘含量标准有什么差异？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：GB 26878被GB 2721引用但不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q017",
+      "question": "GB/T 5009.48-2003蒸馏酒与配制酒卫生标准的分析方法中，甲醇的气相色谱测定条件是什么？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：检验方法标准不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q018",
+      "question": "根据GB 29921-2021，熟肉制品中单核细胞增生李斯特氏菌的限量标准是什么？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：GB 29921被多个产品标准引用但不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q019",
+      "question": "GB 4789.26-2013食品微生物学检验商业无菌检验的判定标准是什么？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：检验方法标准不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q020",
+      "question": "GB 31604.1-2015食品接触材料迁移试验通则的浸泡条件有什么规定？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：食品接触材料标准不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q021",
+      "question": "GB 2760-2024表B.1中，婴幼儿配方食品允许使用的食品添加剂有哪些？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：GB 2760表B.1可能不在库中或内容不完整，婴幼儿配方食品属特殊食品类别"
+    },
+    {
+      "id": "V2-B06-Q022",
+      "question": "GB 14881-2013食品生产通用卫生规范对食品工厂的排水系统有什么要求？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：GB 14881不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q023",
+      "question": "GB 8950-2016罐头食品生产卫生规范中对杀菌锅的热分布测试有什么要求？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：罐头生产规范不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q024",
+      "question": "根据GB 2763-2024，茶叶中联苯菊酯的最大残留限量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：库中只有GB 2763.1(43种农药)，不含茶叶相关MRL"
+    },
+    {
+      "id": "V2-B06-Q025",
+      "question": "GB 31650-2019食品中兽药最大残留限量标准中，牛奶中青霉素的残留限量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：库中只有GB 31650.1-2022(41种兽药)，不含完整GB 31650"
+    },
+    {
+      "id": "V2-B06-Q026",
+      "question": "根据GB 2712-2014，豆腐中蛋白质含量的最低要求是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "medium"
+      ],
+      "notes": "库外问题：GB 2712未规定蛋白质含量指标，属误导性提问"
+    },
+    {
+      "id": "V2-B06-Q027",
+      "question": "根据GB 7718和GB 28050，同时符合两个标准要求的预包装食品营养标签应如何标示反式脂肪酸？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：两个标准均不在知识库中，跨标准复合查询"
+    },
+    {
+      "id": "V2-B06-Q028",
+      "question": "GB 2760-2024食品用香料香精使用标准中，允许在酱油中使用的香料品种有多少种？请列举前5种。",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：GB 2760香料部分可能不在库中或无法精确列举品种"
+    },
+    {
+      "id": "V2-B06-Q029",
+      "question": "根据GB 31604和GB 4806系列，食品接触用塑料材料中邻苯二甲酸酯类物质的迁移限量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：食品接触材料标准均不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q030",
+      "question": "GB 2763-2024中，针对婴幼儿辅食的农药残留限量有哪些特殊规定？与成人食品有何不同？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：库中只有GB 2763.1，不含婴幼儿辅食特殊规定"
+    },
+    {
+      "id": "V2-B06-Q031",
+      "question": "根据GB 4789.3-2016大肠菌群计数方法，MPN法和平板计数法各自的适用范围和判定标准有什么区别？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：检验方法标准不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q032",
+      "question": "GB 2760-2024食品工业用加工助剂使用标准中，用于油脂精炼的加工助剂有哪些？各自的最大残留量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：GB 2760加工助剂部分的残留量数据可能不在库中"
+    },
+    {
+      "id": "V2-B06-Q033",
+      "question": "根据GB 14880-2012和GB 2760-2024，冷冻饮品中同时允许使用的营养强化剂和食品添加剂之间有什么配伍禁忌？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：GB 14880不在知识库中，且配伍禁忌不在任何现有标准中"
+    },
+    {
+      "id": "V2-B06-Q034",
+      "question": "GB 2715-2016粮食标准中对转基因成分的标识有什么要求？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：GB 2715不涉及转基因标识，属误导性提问"
+    },
+    {
+      "id": "V2-B06-Q035",
+      "question": "根据GB 2761-2017，酱油中黄曲霉毒素B1的限量是5.0μg/kg，该限量的制定依据和风险评估数据是什么？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：GB 2761有限量数值但风险评估/制定依据不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q036",
+      "question": "GB 2762-2025中稻谷的镉限量和GB 2763.1-2018中稻谷的农药残留限量，综合来看稻谷的食品安全风险主要来自哪些因素？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：要求综合风险评估，超出知识库范围"
+    },
+    {
+      "id": "V2-B06-Q037",
+      "question": "GB 2757-2012蒸馏酒标准中为什么没有规定铅的限量？是否需要同时参照GB 2762？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：标准缺失原因分析不在知识库中"
+    },
+    {
+      "id": "V2-B06-Q038",
+      "question": "根据现行GB标准体系，婴幼儿罐装辅助食品需要同时符合哪些食品安全国家标准？请列出所有适用标准编号。",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：标准体系梳理超出知识库范围"
+    },
+    {
+      "id": "V2-B06-Q039",
+      "question": "GB 2760-2024允许在发酵酒中使用的防腐剂种类有哪些？各自的Max使用量是否因酒精度不同而异？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：发酵酒防腐剂使用细节可能不在库中"
+    },
+    {
+      "id": "V2-B06-Q040",
+      "question": "GB 2762-2025对婴幼儿谷类辅助食品中砷的限量标准与成人食品有何不同？为什么需要更严格？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard"
+      ],
+      "notes": "库外问题：婴幼儿砷限量对比和制定原因超出知识库范围"
+    },
+    {
+      "id": "V2-B06-Q041",
+      "question": "GB 2715-2016粮食标准规定污染物限量应符合GB 2762的规定，那么粮食中镉的限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "粮食",
+        "镉",
+        "限量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "GB 2762"
+      ],
+      "document_ids": [
+        46,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2715引用GB 2762，需从GB 2762获取镉限量值"
+    },
+    {
+      "id": "V2-B06-Q042",
+      "question": "GB 2715-2016粮食的真菌毒素限量应符合哪个标准？在该标准中，小麦的黄曲霉毒素B1限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2761",
+        "小麦",
+        "5.0",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "GB 2761"
+      ],
+      "document_ids": [
+        46,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2715→GB 2761，小麦黄曲霉毒素B1=5.0μg/kg"
+    },
+    {
+      "id": "V2-B06-Q043",
+      "question": "GB 2712-2014豆制品的污染物限量应符合GB 2762，GB 2762中豆类的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "豆类",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "GB 2762"
+      ],
+      "document_ids": [
+        35,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2712→GB 2762，豆类铅限量"
+    },
+    {
+      "id": "V2-B06-Q044",
+      "question": "GB 2714-2015酱腌菜的污染物限量应符合GB 2762中腌渍蔬菜的规定，GB 2762中腌渍蔬菜的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "腌渍蔬菜",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "GB 2762"
+      ],
+      "document_ids": [
+        38,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2714→GB 2762腌渍蔬菜铅限量"
+    },
+    {
+      "id": "V2-B06-Q045",
+      "question": "GB 2717-2018酱油的真菌毒素限量应符合GB 2761的规定，GB 2761中酱油的黄曲霉毒素B1限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2761",
+        "酱油",
+        "5.0",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "GB 2761"
+      ],
+      "document_ids": [
+        33,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2717→GB 2761，酱油黄曲霉毒素B1=5.0μg/kg"
+    },
+    {
+      "id": "V2-B06-Q046",
+      "question": "GB 2719-2018食醋的污染物限量应符合GB 2762，真菌毒素限量应符合GB 2761，请问食醋在GB 2761中黄曲霉毒素B1限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2761",
+        "食醋",
+        "5.0",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "GB 2761"
+      ],
+      "document_ids": [
+        37,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2719→GB 2761，食醋黄曲霉毒素B1=5.0μg/kg"
+    },
+    {
+      "id": "V2-B06-Q047",
+      "question": "GB 2757-2012蒸馏酒的污染物限量应符合GB 2762的规定，GB 2762中蒸馏酒的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "蒸馏酒",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "GB 2762"
+      ],
+      "document_ids": [
+        47,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2757→GB 2762，蒸馏酒铅限量"
+    },
+    {
+      "id": "V2-B06-Q048",
+      "question": "GB 2759-2015冷冻饮品的污染物限量应符合GB 2762中冷冻饮品的规定，GB 2762中冷冻饮品的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "冷冻饮品",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "GB 2762"
+      ],
+      "document_ids": [
+        49,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2759→GB 2762，冷冻饮品铅限量"
+    },
+    {
+      "id": "V2-B06-Q049",
+      "question": "GB 2718-2014酿造酱的污染物限量应符合GB 2762，真菌毒素限量应符合GB 2761，请问酿造酱在GB 2761中黄曲霉毒素B1限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2761",
+        "酿造酱",
+        "5.0",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "GB 2761"
+      ],
+      "document_ids": [
+        36,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2718→GB 2761，酿造酱黄曲霉毒素B1=5.0μg/kg"
+    },
+    {
+      "id": "V2-B06-Q050",
+      "question": "GB 2726-2016熟肉制品的污染物限量应符合GB 2762的规定，GB 2762中肉制品的镉限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "肉制品",
+        "镉"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "GB 2762"
+      ],
+      "document_ids": [
+        45,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2726→GB 2762，肉制品镉限量"
+    },
+    {
+      "id": "V2-B06-Q051",
+      "question": "GB 2713-2015淀粉制品的污染物限量应符合GB 2762，GB 2762中淀粉制品的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "淀粉制品",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "GB 2762"
+      ],
+      "document_ids": [
+        39,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2713→GB 2762，淀粉制品铅限量"
+    },
+    {
+      "id": "V2-B06-Q052",
+      "question": "GB 2720-2015味精的污染物限量应符合GB 2762对调味品类别中鲜味剂的规定，GB 2762中鲜味剂/调味品的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "调味品",
+        "鲜味剂",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "GB 2762"
+      ],
+      "document_ids": [
+        40,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2720→GB 2762，鲜味剂铅限量"
+    },
+    {
+      "id": "V2-B06-Q053",
+      "question": "GB 2716-2018植物油的污染物限量应符合GB 2762，GB 2762中植物油的黄曲霉毒素B1限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "植物油",
+        "黄曲霉毒素B1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "GB 2762"
+      ],
+      "document_ids": [
+        42,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2716→GB 2762，植物油黄曲霉毒素B1限量"
+    },
+    {
+      "id": "V2-B06-Q054",
+      "question": "GB 2758-2012发酵酒的污染物限量应符合GB 2762，GB 2762中发酵酒的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "发酵酒",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "GB 2762"
+      ],
+      "document_ids": [
+        48,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium"
+      ],
+      "notes": "跨文档：GB 2758→GB 2762，发酵酒铅限量"
+    },
+    {
+      "id": "V2-B06-Q055",
+      "question": "GB 2715-2016粮食同时引用了GB 2762和GB 2761，请分别说明粮食中铅的限量（来自GB 2762）和脱氧雪腐镰刀菌烯醇的限量（来自GB 2761）各是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "铅",
+        "GB 2762",
+        "脱氧雪腐镰刀菌烯醇",
+        "GB 2761",
+        "限量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "GB 2762",
+        "GB 2761"
+      ],
+      "document_ids": [
+        46,
+        52,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档三级链路：GB 2715→GB 2762+GB 2761，需同时查两个限量标准"
+    },
+    {
+      "id": "V2-B06-Q056",
+      "question": "GB 2719-2018食醋引用了GB 2760和GB 14880，其中GB 2760中食醋允许使用的防腐剂有哪些？冰乙酸是否被允许？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "食醋",
+        "冰乙酸",
+        "不可用于食醋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "GB 2760"
+      ],
+      "document_ids": [
+        37,
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：GB 2719→GB 2760，需同时检索食醋的添加剂规定和冰乙酸禁用条款"
+    },
+    {
+      "id": "V2-B06-Q057",
+      "question": "GB 2717-2018酱油、GB 2719-2018食醋和GB 2718-2014酿造酱都引用了GB 2761，这三个产品在GB 2761中黄曲霉毒素B1的限量是否相同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "5.0",
+        "μg/kg",
+        "酱油",
+        "食醋",
+        "酿造酱",
+        "相同"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "GB 2719",
+        "GB 2718",
+        "GB 2761"
+      ],
+      "document_ids": [
+        33,
+        37,
+        36,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：三个调味品标准→GB 2761，验证黄曲霉毒素B1限量均为5.0μg/kg"
+    },
+    {
+      "id": "V2-B06-Q058",
+      "question": "GB 2711-2014面筋制品的致病菌限量应符合GB 29921中熟制粮食制品类的规定，同时面筋制品的食品添加剂使用应符合GB 2760，那么GB 2760中面筋制品对应的食品分类号是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "面筋制品",
+        "食品分类"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "GB 2760"
+      ],
+      "document_ids": [
+        34,
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：GB 2711→GB 2760，需在GB 2760中查找面筋制品的食品分类号"
+    },
+    {
+      "id": "V2-B06-Q059",
+      "question": "GB 2757-2012蒸馏酒引用了GB 2762和GB 2761，GB 2758-2012发酵酒也引用了GB 2762和GB 2761，两者在GB 2762中的铅限量是否相同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "蒸馏酒",
+        "发酵酒",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "GB 2758",
+        "GB 2762"
+      ],
+      "document_ids": [
+        47,
+        48,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：两个酒类标准→GB 2762，对比铅限量"
+    },
+    {
+      "id": "V2-B06-Q060",
+      "question": "GB 2715-2016粮食标准引用了GB 2763，而库中有GB 2763.1-2018，请说明GB 2763.1中粮食作物的农药残留限量涵盖哪些农药？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2763.1",
+        "粮食",
+        "农药残留",
+        "MRL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "GB 2763.1"
+      ],
+      "document_ids": [
+        46,
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：GB 2715→GB 2763.1，粮食作物的农药残留限量"
+    },
+    {
+      "id": "V2-B06-Q061",
+      "question": "GB 2726-2016熟肉制品引用了GB 2762和GB 29921，GB 2730-2015腌腊肉制品也引用了GB 2762，两类肉制品在GB 2762中的铅限量是否相同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "熟肉制品",
+        "腌腊肉制品",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "GB 2730",
+        "GB 2762"
+      ],
+      "document_ids": [
+        45,
+        41,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：两个肉制品标准→GB 2762，对比铅限量"
+    },
+    {
+      "id": "V2-B06-Q062",
+      "question": "GB 2714-2015酱腌菜的食品添加剂使用应符合GB 2760中腌渍蔬菜或发酵蔬菜制品的规定，GB 2760中腌渍蔬菜的食品分类号是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "腌渍蔬菜",
+        "食品分类号"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "GB 2760"
+      ],
+      "document_ids": [
+        38,
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：GB 2714→GB 2760，查找腌渍蔬菜的食品分类号"
+    },
+    {
+      "id": "V2-B06-Q063",
+      "question": "GB 2759-2015冷冻饮品引用了GB 2760和GB 14880，GB 2760中冷冻饮品的食品分类号是多少？允许使用的甜味剂有哪些？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "冷冻饮品",
+        "食品分类号",
+        "甜味剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "GB 2760"
+      ],
+      "document_ids": [
+        49,
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：GB 2759→GB 2760，冷冻饮品分类号和甜味剂"
+    },
+    {
+      "id": "V2-B06-Q064",
+      "question": "GB 2712-2014豆制品和GB 2713-2015淀粉制品都引用了GB 2762和GB 2760，但豆制品还额外引用了GB 2761，淀粉制品没有。豆制品在GB 2761中需要符合哪些真菌毒素限量？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2761",
+        "豆制品",
+        "真菌毒素",
+        "黄曲霉毒素"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "GB 2761"
+      ],
+      "document_ids": [
+        35,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：GB 2712→GB 2761，豆制品真菌毒素限量（发酵豆制品黄曲霉毒素B1=5.0μg/kg）"
+    },
+    {
+      "id": "V2-B06-Q065",
+      "question": "GB 2707-2016鲜冻畜禽产品、GB 2733-2015水产品和GB 2726-2016熟肉制品都引用了GB 2762，这三类产品在GB 2762中的铅限量分别可能是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "畜禽",
+        "水产品",
+        "熟肉",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707",
+        "GB 2733",
+        "GB 2726",
+        "GB 2762"
+      ],
+      "document_ids": [
+        32,
+        43,
+        45,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：三个产品标准→GB 2762，对比铅限量"
+    },
+    {
+      "id": "V2-B06-Q066",
+      "question": "GB 2711-2014面筋制品和GB 2712-2014豆制品都引用了GB 29921和GB 2760，但面筋制品的致病菌应符合熟制粮食制品类，豆制品应符合哪个类别？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 29921",
+        "豆制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "GB 2712"
+      ],
+      "document_ids": [
+        34,
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：GB 2711与GB 2712对比GB 29921适用类别"
+    },
+    {
+      "id": "V2-B06-Q067",
+      "question": "GB 2717-2018酱油和GB 2718-2014酿造酱都引用了GB 2760和GB 2761，在GB 2760中酱油和酿造酱的食品分类号是否相同？在GB 2761中的黄曲霉毒素B1限量是否相同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "酱油",
+        "酿造酱",
+        "食品分类号",
+        "GB 2761",
+        "5.0",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "GB 2718",
+        "GB 2760",
+        "GB 2761"
+      ],
+      "document_ids": [
+        33,
+        36,
+        50,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard"
+      ],
+      "notes": "跨文档：两个调味品标准→GB 2760+GB 2761，分类号和黄曲霉毒素限量对比"
+    }
+  ]
+}
