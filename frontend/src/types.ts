@@ -45,6 +45,7 @@ export interface DocumentProcessingJobRead {
   probe_json: Record<string, unknown> | null
   plan_json: Record<string, unknown> | null
   options_json: Record<string, unknown> | null
+  trace_json: IngestionTraceItem[] | null
   progress_total: number
   progress_current: number
   progress_percent: number
@@ -53,6 +54,20 @@ export interface DocumentProcessingJobRead {
   started_at: string | null
   finished_at: string | null
   updated_at: string | null
+}
+
+export interface IngestionTraceItem {
+  node: string
+  label?: string
+  state: 'pending' | 'running' | 'done' | 'failed' | 'skipped' | string
+  started_at?: string | null
+  finished_at?: string | null
+  duration_ms?: number | null
+  message?: string | null
+  error?: string | null
+  summary?: Record<string, unknown> | null
+  contract?: Record<string, unknown> | null
+  state_snapshot?: Record<string, unknown> | null
 }
 
 export interface DocumentQualityReportRead {
@@ -83,6 +98,7 @@ export interface DocumentQualityReportRead {
   latest_job_progress_current: number
   latest_job_progress_total: number
   latest_job_progress_percent: number
+  latest_job_trace: IngestionTraceItem[]
   stage_overview: Array<{
     name: string
     state: string
@@ -169,11 +185,31 @@ export interface EvidenceRow {
   keywords: string
 }
 
+export interface RetrievalTraceHit {
+  rank: number
+  score: number | null
+  filename: string
+  page: number | null
+  table: string | null
+  chunk_id: string | null
+  retrieval_source: string | null
+  matched_terms: string[]
+}
+
+export interface RetrievalTraceStep {
+  query_index: number
+  query: string
+  source: string
+  hit_count: number
+  top_hits: RetrievalTraceHit[]
+}
+
 export interface ChatResponse {
   answer: string
   sections: AnswerSections
   evidence_rows: EvidenceRow[]
   citations: Citation[]
+  retrieval_trace: RetrievalTraceStep[]
   retrieval_only: boolean
   log_id: number | null
 }

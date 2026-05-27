@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from app.rag.schemas import LoadedDocumentPart
@@ -53,6 +54,17 @@ def normalize_table(
         return []
 
     parts: list[LoadedDocumentPart] = []
+    table_id = _table_id(page=page, table_index=table_index)
+    table_metadata = {
+        "page": page,
+        "table_index": table_index,
+        "table_id": table_id,
+        "table_title": table_title,
+        "table_row_count": len(data_rows),
+        "table_column_count": len(headers),
+        "table_columns": " | ".join(headers),
+        "extraction_method": "pymupdf_table",
+    }
     markdown = table_to_markdown(headers, data_rows)
     if markdown:
         parts.append(
@@ -64,17 +76,16 @@ def normalize_table(
                     table_title=table_title,
                 ),
                 metadata={
-                    "page": page,
-                    "table_index": table_index,
-                    "table_title": table_title,
+                    **table_metadata,
                     "chunk_type": "table_markdown",
-                    "extraction_method": "pymupdf_table",
+                    "table_chunking_strategy": "row_aware_markdown",
                 },
             )
         )
 
     for row_index, row in enumerate(data_rows, start=1):
         row_map = _row_to_map(headers, row)
+        row_semantics = _row_semantics(row_map)
         text = verbalize_row(
             row_map,
             page=page,
@@ -87,12 +98,12 @@ def normalize_table(
                 LoadedDocumentPart(
                     text=text,
                     metadata={
-                        "page": page,
-                        "table_index": table_index,
-                        "table_title": table_title,
+                        **table_metadata,
                         "table_row_index": row_index,
+                        "table_row_fields_json": json.dumps(row_map, ensure_ascii=False),
                         "chunk_type": "table_row_fact",
-                        "extraction_method": "pymupdf_table",
+                        "table_chunking_strategy": "row_fact",
+                        **row_semantics,
                     },
                 )
             )
@@ -217,6 +228,37 @@ def _row_to_map(headers: list[str], row: list[str]) -> dict[str, str]:
     return dict(zip(headers, padded_row, strict=False))
 
 
+def _row_semantics(row_map: dict[str, str]) -> dict[str, str]:
+    subject_key = _find_best_key(row_map, SUBJECT_KEYWORDS)
+    item_key = _find_best_key(row_map, ITEM_KEYWORDS, excluded={subject_key})
+    unit_key = _find_unit_key(row_map)
+    limit_keys = _find_keys(row_map, LIMIT_KEYWORDS, excluded={subject_key, item_key, unit_key})
+    if not limit_keys:
+        limit_keys = [
+            key
+            for key, value in row_map.items()
+            if key not in {subject_key, item_key, unit_key} and _looks_like_limit_value(value)
+        ]
+
+    metadata: dict[str, str] = {}
+    if subject_key:
+        metadata["table_subject_key"] = subject_key
+        metadata["table_subject_value"] = row_map.get(subject_key, "")
+    if item_key:
+        metadata["table_item_key"] = item_key
+        metadata["table_item_value"] = row_map.get(item_key, "")
+    if unit_key:
+        metadata["table_unit_key"] = unit_key
+        metadata["table_unit_value"] = row_map.get(unit_key, "")
+    if limit_keys:
+        metadata["table_limit_keys"] = " | ".join(limit_keys)
+        metadata["table_limit_values_json"] = json.dumps(
+            {key: row_map.get(key, "") for key in limit_keys},
+            ensure_ascii=False,
+        )
+    return metadata
+
+
 def _pad_row(row: list[str], length: int) -> list[str]:
     if len(row) >= length:
         return row[:length]
@@ -286,3 +328,7 @@ def _with_table_source(
 def _table_source(page: int, table_index: int, table_title: str | None) -> str:
     title = f"，表题：{table_title}" if table_title else ""
     return f"来源：第{page}页，表格{table_index}{title}"
+
+
+def _table_id(*, page: int, table_index: int) -> str:
+    return f"p{page}:t{table_index}"

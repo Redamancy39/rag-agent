@@ -57,6 +57,7 @@ import type {
   DocumentQualityReportRead,
   DocumentRead,
   EvidenceRow,
+  IngestionTraceItem,
   GroupPermissionRead,
   GroupRead,
   PermissionRead,
@@ -473,15 +474,22 @@ function statusType(status: string) {
     [
       'queued',
       'agent_planning',
+      'file_probe',
+      'strategy_planner',
       'uploaded',
       'parsing',
+      'parse_ocr',
       'preprocessing',
       'ocr',
       'llm_preprocessing_queued',
       'llm_preprocessing',
       'chunking',
+      'normalize',
+      'chunk_quality',
+      'index',
       'embedding',
-      'indexing'
+      'indexing',
+      'report'
     ].includes(status)
   ) {
     return 'warning'
@@ -499,15 +507,22 @@ function statusLabel(status: string) {
   const labels: Record<string, string> = {
     queued: '等待入库',
     agent_planning: 'Agent 规划',
+    file_probe: '文件探测',
+    strategy_planner: '策略规划',
     uploaded: '已上传',
     parsing: '读取文件',
+    parse_ocr: '解析 / OCR',
     preprocessing: '质量检查',
     ocr: 'OCR 识别',
     llm_preprocessing_queued: 'LLM 排队',
     llm_preprocessing: '大模型整理',
     chunking: '正在切块',
+    normalize: '归一化整理',
+    chunk_quality: '质量评估',
+    index: '准备入库',
     embedding: '生成向量',
     indexing: '写入向量库',
+    report: '生成报告',
     indexed: '已入库',
     failed: '失败'
   }
@@ -562,15 +577,22 @@ function statusProgress(status: string) {
   const values: Record<string, number> = {
     queued: 8,
     agent_planning: 16,
+    file_probe: 14,
+    strategy_planner: 20,
     uploaded: 12,
     parsing: 24,
+    parse_ocr: 30,
     preprocessing: 34,
     ocr: 42,
     llm_preprocessing_queued: 50,
     llm_preprocessing: 56,
     chunking: 68,
+    normalize: 62,
+    chunk_quality: 72,
+    index: 78,
     embedding: 82,
     indexing: 92,
+    report: 96,
     indexed: 100,
     failed: 100
   }
@@ -1032,6 +1054,41 @@ function formatPlanSummary(job: DocumentProcessingJobRead) {
   return `${reader} / OCR:${ocr} / LLM:${llm} / ${source}`
 }
 
+function traceItems(job: DocumentProcessingJobRead) {
+  return job.trace_json || []
+}
+
+function traceStateLabel(state: string) {
+  if (state === 'done') return '完成'
+  if (state === 'running') return '进行中'
+  if (state === 'failed') return '失败'
+  if (state === 'skipped') return '跳过'
+  return '待处理'
+}
+
+function traceStateType(state: string) {
+  if (state === 'done') return 'success'
+  if (state === 'running') return 'warning'
+  if (state === 'failed') return 'danger'
+  if (state === 'skipped') return 'info'
+  return 'info'
+}
+
+function traceDuration(item: IngestionTraceItem) {
+  const duration = Number(item.duration_ms || 0)
+  if (!duration) return '-'
+  if (duration < 1000) return `${duration} ms`
+  return `${(duration / 1000).toFixed(1)} s`
+}
+
+function traceSummaryRows(item: IngestionTraceItem) {
+  const summary = item.summary || {}
+  return Object.entries(summary).map(([key, value]) => ({
+    key,
+    value: String(value ?? '-')
+  }))
+}
+
 async function confirmDeleteDocument(document: DocumentRead) {
   if (!token.value || !currentUser.value?.is_admin) return
   try {
@@ -1223,6 +1280,7 @@ function cloneChatTurn(turn: ChatTurn): ChatTurn {
           ...turn.response,
           citations: [...turn.response.citations],
           evidence_rows: [...turn.response.evidence_rows],
+          retrieval_trace: [...(turn.response.retrieval_trace || [])],
           sections: { ...turn.response.sections }
         }
       : null
@@ -1265,6 +1323,7 @@ function chatLogToTurn(log: ChatLogRead): ChatTurn {
       sections: parseAnswerSections(log.answer),
       evidence_rows: citationsToEvidenceRows(citations),
       citations,
+      retrieval_trace: [],
       retrieval_only: false,
       log_id: log.id
     },
@@ -1375,6 +1434,22 @@ function getEvidenceRows(response: ChatResponse): EvidenceRow[] {
     chunk_id: citation.chunk_id,
     keywords: textPreview(citation.text, 100)
   }))
+}
+
+function getRetrievalTrace(response: ChatResponse) {
+  return response.retrieval_trace || []
+}
+
+function retrievalSourceLabel(source: string | null) {
+  const labels: Record<string, string> = {
+    original: '原始问题',
+    expanded: '扩展检索',
+    merged: '融合结果',
+    merged_without_reranker: '未重排融合',
+    reranked: 'Reranker 精排',
+    reranker_failed: '重排失败回退'
+  }
+  return labels[source || ''] || source || '-'
 }
 
 function formatScore(score: number | null) {
@@ -2206,6 +2281,53 @@ async function scrollChatToBottom() {
                         </el-table>
                       </el-collapse-item>
                     </el-collapse>
+
+                    <el-collapse
+                      v-if="getRetrievalTrace(turn.response).length"
+                      class="retrieval-trace-collapse"
+                    >
+                      <el-collapse-item :name="`${turn.id}-trace`">
+                        <template #title>
+                          <span class="evidence-title">链式检索过程</span>
+                        </template>
+                        <div class="retrieval-trace-list">
+                          <article
+                            v-for="step in getRetrievalTrace(turn.response)"
+                            :key="`${turn.id}-${step.query_index}-${step.source}`"
+                            class="retrieval-trace-step"
+                          >
+                            <div class="retrieval-trace-head">
+                              <el-tag size="small" effect="plain">
+                                {{ retrievalSourceLabel(step.source) }}
+                              </el-tag>
+                              <strong>{{ step.query }}</strong>
+                              <span>命中 {{ step.hit_count }} 个</span>
+                            </div>
+                            <el-table
+                              :data="step.top_hits"
+                              size="small"
+                              class="evidence-table"
+                              empty-text="无命中"
+                            >
+                              <el-table-column prop="rank" label="#" width="56" />
+                              <el-table-column label="分数" width="90">
+                                <template #default="{ row }">{{ formatScore(row.score) }}</template>
+                              </el-table-column>
+                              <el-table-column prop="filename" label="文件" min-width="220" show-overflow-tooltip />
+                              <el-table-column label="页码" width="80">
+                                <template #default="{ row }">{{ formatPage(row.page) }}</template>
+                              </el-table-column>
+                              <el-table-column label="来源" width="110">
+                                <template #default="{ row }">{{ row.retrieval_source || '-' }}</template>
+                              </el-table-column>
+                              <el-table-column label="关键词" min-width="180" show-overflow-tooltip>
+                                <template #default="{ row }">{{ row.matched_terms?.join('、') || '-' }}</template>
+                              </el-table-column>
+                            </el-table>
+                          </article>
+                        </div>
+                      </el-collapse-item>
+                    </el-collapse>
                   </template>
                 </div>
               </div>
@@ -2257,20 +2379,56 @@ async function scrollChatToBottom() {
             <el-collapse-item
               v-for="job in selectedJobs"
               :key="job.id"
-              :title="`Agent 决策 #${job.id}`"
+              :title="`入库节点追踪 #${job.id}`"
               :name="String(job.id)"
             >
+              <section class="job-trace-section">
+                <div class="job-trace-head">
+                  <h3>节点时间线</h3>
+                  <span>展示 FileProbe → StrategyPlanner → Parse/OCR → Normalize → ChunkQuality → Index → Report 的执行结果</span>
+                </div>
+                <el-timeline v-if="traceItems(job).length" class="job-trace-timeline">
+                  <el-timeline-item
+                    v-for="item in traceItems(job)"
+                    :key="`${job.id}-${item.node}-${item.started_at || item.state}`"
+                    :type="traceStateType(item.state)"
+                    :timestamp="formatTime(item.started_at || null)"
+                    placement="top"
+                  >
+                    <div class="job-trace-card">
+                      <div class="job-trace-title">
+                        <strong>{{ item.label || item.node }}</strong>
+                        <el-tag :type="traceStateType(item.state)" size="small" effect="plain">
+                          {{ traceStateLabel(item.state) }}
+                        </el-tag>
+                      </div>
+                      <p>{{ item.message || '-' }}</p>
+                      <p v-if="item.finished_at">结束时间：{{ formatTime(item.finished_at) }}；耗时：{{ traceDuration(item) }}</p>
+                      <p v-if="item.error" class="job-trace-error">错误：{{ item.error }}</p>
+                      <div v-if="traceSummaryRows(item).length" class="job-trace-summary">
+                        <span
+                          v-for="row in traceSummaryRows(item)"
+                          :key="`${item.node}-${row.key}`"
+                        >
+                          {{ row.key }}：{{ row.value }}
+                        </span>
+                      </div>
+                    </div>
+                  </el-timeline-item>
+                </el-timeline>
+                <el-empty v-else description="该任务暂无节点追踪记录" :image-size="72" />
+              </section>
               <div class="job-detail-grid">
                 <section>
-                  <h3>Plan</h3>
+                  <h3>处理策略 Plan</h3>
                   <pre class="json-block">{{ formatJson(job.plan_json) }}</pre>
                 </section>
                 <section>
-                  <h3>Probe</h3>
+                  <h3>文件探测 Probe</h3>
                   <pre class="json-block">{{ formatJson(job.probe_json) }}</pre>
                 </section>
                 <section>
-                  <h3>Options</h3>
+                  <h3>上传选项 Options</h3>
                   <pre class="json-block">{{ formatJson(job.options_json) }}</pre>
                 </section>
               </div>
@@ -2348,6 +2506,31 @@ async function scrollChatToBottom() {
                 :percentage="selectedQualityReport.latest_job_progress_percent"
                 :stroke-width="8"
               />
+            </section>
+
+            <section class="quality-section">
+              <h3>节点追踪</h3>
+              <el-timeline v-if="selectedQualityReport.latest_job_trace.length" class="job-trace-timeline compact">
+                <el-timeline-item
+                  v-for="item in selectedQualityReport.latest_job_trace"
+                  :key="`${item.node}-${item.started_at || item.state}`"
+                  :type="traceStateType(item.state)"
+                  :timestamp="formatTime(item.started_at || null)"
+                  placement="top"
+                >
+                  <div class="job-trace-card">
+                    <div class="job-trace-title">
+                      <strong>{{ item.label || item.node }}</strong>
+                      <el-tag :type="traceStateType(item.state)" size="small" effect="plain">
+                        {{ traceStateLabel(item.state) }}
+                      </el-tag>
+                    </div>
+                    <p>{{ item.message || '-' }}</p>
+                    <p v-if="item.finished_at">结束时间：{{ formatTime(item.finished_at) }}；耗时：{{ traceDuration(item) }}</p>
+                  </div>
+                </el-timeline-item>
+              </el-timeline>
+              <p v-else>暂无节点追踪记录，重新入库后的任务会显示完整时间线。</p>
             </section>
 
             <section class="quality-section">

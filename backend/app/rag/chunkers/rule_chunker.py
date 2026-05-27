@@ -33,15 +33,23 @@ class RuleChunker(BaseChunker):
         for part in parts:
             metadata = metadata_with_table_reference(part.metadata, part.text)
             text = augment_text_with_table_reference(part.text, metadata)
+            is_table = is_table_like_text(text, metadata)
             split_texts = (
                 split_table_text(text, chunk_size=self.chunk_size)
-                if is_table_like_text(text, metadata)
+                if is_table
                 else self.split_text(text)
             )
             segment_count = len(split_texts)
             for local_index, chunk_text in enumerate(split_texts):
                 chunk_metadata = dict(metadata)
-                if segment_count > 1 and is_table_like_text(text, metadata):
+                if is_table:
+                    chunk_metadata["is_table_chunk"] = True
+                    chunk_metadata.setdefault(
+                        "table_chunking_strategy",
+                        "row_aware" if segment_count > 1 else "single_table_chunk",
+                    )
+                    chunk_metadata["table_source_text_length"] = len(text)
+                if segment_count > 1 and is_table:
                     chunk_metadata["table_segment_index"] = local_index + 1
                     chunk_metadata["table_segment_count"] = segment_count
                     chunk_metadata["table_chunking_strategy"] = "row_aware"

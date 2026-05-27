@@ -1,17 +1,31 @@
 from pathlib import Path
 from typing import Any
 
+from app.core.logger import get_logger
 from app.rag.loaders.base import BaseLoader
 from app.rag.normalizers.table_normalizer import normalize_table
 from app.rag.schemas import LoadedDocumentPart
+
+logger = get_logger(__name__)
 
 
 class PdfLoader(BaseLoader):
     def load(self, path: str | Path) -> list[LoadedDocumentPart]:
         try:
             return self._load_with_pymupdf(path)
-        except ImportError:
-            return self._load_with_pypdf(path)
+        except Exception as pymupdf_exc:
+            logger.warning(
+                "PyMuPDF PDF parsing failed, trying pypdf fallback: path=%s error=%s",
+                path,
+                pymupdf_exc,
+            )
+            try:
+                return self._load_with_pypdf(path)
+            except Exception as pypdf_exc:
+                raise RuntimeError(
+                    "PDF parsing failed with both PyMuPDF and pypdf. "
+                    f"PyMuPDF error: {pymupdf_exc}; pypdf error: {pypdf_exc}"
+                ) from pypdf_exc
 
     def _load_with_pymupdf(self, path: str | Path) -> list[LoadedDocumentPart]:
         try:

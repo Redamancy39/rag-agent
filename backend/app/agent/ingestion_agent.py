@@ -67,11 +67,19 @@ class IngestionPlan:
 
 
 def plan_ingestion(path: str | Path, file_type: str) -> IngestionPlan:
-    settings = get_settings()
     file_path = Path(path)
     probe = probe_document(file_path, file_type)
+    return plan_from_probe(probe)
+
+
+def plan_from_probe(probe: IngestionProbe) -> IngestionPlan:
+    settings = get_settings()
     plan = _rule_based_plan(probe)
-    if settings.INGESTION_AGENT_LLM_ENABLED and settings.OPENAI_API_KEY:
+    if (
+        probe.file_type == "pdf"
+        and settings.INGESTION_AGENT_LLM_ENABLED
+        and settings.OPENAI_API_KEY
+    ):
         plan = _merge_llm_plan(probe, plan)
     return plan
 

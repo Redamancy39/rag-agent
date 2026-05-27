@@ -16,6 +16,9 @@ frontend/dist/
 frontend-vite*.log
 frontend-static*.log
 frontend/.vite-dev*.log
+backend/.runtime_logs/
+backend/.codex_smoke/
+backend/.runtime_reports/
 
 data/app.db
 *.db

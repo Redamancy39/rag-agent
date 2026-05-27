@@ -11,7 +11,13 @@ from fastapi import UploadFile
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from app.agent.ingestion_agent import plan_ingestion, plan_to_dict, probe_to_dict
+from app.agent.ingestion_agent import plan_to_dict, probe_to_dict
+from app.agent.graph import LangGraphUnavailableError, run_ingestion_graph
+from app.agent.ingestion_nodes import (
+    IngestionCallbacks,
+    IngestionContext,
+    IngestionPipeline,
+)
 from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.db.session import SessionLocal
@@ -20,18 +26,15 @@ from app.models.document_job import DocumentProcessingJob
 from app.models.group import GroupPermission, UserGroup
 from app.models.permission import Permission
 from app.models.user import User
-from app.rag.chunkers.rule_chunker import RuleChunker
 from app.rag.chunk_quality import annotate_chunk_quality
 from app.rag.embeddings import BgeEmbeddingModel
 from app.rag.file_types import detect_file_type, sanitize_filename
-from app.rag.loaders.factory import get_loader
 from app.rag.normalizers.llm_normalizer import (
     dedupe_llm_normalized_chunks,
     merge_llm_normalized_chunks,
     normalize_chunks_with_llm,
     select_llm_normalization_candidates,
 )
-from app.rag.preprocessor import DocumentPreprocessor
 from app.rag.schemas import DocumentChunk
 from app.rag.vector_store import ChromaVectorStore
 
@@ -247,6 +250,11 @@ def get_document_quality_report(db: Session, document_id: int, user: User) -> di
         "latest_job_progress_current": latest_job.progress_current if latest_job else 0,
         "latest_job_progress_total": latest_job.progress_total if latest_job else 0,
         "latest_job_progress_percent": latest_job.progress_percent if latest_job else 0,
+        "latest_job_trace": (
+            _load_trace_json(latest_job.trace_json)
+            if latest_job and latest_job.trace_json
+            else []
+        ),
     }
     report["health_score"] = _quality_health_score(document, report)
     report["risk_level"] = _quality_risk_level(document, report)
@@ -453,107 +461,55 @@ async def _save_upload_file(upload_file: UploadFile, destination: Path) -> int:
 
 
 def _index_document(db: Session, document: Document) -> None:
-    settings = get_settings()
-    ingestion_plan = None
-    if settings.INGESTION_AGENT_ENABLED:
-        _set_document_status(db, document, "agent_planning", "入库 Agent 正在探测文件并选择解析工具")
-        ingestion_plan = plan_ingestion(document.storage_path, document.file_type)
-        _store_ingestion_plan(db, document, ingestion_plan)
-        _set_document_status(db, document, "agent_planning", ingestion_plan.status_message)
-
-    parts = []
-    if not ingestion_plan or ingestion_plan.primary_reader != "paddleocr":
-        _set_document_status(db, document, "parsing", _parser_status_message(document.file_type))
-        loader = get_loader(document.file_type)
-        try:
-            parts = loader.load(document.storage_path)
-        except Exception as exc:
-            _set_document_status(
-                db,
-                document,
-                "failed",
-                "文件无法读取，PDF 可能加密、损坏或缺少对应解析依赖",
-                error_message=str(exc)[:2000],
-            )
-            raise
-
-    parts = DocumentPreprocessor().preprocess(
-        file_type=document.file_type,
-        path=document.storage_path,
-        parts=parts,
-        stage_callback=lambda status, message: _set_document_status(
+    callbacks = IngestionCallbacks(
+        set_status=lambda status, message: _set_document_status(
             db,
             document,
             status,
             message,
         ),
-        force_ocr=bool(ingestion_plan and ingestion_plan.use_ocr),
-        use_llm_preprocessing=(
-            ingestion_plan.use_llm_preprocessing if ingestion_plan else None
-        ),
-    )
-    if not parts:
-        raise ValueError("No text content extracted from document")
-
-    _set_document_status(db, document, "chunking", "正在按规则切块并保留页码、表格等来源信息")
-    chunker = RuleChunker(
-        chunk_size=settings.CHUNK_SIZE,
-        chunk_overlap=settings.CHUNK_OVERLAP,
-    )
-    chunks = chunker.split_documents(parts)
-    if not chunks:
-        raise ValueError("No chunks generated from document")
-
-    chunks = annotate_chunk_quality(chunks)
-    enable_chunk_llm = _is_chunk_llm_enabled_for_document(
-        db,
-        document,
-        ingestion_plan_use_llm=(
-            ingestion_plan.use_llm_preprocessing if ingestion_plan else None
-        ),
-    )
-    if enable_chunk_llm:
-        _set_document_status(
+        update_progress=lambda current, total, message: _update_job_progress(
             db,
             document,
-            "llm_preprocessing",
-            "正在对低质量 OCR / 表格型切块进行 LLM 结构化归一化",
-        )
-        normalized_chunks = normalize_chunks_with_llm(
-            chunks,
-            progress_callback=lambda current, total, message: _update_job_progress(
+            current=current,
+            total=total,
+            detail=message,
+        ),
+        update_trace=lambda event: _upsert_processing_trace(db, document, event),
+        store_plan=lambda plan: _store_ingestion_plan(db, document, plan),
+        should_normalize_chunks=lambda plan: _is_chunk_llm_enabled_for_document(
+            db,
+            document,
+            ingestion_plan_use_llm=(
+                plan.use_llm_preprocessing if plan is not None else None
+            ),
+        ),
+        attach_metadata=lambda chunks: _attach_document_metadata(document, chunks),
+        parser_status_message=_parser_status_message,
+    )
+    context = IngestionContext(db=db, document=document, callbacks=callbacks)
+    settings = get_settings()
+    if settings.INGESTION_EXECUTOR == "langgraph":
+        try:
+            run_ingestion_graph(context)
+            return
+        except LangGraphUnavailableError as exc:
+            logger.warning("LangGraph ingestion unavailable, falling back to pipeline: %s", exc)
+            _upsert_processing_trace(
                 db,
                 document,
-                current=current,
-                total=total,
-                detail=message,
-            ),
-        )
-        if normalized_chunks:
-            chunks = annotate_chunk_quality(
-                merge_llm_normalized_chunks(chunks, normalized_chunks)
+                {
+                    "node": "LangGraphAdapter",
+                    "label": "LangGraph 适配器",
+                    "state": "skipped",
+                    "message": "LangGraph 未安装，已回退到原生节点执行器",
+                    "summary": {
+                        "executor": settings.INGESTION_EXECUTOR,
+                        "fallback": "pipeline",
+                    },
+                },
             )
-
-    indexed_chunks = _attach_document_metadata(document, chunks)
-
-    _set_document_status(db, document, "embedding", "正在调用 BGE Embedding 生成向量")
-
-    embeddings = BgeEmbeddingModel().embed_texts([chunk.text for chunk in indexed_chunks])
-
-    _set_document_status(db, document, "indexing", "正在写入 ChromaDB 向量库")
-
-    vector_store = ChromaVectorStore()
-    vector_store.delete_document(document.id)
-    chunk_ids = [f"doc:{document.id}:chunk:{index}" for index in range(len(indexed_chunks))]
-    vector_store.add_documents(chunk_ids, indexed_chunks, embeddings)
-
-    document.status = "indexed"
-    document.status_message = "入库完成，可以进行检索问答"
-    document.chunk_count = len(indexed_chunks)
-    document.error_message = None
-    db.add(document)
-    db.commit()
-    db.refresh(document)
+    IngestionPipeline().run(context)
 
 
 def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
@@ -818,6 +774,7 @@ def _create_processing_job(
         created_at=now,
         updated_at=now,
         options_json=json.dumps(options or {}, ensure_ascii=False),
+        trace_json="[]",
         progress_total=0,
         progress_current=0,
         progress_percent=0,
@@ -890,6 +847,42 @@ def _update_job_progress(
     db.add(document)
     db.add(job)
     db.commit()
+
+
+def _upsert_processing_trace(
+    db: Session,
+    document: Document,
+    event: dict,
+) -> None:
+    job = _get_latest_processing_job(db, document)
+    trace = _load_trace_json(job.trace_json)
+    node = str(event.get("node") or "")
+    merged = False
+    if node:
+        for index in range(len(trace) - 1, -1, -1):
+            item = trace[index]
+            if item.get("node") == node and item.get("state") == "running":
+                trace[index] = {**item, **event}
+                merged = True
+                break
+    if not merged:
+        trace.append(event)
+    job.trace_json = json.dumps(trace, ensure_ascii=False)
+    job.updated_at = datetime.now(timezone.utc)
+    db.add(job)
+    db.commit()
+
+
+def _load_trace_json(raw: str | None) -> list[dict]:
+    if not raw:
+        return []
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return []
+    if not isinstance(parsed, list):
+        return []
+    return [item for item in parsed if isinstance(item, dict)]
 
 
 def _is_chunk_llm_enabled_for_document(

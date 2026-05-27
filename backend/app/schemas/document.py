@@ -42,6 +42,7 @@ class DocumentProcessingJobRead(BaseModel):
     probe_json: dict[str, Any] | None = None
     plan_json: dict[str, Any] | None = None
     options_json: dict[str, Any] | None = None
+    trace_json: list[dict[str, Any]] | None = None
     progress_total: int = 0
     progress_current: int = 0
     progress_percent: int = 0
@@ -62,6 +63,24 @@ class DocumentProcessingJobRead(BaseModel):
             except json.JSONDecodeError:
                 return {"raw": value}
             return parsed if isinstance(parsed, dict) else {"value": parsed}
+        return None
+
+    @field_validator("trace_json", mode="before")
+    @classmethod
+    def parse_trace_json(cls, value: Any) -> list[dict[str, Any]] | None:
+        if value is None or isinstance(value, list):
+            return value
+        if isinstance(value, str) and value.strip():
+            try:
+                parsed = json.loads(value)
+            except json.JSONDecodeError:
+                return [{"raw": value}]
+            if isinstance(parsed, list):
+                return [
+                    item if isinstance(item, dict) else {"value": item}
+                    for item in parsed
+                ]
+            return [{"value": parsed}]
         return None
 
 
@@ -93,5 +112,6 @@ class DocumentQualityReportRead(BaseModel):
     latest_job_progress_current: int = 0
     latest_job_progress_total: int = 0
     latest_job_progress_percent: int = 0
+    latest_job_trace: list[dict[str, Any]] = []
     stage_overview: list[dict[str, Any]] = []
     recommendations: list[str]

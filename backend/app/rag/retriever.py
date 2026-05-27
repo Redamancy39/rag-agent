@@ -62,6 +62,32 @@ class PermissionAwareRetriever:
         allowed_document_ids: list[int],
         top_k: int | None = None,
     ) -> list[dict]:
+        hits, _trace = self._retrieve_with_optional_trace(
+            question,
+            allowed_document_ids=allowed_document_ids,
+            top_k=top_k,
+        )
+        return hits
+
+    def retrieve_with_trace(
+        self,
+        question: str,
+        allowed_document_ids: list[int],
+        top_k: int | None = None,
+    ) -> tuple[list[dict], list[dict]]:
+        return self._retrieve_with_optional_trace(
+            question,
+            allowed_document_ids=allowed_document_ids,
+            top_k=top_k,
+        )
+
+    def _retrieve_with_optional_trace(
+        self,
+        question: str,
+        *,
+        allowed_document_ids: list[int],
+        top_k: int | None,
+    ) -> tuple[list[dict], list[dict]]:
         final_top_k = top_k or self.settings.RAG_TOP_K
         candidate_top_k = (
             max(final_top_k, self.settings.RERANKER_CANDIDATE_TOP_K)
@@ -70,6 +96,7 @@ class PermissionAwareRetriever:
         )
         queries = self._expanded_queries(question)
         hits: list[dict] = []
+        trace: list[dict] = []
         for query_index, query in enumerate(queries):
             query_top_k = (
                 candidate_top_k
@@ -91,18 +118,62 @@ class PermissionAwareRetriever:
                 else:
                     updated["chain_query_source"] = "original"
                 hits.append(updated)
+            trace.append(
+                _trace_step(
+                    query_index=query_index,
+                    query=query,
+                    source="original" if query_index == 0 else "expanded",
+                    hits=query_hits,
+                )
+            )
 
         hits = self._merge_chain_hits(hits)
         if not self._should_rerank() or not hits:
-            return hits[:final_top_k]
+            final_hits = hits[:final_top_k]
+            trace.append(
+                _trace_step(
+                    query_index=len(trace),
+                    query=question,
+                    source="merged",
+                    hits=final_hits,
+                )
+            )
+            return final_hits, trace
         reranker = get_optional_reranker()
         if not reranker:
-            return hits[:final_top_k]
+            final_hits = hits[:final_top_k]
+            trace.append(
+                _trace_step(
+                    query_index=len(trace),
+                    query=question,
+                    source="merged_without_reranker",
+                    hits=final_hits,
+                )
+            )
+            return final_hits, trace
         try:
-            return reranker.rerank(question, hits, final_top_k)
+            final_hits = reranker.rerank(question, hits, final_top_k)
+            trace.append(
+                _trace_step(
+                    query_index=len(trace),
+                    query=question,
+                    source="reranked",
+                    hits=final_hits,
+                )
+            )
+            return final_hits, trace
         except Exception as exc:
             logger.warning("Reranker failed, using merged retrieval hits: %s", exc)
-        return hits[:final_top_k]
+        final_hits = hits[:final_top_k]
+        trace.append(
+            _trace_step(
+                query_index=len(trace),
+                query=question,
+                source="reranker_failed",
+                hits=final_hits,
+            )
+        )
+        return final_hits, trace
 
     def _retrieve_single_query(
         self,
@@ -328,6 +399,50 @@ def _append_source(hit: dict, source: str) -> None:
     if source not in sources:
         sources.append(source)
     hit["retrieval_sources"] = sources
+
+
+def _trace_step(
+    *,
+    query_index: int,
+    query: str,
+    source: str,
+    hits: list[dict],
+) -> dict:
+    return {
+        "query_index": query_index,
+        "query": query,
+        "source": source,
+        "hit_count": len(hits),
+        "top_hits": [
+            _trace_hit(rank=index, hit=hit)
+            for index, hit in enumerate(hits[:5], start=1)
+        ],
+    }
+
+
+def _trace_hit(*, rank: int, hit: dict) -> dict:
+    metadata = hit.get("metadata") or {}
+    return {
+        "rank": rank,
+        "score": hit.get("score"),
+        "filename": str(metadata.get("filename") or ""),
+        "page": _to_int_or_none(metadata.get("page")),
+        "table": str(metadata.get("table_label") or metadata.get("table_number") or "") or None,
+        "chunk_id": hit.get("id"),
+        "retrieval_source": str(hit.get("retrieval_source") or ""),
+        "matched_terms": [
+            str(term)
+            for term in (hit.get("matched_terms") or [])
+            if str(term)
+        ][:8],
+    }
+
+
+def _to_int_or_none(value: object) -> int | None:
+    try:
+        return int(value) if value is not None else None
+    except (TypeError, ValueError):
+        return None
 
 
 def _merge_terms(left: list, right: list) -> list[str]:

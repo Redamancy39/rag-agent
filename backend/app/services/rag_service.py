@@ -10,7 +10,7 @@ from app.rag.llm_client import LLMConfigError, OpenAICompatibleLLM
 from app.rag.retriever import PermissionAwareRetriever
 from app.rag.table_utils import infer_table_reference
 from app.rag.text_quality import is_text_usable
-from app.schemas.chat import AnswerSections, ChatResponse, Citation, EvidenceRow
+from app.schemas.chat import AnswerSections, ChatResponse, Citation, EvidenceRow, RetrievalTraceStep
 from app.services import document_service, log_service
 
 logger = get_logger(__name__)
@@ -77,7 +77,7 @@ class RagService:
             response.log_id = self._write_log(db, user=user, question=question, response=response)
             return response
 
-        hits = PermissionAwareRetriever().retrieve(
+        hits, retrieval_trace = PermissionAwareRetriever().retrieve_with_trace(
             question,
             allowed_document_ids=allowed_document_ids,
             top_k=top_k or self.settings.RAG_TOP_K,
@@ -85,10 +85,12 @@ class RagService:
         citations = self._filter_usable_citations([_hit_to_citation(hit) for hit in hits])
         if not citations:
             response = _not_found_response()
+            response.retrieval_trace = _parse_retrieval_trace(retrieval_trace)
             response.log_id = self._write_log(db, user=user, question=question, response=response)
             return response
 
         response = self._generate_answer(question, citations)
+        response.retrieval_trace = _parse_retrieval_trace(retrieval_trace)
         response.log_id = self._write_log(db, user=user, question=question, response=response)
         return response
 
@@ -205,6 +207,16 @@ def _hit_to_citation(hit: dict) -> Citation:
         score=hit.get("score"),
         text=str(hit.get("text") or ""),
     )
+
+
+def _parse_retrieval_trace(trace: list[dict]) -> list[RetrievalTraceStep]:
+    steps: list[RetrievalTraceStep] = []
+    for item in trace:
+        try:
+            steps.append(RetrievalTraceStep.model_validate(item))
+        except Exception:
+            continue
+    return steps
 
 
 def _build_context(citations: list[Citation], max_chars: int) -> str:

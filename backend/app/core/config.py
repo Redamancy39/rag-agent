@@ -70,6 +70,7 @@ class Settings(BaseSettings):
     INGESTION_AGENT_ENABLED: bool = True
     INGESTION_AGENT_LLM_ENABLED: bool = False
     INGESTION_AGENT_SAMPLE_PAGES: int = 3
+    INGESTION_EXECUTOR: str = "pipeline"
     INGESTION_MAX_CONCURRENT_JOBS: int = 1
     RELEASE_GPU_CACHE_AFTER_INGESTION: bool = True
 
@@ -139,6 +140,12 @@ class Settings(BaseSettings):
         if value in {None, ""}:
             return None
         return int(value)
+
+    @field_validator("INGESTION_EXECUTOR", mode="before")
+    @classmethod
+    def parse_ingestion_executor(cls, value: Any) -> str:
+        executor = str(value or "pipeline").strip().lower()
+        return executor if executor in {"pipeline", "langgraph"} else "pipeline"
 
 
 @lru_cache

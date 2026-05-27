@@ -37,11 +37,31 @@ class EvidenceRow(BaseModel):
     keywords: str
 
 
+class RetrievalTraceHit(BaseModel):
+    rank: int
+    score: float | None = None
+    filename: str
+    page: int | None = None
+    table: str | None = None
+    chunk_id: str | None = None
+    retrieval_source: str | None = None
+    matched_terms: list[str] = Field(default_factory=list)
+
+
+class RetrievalTraceStep(BaseModel):
+    query_index: int
+    query: str
+    source: str
+    hit_count: int
+    top_hits: list[RetrievalTraceHit] = Field(default_factory=list)
+
+
 class ChatResponse(BaseModel):
     answer: str
     sections: AnswerSections = Field(default_factory=AnswerSections)
     evidence_rows: list[EvidenceRow] = Field(default_factory=list)
     citations: list[Citation] = Field(default_factory=list)
+    retrieval_trace: list[RetrievalTraceStep] = Field(default_factory=list)
     retrieval_only: bool = False
     log_id: int | None = None
 

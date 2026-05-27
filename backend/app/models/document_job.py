@@ -26,6 +26,7 @@ class DocumentProcessingJob(Base):
     probe_json: Mapped[str | None] = mapped_column(Text)
     plan_json: Mapped[str | None] = mapped_column(Text)
     options_json: Mapped[str | None] = mapped_column(Text)
+    trace_json: Mapped[str | None] = mapped_column(Text)
     progress_total: Mapped[int] = mapped_column(Integer, default=0)
     progress_current: Mapped[int] = mapped_column(Integer, default=0)
     progress_percent: Mapped[int] = mapped_column(Integer, default=0)

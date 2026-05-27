@@ -48,6 +48,7 @@ def _ensure_sqlite_schema() -> None:
         "probe_json": "TEXT",
         "plan_json": "TEXT",
         "options_json": "TEXT",
+        "trace_json": "TEXT",
         "progress_total": "INTEGER DEFAULT 0",
         "progress_current": "INTEGER DEFAULT 0",
         "progress_percent": "INTEGER DEFAULT 0",

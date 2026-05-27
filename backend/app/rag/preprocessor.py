@@ -65,6 +65,8 @@ class DocumentPreprocessor:
             )
             ocr_parts = PaddleOcrEngine().extract_pdf(path, page_numbers=page_numbers)
 
+        if stage_callback and ocr_parts:
+            stage_callback("preprocessing", "正在按页比较文本层与 OCR 结果，保留质量更高的版本")
         processed_parts = enhance_loaded_parts(
             processed_parts,
             ocr_parts=ocr_parts,

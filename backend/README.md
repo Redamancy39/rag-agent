@@ -249,9 +249,33 @@ Authorization: Bearer <admin_access_token>
 INGESTION_AGENT_ENABLED=true
 INGESTION_AGENT_LLM_ENABLED=true
 INGESTION_AGENT_SAMPLE_PAGES=3
+INGESTION_EXECUTOR=pipeline
 ```
 
 如果上传速度或 API 成本敏感，可以先把 `INGESTION_AGENT_LLM_ENABLED=false`，系统仍会使用规则规划 PyMuPDF / pypdf / PaddleOCR / LLM 表格预处理。
+
+`INGESTION_EXECUTOR` 默认使用稳定的 `pipeline`。如果已经安装 `requirements-rag.txt` 中的 `langgraph`，可以改为：
+
+```env
+INGESTION_EXECUTOR=langgraph
+```
+
+当前 LangGraph 执行器是顺序图适配层，复用同一批 FileProbe、StrategyPlanner、Parse/OCR、Normalize、ChunkQuality、Index、Report 节点；如果未安装 LangGraph，会自动回退到 `pipeline`，不影响入库。
+当前图中已显式加入两个轻量条件路由：
+
+- `RouteTextFirst / RouteOcrFirst`：展示策略选择文本层优先还是 OCR 优先。
+- `RouteLlmNormalize / RouteSkipLlmNormalize`：展示是否进入 LLM 切块整理路径。
+
+路由节点只负责可观测决策，真正的解析、OCR fallback 和 LLM 整理仍由后续业务节点执行。
+
+环境自检：
+
+```powershell
+conda activate rag-agent
+python scripts\check_runtime.py
+```
+
+该脚本会检查当前 Python、LangGraph、日志目录、SQLite 和 Chroma 目录是否可用。若主日志目录不可写，系统会自动回退到 `backend/.runtime_logs`。
 
 单机 GPU 环境建议限制入库并发，避免同时上传多个 PDF 时 PaddleOCR、Embedding 和 LLM 整理一起占用显存：
 

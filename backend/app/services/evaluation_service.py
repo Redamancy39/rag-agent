@@ -65,6 +65,7 @@ def run_rag_evaluation(
             RagEvalCaseResult(
                 id=case.id,
                 question=case.question,
+                tags=case.tags,
                 passed=passed,
                 expected_found=case.expected_found,
                 actual_found=actual_found,

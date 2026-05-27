@@ -1222,6 +1222,51 @@ textarea {
   width: 100%;
 }
 
+.retrieval-trace-collapse {
+  margin-top: 10px;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.retrieval-trace-collapse .el-collapse-item__header {
+  height: 40px;
+  padding: 0 12px;
+  background: #fbfcfd;
+}
+
+.retrieval-trace-collapse .el-collapse-item__content {
+  padding: 12px;
+}
+
+.retrieval-trace-list {
+  display: grid;
+  gap: 12px;
+}
+
+.retrieval-trace-step {
+  display: grid;
+  gap: 8px;
+}
+
+.retrieval-trace-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  color: #526172;
+  font-size: 12px;
+}
+
+.retrieval-trace-head strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #111827;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .job-dialog-body {
   display: grid;
   gap: 16px;
@@ -1383,6 +1428,93 @@ textarea {
   border: 1px solid #dce3ea;
   border-radius: 8px;
   overflow: hidden;
+}
+
+.job-trace-section {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.job-trace-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.job-trace-head h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.job-trace-head span {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.job-trace-timeline {
+  padding: 4px 0 0;
+}
+
+.job-trace-timeline.compact {
+  padding-top: 8px;
+}
+
+.job-trace-card {
+  display: grid;
+  gap: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.job-trace-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.job-trace-title strong {
+  color: #111827;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.job-trace-card p {
+  margin: 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.job-trace-error {
+  color: #dc2626 !important;
+}
+
+.job-trace-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.job-trace-summary span {
+  border-radius: 6px;
+  background: #ecfeff;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 650;
+  padding: 4px 6px;
 }
 
 .job-detail-grid {
@@ -1587,5 +1719,13 @@ textarea {
 
   .quality-stage-item {
     grid-template-columns: 1fr;
+  }
+
+  .job-trace-head {
+    display: grid;
+  }
+
+  .job-trace-head span {
+    text-align: left;
   }
 }

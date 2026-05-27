@@ -41,6 +41,10 @@ COMMON_UNIT_REPLACEMENTS = (
     ("μg / kg", "μg/kg"),
 )
 
+OCR_REPLACE_MARGIN = 0.12
+OCR_FORCED_KEEP_MARGIN = 0.08
+OCR_MIN_ACCEPTABLE_SCORE = 0.32
+
 
 def detect_bad_text_pages(
     parts: Iterable[LoadedDocumentPart],
@@ -80,27 +84,38 @@ def enhance_loaded_parts(
 ) -> list[LoadedDocumentPart]:
     bad_page_reasons = detect_bad_text_pages(parts)
     ocr_by_page = _group_parts_by_page(ocr_parts or [])
+    original_by_page = _group_parts_by_page(parts)
     pages_to_replace = set(replace_bad_pages or set())
     if replace_detected_bad_pages:
         pages_to_replace.update(page for page in bad_page_reasons if page in ocr_by_page)
     if replace_all_text_layer:
         pages_to_replace.update(
-            page for page in _group_parts_by_page(parts) if page in ocr_by_page
+            page for page in original_by_page if page in ocr_by_page
         )
+    page_decisions = _choose_text_or_ocr_pages(
+        original_by_page=original_by_page,
+        ocr_by_page=ocr_by_page,
+        requested_replace_pages=pages_to_replace,
+        bad_page_reasons=bad_page_reasons,
+    )
 
     enhanced_parts: list[LoadedDocumentPart] = []
     kept_pages: set[int] = set()
     for part in parts:
         page = _metadata_page(part.metadata)
+        decision = page_decisions.get(page) if page is not None else None
         if (
             page is not None
-            and page in pages_to_replace
-            and page in ocr_by_page
+            and decision
+            and decision["use_ocr"]
             and not _is_ocr_part(part)
         ):
             continue
+        metadata = dict(part.metadata)
+        if decision and not _is_ocr_part(part):
+            metadata.update(_decision_metadata(decision))
         enhanced = _enhance_part(
-            part,
+            LoadedDocumentPart(text=part.text, metadata=metadata),
             bad_page_reasons=bad_page_reasons,
             repair_text=repair_text,
         )
@@ -109,12 +124,15 @@ def enhance_loaded_parts(
             kept_pages.add(page)
 
     for page, page_ocr_parts in sorted(ocr_by_page.items()):
-        should_add = page in pages_to_replace or page not in kept_pages
+        decision = page_decisions.get(page)
+        should_add = bool(decision and decision["use_ocr"]) or page not in kept_pages
         if not should_add:
             continue
         for part in page_ocr_parts:
             metadata = dict(part.metadata)
-            metadata["ocr_replaced_bad_text_layer"] = page in pages_to_replace
+            if decision:
+                metadata.update(_decision_metadata(decision))
+            metadata["ocr_replaced_bad_text_layer"] = page in original_by_page
             if page in bad_page_reasons:
                 metadata["bad_text_layer_reasons"] = ",".join(bad_page_reasons[page])
             enhanced_parts.append(
@@ -126,6 +144,138 @@ def enhance_loaded_parts(
             )
 
     return enhanced_parts
+
+
+def _choose_text_or_ocr_pages(
+    *,
+    original_by_page: dict[int, list[LoadedDocumentPart]],
+    ocr_by_page: dict[int, list[LoadedDocumentPart]],
+    requested_replace_pages: set[int],
+    bad_page_reasons: dict[int, list[str]],
+) -> dict[int, dict[str, Any]]:
+    decisions: dict[int, dict[str, Any]] = {}
+    for page, page_ocr_parts in sorted(ocr_by_page.items()):
+        text_parts = [
+            part for part in original_by_page.get(page, []) if not _is_ocr_part(part)
+        ]
+        text_score = _score_page_parts(
+            text_parts,
+            bad_flags=bad_page_reasons.get(page, []),
+            is_ocr=False,
+        )
+        ocr_score = _score_page_parts(page_ocr_parts, bad_flags=[], is_ocr=True)
+        text = _parts_text(text_parts)
+        requested = page in requested_replace_pages
+
+        use_ocr = False
+        reason = "text_layer_quality_better"
+        if not text.strip():
+            use_ocr = True
+            reason = "text_layer_empty"
+        elif requested:
+            use_ocr = ocr_score >= max(
+                OCR_MIN_ACCEPTABLE_SCORE,
+                text_score - OCR_FORCED_KEEP_MARGIN,
+            )
+            reason = "requested_ocr_quality_accepted" if use_ocr else "requested_ocr_quality_rejected"
+        elif ocr_score >= OCR_MIN_ACCEPTABLE_SCORE and ocr_score > text_score + OCR_REPLACE_MARGIN:
+            use_ocr = True
+            reason = "ocr_quality_better"
+
+        decisions[page] = {
+            "page": page,
+            "use_ocr": use_ocr,
+            "reason": reason,
+            "text_score": round(text_score, 4),
+            "ocr_score": round(ocr_score, 4),
+            "bad_text_layer_reasons": ",".join(bad_page_reasons.get(page, [])),
+        }
+    return decisions
+
+
+def _score_page_parts(
+    parts: list[LoadedDocumentPart],
+    *,
+    bad_flags: list[str],
+    is_ocr: bool,
+) -> float:
+    text = _parts_text(parts)
+    if not text.strip():
+        return 0.0
+
+    summary = text_quality_summary(text)
+    length = float(summary["length"])
+    readable_ratio = float(summary["readable_char_ratio"])
+    cjk_ratio = float(summary["cjk_char_ratio"])
+    noise_ratio = (
+        float(summary["garbled_token_ratio"])
+        + float(summary["control_char_ratio"])
+        + float(summary["mojibake_marker_ratio"])
+        + float(summary["hangul_char_ratio"])
+        + float(summary["private_use_char_ratio"])
+        + float(summary["replacement_char_ratio"])
+        + float(summary["question_mark_run_ratio"])
+    )
+
+    score = 0.18
+    score += min(length / 600.0, 1.0) * 0.18
+    score += readable_ratio * 0.28
+    score += min(cjk_ratio / 0.55, 1.0) * 0.14
+    score += 0.16 if is_text_usable(text) else -0.18
+    score -= min(noise_ratio * 2.8, 0.35)
+    score -= min(len(bad_flags) * 0.08, 0.28)
+
+    if _has_table_signals(text):
+        score += 0.06
+    if is_ocr:
+        score += _ocr_confidence_bonus(parts)
+    return max(0.0, min(1.0, score))
+
+
+def _parts_text(parts: list[LoadedDocumentPart]) -> str:
+    return "\n".join(part.text.strip() for part in parts if part.text.strip())
+
+
+def _has_table_signals(text: str) -> bool:
+    hits = 0
+    for keyword in ("表", "限量", "最大残留限量", "μg/kg", "mg/kg", "CFU", "|"):
+        if keyword in text:
+            hits += 1
+    return hits >= 2
+
+
+def _ocr_confidence_bonus(parts: list[LoadedDocumentPart]) -> float:
+    scores = [
+        _metadata_float(part.metadata.get("ocr_avg_score"))
+        for part in parts
+        if _metadata_float(part.metadata.get("ocr_avg_score")) > 0
+    ]
+    if not scores:
+        return 0.0
+    avg_score = sum(scores) / len(scores)
+    if avg_score >= 0.92:
+        return 0.08
+    if avg_score >= 0.85:
+        return 0.04
+    if avg_score < 0.65:
+        return -0.10
+    return 0.0
+
+
+def _metadata_float(value: Any) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _decision_metadata(decision: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "ocr_text_layer_decision": "use_ocr" if decision["use_ocr"] else "keep_text_layer",
+        "ocr_text_layer_reason": decision["reason"],
+        "text_layer_quality_score": decision["text_score"],
+        "ocr_quality_score": decision["ocr_score"],
+    }
 
 
 def repair_ingestion_text(text: str, metadata: dict[str, Any] | None = None) -> tuple[str, list[str]]:

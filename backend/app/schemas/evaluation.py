@@ -23,6 +23,7 @@ class RagEvalRunRequest(BaseModel):
 class RagEvalCaseResult(BaseModel):
     id: str
     question: str
+    tags: list[str] = Field(default_factory=list)
     passed: bool
     expected_found: bool
     actual_found: bool
