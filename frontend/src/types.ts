@@ -204,12 +204,41 @@ export interface RetrievalTraceStep {
   top_hits: RetrievalTraceHit[]
 }
 
+export interface QueryPlanRead {
+  original_question: string
+  normalized_question: string
+  needs_rewrite: boolean
+  question_type: string
+  source: string
+  reason: string
+  standard_refs: string[]
+  entities: string[]
+  metrics: string[]
+  sub_questions: string[]
+  rewritten_queries: string[]
+  evidence_requirements: string[]
+  confidence: number
+  llm_used: boolean
+  warnings: string[]
+}
+
+export interface EvidenceDecisionRead {
+  sufficient: boolean
+  source: string
+  reason: string
+  confidence: number
+  missing_requirements: string[]
+  warnings: string[]
+}
+
 export interface ChatResponse {
   answer: string
   sections: AnswerSections
   evidence_rows: EvidenceRow[]
   citations: Citation[]
   retrieval_trace: RetrievalTraceStep[]
+  query_plan: QueryPlanRead | null
+  evidence_decision: EvidenceDecisionRead | null
   retrieval_only: boolean
   log_id: number | null
 }

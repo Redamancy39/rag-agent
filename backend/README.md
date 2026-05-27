@@ -314,3 +314,25 @@ GET /api/v1/permissions/audit-logs?limit=100
 - `文档列表 -> 权限`：按用户授权或按部门授权。
 
 详细说明见 `docs/PERMISSION_AUDIT.md`。
+
+## 11. Query Agent 检索规划
+
+问答阶段已加入轻量 Query Agent，位置在权限过滤之后、正式检索之前。它不会直接回答问题，只负责把用户问题整理成更适合检索的计划：
+
+- 查询归一化：统一标准号、空格、括号、单位和常见符号。
+- 查询改写：生成适合向量检索、BM25 和关键词检索的多个 query。
+- 查询分解：跨文档、对比、多实体问题会拆成子问题。
+- 证据充分性判断：检索后判断证据是否覆盖标准号、核心对象和指标；证据不足时直接返回“未找到”，避免幻觉。
+
+默认配置是规则规划 + 规则证据判断，不会为每个问题额外调用大模型。如果需要让 DeepSeek 等 OpenAI-compatible API 一次性完成“是否需要改写、归一化、改写、分解、证据需求提取”，可开启：
+
+```env
+QUERY_AGENT_ENABLED=true
+QUERY_AGENT_LLM_ENABLED=true
+QUERY_AGENT_MAX_QUERIES=5
+QUERY_AGENT_MAX_SUB_QUESTIONS=5
+QUERY_AGENT_EVIDENCE_JUDGE_ENABLED=true
+QUERY_AGENT_EVIDENCE_LLM_ENABLED=false
+```
+
+`QUERY_AGENT_EVIDENCE_LLM_ENABLED=true` 会在检索后再调用一次大模型审查证据充分性，成本和耗时更高，建议只在调试复杂跨文档问题时开启。接口返回中会包含 `query_plan`、`evidence_decision` 和 `retrieval_trace`，前端“链式检索过程”可以展开查看。

@@ -1,5 +1,6 @@
 import re
 
+from app.agent.query_agent import QueryAgent, QueryPlan
 from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.rag.bm25_retriever import BM25Retriever
@@ -66,6 +67,7 @@ class PermissionAwareRetriever:
             question,
             allowed_document_ids=allowed_document_ids,
             top_k=top_k,
+            query_plan=None,
         )
         return hits
 
@@ -75,11 +77,27 @@ class PermissionAwareRetriever:
         allowed_document_ids: list[int],
         top_k: int | None = None,
     ) -> tuple[list[dict], list[dict]]:
-        return self._retrieve_with_optional_trace(
+        hits, trace, _query_plan = self.retrieve_with_plan(
             question,
             allowed_document_ids=allowed_document_ids,
             top_k=top_k,
         )
+        return hits, trace
+
+    def retrieve_with_plan(
+        self,
+        question: str,
+        allowed_document_ids: list[int],
+        top_k: int | None = None,
+    ) -> tuple[list[dict], list[dict], QueryPlan]:
+        query_plan = QueryAgent().plan(question)
+        hits, trace = self._retrieve_with_optional_trace(
+            question,
+            allowed_document_ids=allowed_document_ids,
+            top_k=top_k,
+            query_plan=query_plan,
+        )
+        return hits, trace, query_plan
 
     def _retrieve_with_optional_trace(
         self,
@@ -87,6 +105,7 @@ class PermissionAwareRetriever:
         *,
         allowed_document_ids: list[int],
         top_k: int | None,
+        query_plan: QueryPlan | None,
     ) -> tuple[list[dict], list[dict]]:
         final_top_k = top_k or self.settings.RAG_TOP_K
         candidate_top_k = (
@@ -94,7 +113,7 @@ class PermissionAwareRetriever:
             if self._should_rerank()
             else final_top_k
         )
-        queries = self._expanded_queries(question)
+        queries = self._queries_from_plan(question, query_plan)
         hits: list[dict] = []
         trace: list[dict] = []
         for query_index, query in enumerate(queries):
@@ -222,6 +241,15 @@ class PermissionAwareRetriever:
             )
             hits = self._merge_hybrid_hits(hits, keyword_hits, bm25_hits)
         return hits[:top_k]
+
+    def _queries_from_plan(
+        self,
+        question: str,
+        query_plan: QueryPlan | None,
+    ) -> list[str]:
+        if query_plan is not None and query_plan.rewritten_queries:
+            return query_plan.rewritten_queries[: self.settings.QUERY_AGENT_MAX_QUERIES]
+        return self._expanded_queries(question)
 
     def _should_rerank(self) -> bool:
         return bool(self.settings.RERANKER_ENABLED and self.settings.RERANKER_MODEL_NAME)

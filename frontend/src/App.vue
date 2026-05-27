@@ -1281,6 +1281,10 @@ function cloneChatTurn(turn: ChatTurn): ChatTurn {
           citations: [...turn.response.citations],
           evidence_rows: [...turn.response.evidence_rows],
           retrieval_trace: [...(turn.response.retrieval_trace || [])],
+          query_plan: turn.response.query_plan ? { ...turn.response.query_plan } : null,
+          evidence_decision: turn.response.evidence_decision
+            ? { ...turn.response.evidence_decision }
+            : null,
           sections: { ...turn.response.sections }
         }
       : null
@@ -1324,6 +1328,8 @@ function chatLogToTurn(log: ChatLogRead): ChatTurn {
       evidence_rows: citationsToEvidenceRows(citations),
       citations,
       retrieval_trace: [],
+      query_plan: null,
+      evidence_decision: null,
       retrieval_only: false,
       log_id: log.id
     },
@@ -1438,6 +1444,30 @@ function getEvidenceRows(response: ChatResponse): EvidenceRow[] {
 
 function getRetrievalTrace(response: ChatResponse) {
   return response.retrieval_trace || []
+}
+
+function getQueryPlan(response: ChatResponse) {
+  return response.query_plan
+}
+
+function getEvidenceDecision(response: ChatResponse) {
+  return response.evidence_decision
+}
+
+function joinPlanItems(items: string[] | undefined, fallback = '-') {
+  return items && items.length ? items.join('、') : fallback
+}
+
+function evidenceDecisionType(response: ChatResponse) {
+  const decision = getEvidenceDecision(response)
+  if (!decision) return 'info'
+  return decision.sufficient ? 'success' : 'warning'
+}
+
+function evidenceDecisionLabel(response: ChatResponse) {
+  const decision = getEvidenceDecision(response)
+  if (!decision) return '未启用'
+  return decision.sufficient ? '证据充分' : '证据不足'
 }
 
 function retrievalSourceLabel(source: string | null) {
@@ -2290,6 +2320,65 @@ async function scrollChatToBottom() {
                         <template #title>
                           <span class="evidence-title">链式检索过程</span>
                         </template>
+                        <div
+                          v-if="getQueryPlan(turn.response) || getEvidenceDecision(turn.response)"
+                          class="query-agent-summary"
+                        >
+                          <div v-if="getQueryPlan(turn.response)" class="query-agent-card">
+                            <div class="query-agent-card-title">
+                              <strong>查询规划</strong>
+                              <el-tag size="small" effect="plain">
+                                {{ getQueryPlan(turn.response)?.source }}
+                              </el-tag>
+                              <el-tag
+                                v-if="getQueryPlan(turn.response)?.llm_used"
+                                size="small"
+                                type="success"
+                                effect="plain"
+                              >
+                                LLM
+                              </el-tag>
+                            </div>
+                            <div class="query-agent-grid">
+                              <span>归一化问题</span>
+                              <p>{{ getQueryPlan(turn.response)?.normalized_question || '-' }}</p>
+                              <span>问题类型</span>
+                              <p>{{ getQueryPlan(turn.response)?.question_type || '-' }}</p>
+                              <span>标准号</span>
+                              <p>{{ joinPlanItems(getQueryPlan(turn.response)?.standard_refs) }}</p>
+                              <span>核心对象</span>
+                              <p>{{ joinPlanItems(getQueryPlan(turn.response)?.entities) }}</p>
+                              <span>指标词</span>
+                              <p>{{ joinPlanItems(getQueryPlan(turn.response)?.metrics) }}</p>
+                              <span>改写查询</span>
+                              <p>{{ joinPlanItems(getQueryPlan(turn.response)?.rewritten_queries) }}</p>
+                              <span>子问题</span>
+                              <p>{{ joinPlanItems(getQueryPlan(turn.response)?.sub_questions) }}</p>
+                            </div>
+                          </div>
+                          <div v-if="getEvidenceDecision(turn.response)" class="query-agent-card">
+                            <div class="query-agent-card-title">
+                              <strong>证据判断</strong>
+                              <el-tag
+                                size="small"
+                                :type="evidenceDecisionType(turn.response)"
+                                effect="plain"
+                              >
+                                {{ evidenceDecisionLabel(turn.response) }}
+                              </el-tag>
+                            </div>
+                            <div class="query-agent-grid">
+                              <span>判断来源</span>
+                              <p>{{ getEvidenceDecision(turn.response)?.source || '-' }}</p>
+                              <span>置信度</span>
+                              <p>{{ formatScore(getEvidenceDecision(turn.response)?.confidence ?? null) }}</p>
+                              <span>判断原因</span>
+                              <p>{{ getEvidenceDecision(turn.response)?.reason || '-' }}</p>
+                              <span>缺失要素</span>
+                              <p>{{ joinPlanItems(getEvidenceDecision(turn.response)?.missing_requirements) }}</p>
+                            </div>
+                          </div>
+                        </div>
                         <div class="retrieval-trace-list">
                           <article
                             v-for="step in getRetrievalTrace(turn.response)"

@@ -56,12 +56,41 @@ class RetrievalTraceStep(BaseModel):
     top_hits: list[RetrievalTraceHit] = Field(default_factory=list)
 
 
+class QueryPlanRead(BaseModel):
+    original_question: str
+    normalized_question: str
+    needs_rewrite: bool
+    question_type: str
+    source: str
+    reason: str
+    standard_refs: list[str] = Field(default_factory=list)
+    entities: list[str] = Field(default_factory=list)
+    metrics: list[str] = Field(default_factory=list)
+    sub_questions: list[str] = Field(default_factory=list)
+    rewritten_queries: list[str] = Field(default_factory=list)
+    evidence_requirements: list[str] = Field(default_factory=list)
+    confidence: float = 0.0
+    llm_used: bool = False
+    warnings: list[str] = Field(default_factory=list)
+
+
+class EvidenceDecisionRead(BaseModel):
+    sufficient: bool
+    source: str
+    reason: str
+    confidence: float = 0.0
+    missing_requirements: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+
+
 class ChatResponse(BaseModel):
     answer: str
     sections: AnswerSections = Field(default_factory=AnswerSections)
     evidence_rows: list[EvidenceRow] = Field(default_factory=list)
     citations: list[Citation] = Field(default_factory=list)
     retrieval_trace: list[RetrievalTraceStep] = Field(default_factory=list)
+    query_plan: QueryPlanRead | None = None
+    evidence_decision: EvidenceDecisionRead | None = None
     retrieval_only: bool = False
     log_id: int | None = None
 

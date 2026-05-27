@@ -3,6 +3,8 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from app.agent.evidence_judge import EvidenceDecision, EvidenceJudge
+from app.agent.query_agent import QueryPlan
 from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.models.user import User
@@ -10,7 +12,15 @@ from app.rag.llm_client import LLMConfigError, OpenAICompatibleLLM
 from app.rag.retriever import PermissionAwareRetriever
 from app.rag.table_utils import infer_table_reference
 from app.rag.text_quality import is_text_usable
-from app.schemas.chat import AnswerSections, ChatResponse, Citation, EvidenceRow, RetrievalTraceStep
+from app.schemas.chat import (
+    AnswerSections,
+    ChatResponse,
+    Citation,
+    EvidenceDecisionRead,
+    EvidenceRow,
+    QueryPlanRead,
+    RetrievalTraceStep,
+)
 from app.services import document_service, log_service
 
 logger = get_logger(__name__)
@@ -77,7 +87,7 @@ class RagService:
             response.log_id = self._write_log(db, user=user, question=question, response=response)
             return response
 
-        hits, retrieval_trace = PermissionAwareRetriever().retrieve_with_trace(
+        hits, retrieval_trace, query_plan = PermissionAwareRetriever().retrieve_with_plan(
             question,
             allowed_document_ids=allowed_document_ids,
             top_k=top_k or self.settings.RAG_TOP_K,
@@ -86,11 +96,29 @@ class RagService:
         if not citations:
             response = _not_found_response()
             response.retrieval_trace = _parse_retrieval_trace(retrieval_trace)
+            response.query_plan = _parse_query_plan(query_plan)
+            response.log_id = self._write_log(db, user=user, question=question, response=response)
+            return response
+
+        evidence_decision = EvidenceJudge().judge(
+            question=question,
+            citations=citations,
+            query_plan=query_plan,
+        )
+        if not evidence_decision.sufficient:
+            response = _not_found_response(evidence_decision.reason)
+            response.retrieval_trace = _parse_retrieval_trace(retrieval_trace)
+            response.query_plan = _parse_query_plan(query_plan)
+            response.evidence_decision = _parse_evidence_decision(evidence_decision)
+            response.evidence_rows = _fallback_evidence_rows(citations)
+            response.citations = _compact_citations(citations)
             response.log_id = self._write_log(db, user=user, question=question, response=response)
             return response
 
         response = self._generate_answer(question, citations)
         response.retrieval_trace = _parse_retrieval_trace(retrieval_trace)
+        response.query_plan = _parse_query_plan(query_plan)
+        response.evidence_decision = _parse_evidence_decision(evidence_decision)
         response.log_id = self._write_log(db, user=user, question=question, response=response)
         return response
 
@@ -217,6 +245,26 @@ def _parse_retrieval_trace(trace: list[dict]) -> list[RetrievalTraceStep]:
         except Exception:
             continue
     return steps
+
+
+def _parse_query_plan(plan: QueryPlan | None) -> QueryPlanRead | None:
+    if plan is None:
+        return None
+    try:
+        return QueryPlanRead.model_validate(plan.to_dict())
+    except Exception:
+        return None
+
+
+def _parse_evidence_decision(
+    decision: EvidenceDecision | None,
+) -> EvidenceDecisionRead | None:
+    if decision is None:
+        return None
+    try:
+        return EvidenceDecisionRead.model_validate(decision.to_dict())
+    except Exception:
+        return None
 
 
 def _build_context(citations: list[Citation], max_chars: int) -> str:
