@@ -89,7 +89,7 @@ class Settings(BaseSettings):
     RAG_CHAIN_PER_QUERY_TOP_K: int = 8
     RAG_CHAIN_EXPANSION_SCORE_FACTOR: float = 0.97
     QUERY_AGENT_ENABLED: bool = True
-    QUERY_AGENT_LLM_ENABLED: bool = False
+    QUERY_AGENT_LLM_ENABLED: bool = True
     QUERY_AGENT_MAX_QUERIES: int = 5
     QUERY_AGENT_MAX_SUB_QUESTIONS: int = 5
     QUERY_AGENT_EVIDENCE_JUDGE_ENABLED: bool = True
