@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import {
   CircleCheck,
   Cloudy,
@@ -15,6 +15,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox, type UploadRequestOptions } from 'element-plus'
 import {
+  AUTH_ERROR_EVENT,
   addGroupMember,
   askQuestion,
   createGroup,
@@ -249,13 +250,24 @@ const groupMemberOptions = computed(() => {
   return users.value.filter((user) => user.is_active && !memberIds.has(user.id))
 })
 
+function handleAuthExpired() {
+  if (!token.value && !currentUser.value) return
+  logout(false)
+  ElMessage.warning('登录状态已失效，请重新登录')
+}
+
 onMounted(async () => {
+  window.addEventListener(AUTH_ERROR_EVENT, handleAuthExpired)
   await refreshBackendStatus()
   if (token.value) {
     await loadCurrentUser()
     await refreshDocuments()
     await loadChatHistory()
   }
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener(AUTH_ERROR_EVENT, handleAuthExpired)
 })
 
 function selectView(view: ActiveView) {

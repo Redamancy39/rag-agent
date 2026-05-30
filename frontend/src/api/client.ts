@@ -14,6 +14,20 @@ import type {
   UserRead
 } from '../types'
 
+export const AUTH_ERROR_EVENT = 'rag-agent-auth-error'
+
+export class ApiError extends Error {
+  status: number
+  payload: unknown
+
+  constructor(message: string, status: number, payload: unknown) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+    this.payload = payload
+  }
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const API_V1 = `${API_BASE_URL}/api/v1`
 
@@ -275,7 +289,11 @@ export function uploadDocument(
         resolve(parsed as DocumentRead)
         return
       }
-      reject(new Error(getErrorMessage(parsed, `上传失败，HTTP ${xhr.status}`)))
+      const message = getErrorMessage(parsed, `上传失败，HTTP ${xhr.status}`)
+      if (xhr.status === 401) {
+        emitAuthError(message)
+      }
+      reject(new ApiError(message, xhr.status, parsed))
     }
 
     xhr.onerror = () => reject(new Error('网络请求失败，请检查后端服务是否启动'))
@@ -301,9 +319,23 @@ async function request<T>(
   })
   const parsed = parseJson(await response.text())
   if (!response.ok) {
-    throw new Error(getErrorMessage(parsed, `请求失败，HTTP ${response.status}`))
+    const message = getErrorMessage(parsed, `请求失败，HTTP ${response.status}`)
+    if (response.status === 401) {
+      emitAuthError(message)
+    }
+    throw new ApiError(message, response.status, parsed)
   }
   return parsed as T
+}
+
+function emitAuthError(message: string): void {
+  if (typeof window === 'undefined') return
+  window.localStorage.removeItem('rag_agent_token')
+  window.dispatchEvent(
+    new CustomEvent(AUTH_ERROR_EVENT, {
+      detail: { message }
+    })
+  )
 }
 
 function parseJson(text: string): unknown {
