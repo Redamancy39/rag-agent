@@ -217,6 +217,7 @@ export interface QueryPlanRead {
   sub_questions: string[]
   rewritten_queries: string[]
   evidence_requirements: string[]
+  synonym_expansions: Array<Record<string, unknown>>
   confidence: number
   llm_used: boolean
   warnings: string[]

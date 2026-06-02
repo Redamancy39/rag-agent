@@ -1470,6 +1470,20 @@ function joinPlanItems(items: string[] | undefined, fallback = '-') {
   return items && items.length ? items.join('、') : fallback
 }
 
+function formatSynonymExpansions(expansions: Array<Record<string, unknown>> | undefined) {
+  if (!expansions?.length) return '-'
+  return expansions
+    .map((item) => {
+      const canonical = String(item.canonical || '')
+      const matched = Array.isArray(item.matched)
+        ? item.matched.map((value) => String(value)).filter(Boolean)
+        : []
+      return matched.length ? `${matched.join('/')} -> ${canonical}` : canonical
+    })
+    .filter(Boolean)
+    .join('；')
+}
+
 function evidenceDecisionType(response: ChatResponse) {
   const decision = getEvidenceDecision(response)
   if (!decision) return 'info'
@@ -2354,6 +2368,8 @@ async function scrollChatToBottom() {
                             <div class="query-agent-grid">
                               <span>归一化问题</span>
                               <p>{{ getQueryPlan(turn.response)?.normalized_question || '-' }}</p>
+                              <span>同义词转换</span>
+                              <p>{{ formatSynonymExpansions(getQueryPlan(turn.response)?.synonym_expansions) }}</p>
                               <span>问题类型</span>
                               <p>{{ getQueryPlan(turn.response)?.question_type || '-' }}</p>
                               <span>标准号</span>

@@ -5,6 +5,12 @@ import unicodedata
 from dataclasses import dataclass, field
 from typing import Any
 
+from app.agent.query_synonyms import (
+    apply_query_synonyms,
+    detect_query_synonyms,
+    synonym_expansions_to_dicts,
+    synonym_search_terms,
+)
 from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.rag.llm_client import LLMConfigError, OpenAICompatibleLLM
@@ -92,6 +98,7 @@ class QueryPlan:
     sub_questions: list[str] = field(default_factory=list)
     rewritten_queries: list[str] = field(default_factory=list)
     evidence_requirements: list[str] = field(default_factory=list)
+    synonym_expansions: list[dict[str, Any]] = field(default_factory=list)
     confidence: float = 0.0
     llm_used: bool = False
     warnings: list[str] = field(default_factory=list)
@@ -110,6 +117,7 @@ class QueryPlan:
             "sub_questions": self.sub_questions,
             "rewritten_queries": self.rewritten_queries,
             "evidence_requirements": self.evidence_requirements,
+            "synonym_expansions": self.synonym_expansions,
             "confidence": self.confidence,
             "llm_used": self.llm_used,
             "warnings": self.warnings,
@@ -131,6 +139,9 @@ class QueryAgent:
                 source="disabled",
                 reason="QUERY_AGENT_ENABLED=false",
                 rewritten_queries=[normalized_question],
+                synonym_expansions=synonym_expansions_to_dicts(
+                    detect_query_synonyms(question)
+                ),
                 confidence=1.0,
             )
 
@@ -151,9 +162,15 @@ class QueryAgent:
         return rule_plan
 
     def _rule_plan(self, question: str, normalized_question: str) -> QueryPlan:
-        refs = extract_standard_refs(question)
-        metrics = extract_metric_terms(question)
-        entities = extract_entities(question, metrics)
+        synonym_expansions = detect_query_synonyms(question)
+        synonym_terms = synonym_search_terms(synonym_expansions)
+        search_question = f"{question}\n{normalized_question}\n{' '.join(synonym_terms)}"
+        refs = extract_standard_refs(search_question)
+        metrics = extract_metric_terms(search_question)
+        for term in synonym_terms:
+            if term and term not in metrics:
+                metrics.append(term)
+        entities = extract_entities(search_question, metrics)
         is_complex = _looks_complex(question, refs)
         question_type = _question_type(question, refs)
         queries = _build_rule_queries(
@@ -182,6 +199,7 @@ class QueryAgent:
             sub_questions=sub_questions if is_complex else [],
             rewritten_queries=queries,
             evidence_requirements=_build_evidence_requirements(refs, metrics, entities),
+            synonym_expansions=synonym_expansions_to_dicts(synonym_expansions),
             confidence=0.72 if is_complex else 0.95,
         )
 
@@ -191,6 +209,15 @@ class QueryAgent:
             (
                 f"用户问题：{question}\n\n"
                 f"规则检测结果：{fallback.to_dict()}\n\n"
+                "同义词转写小样本：\n"
+                "1. 用户问题：冷鲜肉的 TVBN 限量是多少？\n"
+                "   normalized_question：冷鲜肉的挥发性盐基氮(TVB-N)限量是多少？\n"
+                "   metrics：['挥发性盐基氮', 'TVB-N', '限量']\n"
+                "   rewritten_queries：['冷鲜肉 挥发性盐基氮 TVB-N 限量', '冷鲜肉 tvbn 限量']\n"
+                "2. 用户问题：GB 2707 里面 tvb-n 怎么规定？\n"
+                "   normalized_question：GB 2707 里面挥发性盐基氮(TVB-N)怎么规定？\n"
+                "   metrics：['挥发性盐基氮', 'TVB-N']\n\n"
+                "如果规则检测结果中包含 synonym_expansions，必须把 canonical 和 aliases 同时放入 metrics 或 rewritten_queries，避免只按缩写检索。\n\n"
                 "请输出查询规划 JSON。"
             ),
         )
@@ -215,6 +242,8 @@ class QueryAgent:
             ),
             evidence_requirements=_clean_list(payload.get("evidence_requirements"))
             or fallback.evidence_requirements,
+            synonym_expansions=_clean_expansion_list(payload.get("synonym_expansions"))
+            or fallback.synonym_expansions,
             confidence=_clean_float(payload.get("confidence"), fallback.confidence),
             llm_used=True,
         )
@@ -231,6 +260,7 @@ def normalize_question(question: str) -> str:
     text = re.sub(r"\bμ\s*g\b", "μg", text, flags=re.I)
     text = re.sub(r"\bu\s*g\b", "μg", text, flags=re.I)
     text = re.sub(r"\bm\s*g\b", "mg", text, flags=re.I)
+    text, _ = apply_query_synonyms(text)
     return text
 
 
@@ -248,7 +278,11 @@ def extract_standard_refs(question: str) -> list[str]:
 
 
 def extract_metric_terms(question: str) -> list[str]:
-    return [term for term in METRIC_TERMS if term in question]
+    terms = [term for term in METRIC_TERMS if term in question]
+    for term in synonym_search_terms(detect_query_synonyms(question)):
+        if term and term not in terms:
+            terms.append(term)
+    return terms
 
 
 def extract_entities(question: str, metrics: list[str]) -> list[str]:
@@ -364,8 +398,13 @@ def _repair_plan(plan: QueryPlan, fallback: QueryPlan) -> QueryPlan:
         plan.normalized_question = fallback.normalized_question
     if not plan.rewritten_queries:
         plan.rewritten_queries = fallback.rewritten_queries
+    if not plan.synonym_expansions:
+        plan.synonym_expansions = fallback.synonym_expansions
     if plan.normalized_question not in plan.rewritten_queries:
         plan.rewritten_queries.insert(0, plan.normalized_question)
+    for query in fallback.rewritten_queries:
+        if query not in plan.rewritten_queries:
+            plan.rewritten_queries.append(query)
     plan.rewritten_queries = _unique_queries(
         plan.rewritten_queries,
         limit=get_settings().QUERY_AGENT_MAX_QUERIES,
@@ -405,6 +444,29 @@ def _clean_list(value: object) -> list[str]:
         if text:
             cleaned.append(text)
     return _unique_queries(cleaned, limit=20)
+
+
+def _clean_expansion_list(value: object) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+    cleaned: list[dict[str, Any]] = []
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        canonical = _clean_str(item.get("canonical"))
+        if not canonical:
+            continue
+        aliases = _clean_list(item.get("aliases"))
+        matched = _clean_list(item.get("matched"))
+        cleaned.append(
+            {
+                "canonical": canonical,
+                "aliases": aliases,
+                "matched": matched,
+                "category": _clean_str(item.get("category")) or "metric",
+            }
+        )
+    return cleaned[:20]
 
 
 def _clean_float(value: object, default: float) -> float:

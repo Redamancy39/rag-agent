@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -69,6 +70,7 @@ class QueryPlanRead(BaseModel):
     sub_questions: list[str] = Field(default_factory=list)
     rewritten_queries: list[str] = Field(default_factory=list)
     evidence_requirements: list[str] = Field(default_factory=list)
+    synonym_expansions: list[dict[str, Any]] = Field(default_factory=list)
     confidence: float = 0.0
     llm_used: bool = False
     warnings: list[str] = Field(default_factory=list)
