@@ -104,6 +104,12 @@ def probe_document(path: Path, file_type: str) -> IngestionProbe:
         file_type=file_type,
         file_size=path.stat().st_size if path.exists() else 0,
     )
+    if file_type == "docx":
+        return _probe_docx(path, probe)
+    if file_type == "pptx":
+        return _probe_pptx(path, probe)
+    if file_type == "xlsx":
+        return _probe_xlsx(path, probe)
     if file_type != "pdf":
         probe.readable = True
         return probe
@@ -136,6 +142,45 @@ def probe_document(path: Path, file_type: str) -> IngestionProbe:
 
 def _rule_based_plan(probe: IngestionProbe) -> IngestionPlan:
     settings = get_settings()
+    if probe.file_type == "docx":
+        use_llm = settings.PREPROCESS_LLM_ENABLED and probe.table_count > 0
+        reason = "DOCX 使用 python-docx 提取标题、段落和表格。"
+        if probe.table_count > 0:
+            reason += f" 检测到 {probe.table_count} 个表格。"
+        if use_llm:
+            reason += " 已启用表格型切块的大模型整理。"
+        return IngestionPlan(
+            primary_reader="docx_loader",
+            use_ocr=False,
+            use_llm_preprocessing=use_llm,
+            reason=reason,
+            probe=probe,
+        )
+    if probe.file_type == "pptx":
+        use_llm = settings.PREPROCESS_LLM_ENABLED and probe.table_count > 0
+        reason = "PPTX 使用 python-pptx 提取幻灯片文本、表格和演讲者备注。"
+        if probe.table_count > 0:
+            reason += f" 检测到 {probe.table_count} 个表格。"
+        if use_llm:
+            reason += " 已启用表格型切块的大模型整理。"
+        return IngestionPlan(
+            primary_reader="pptx_loader",
+            use_ocr=False,
+            use_llm_preprocessing=use_llm,
+            reason=reason,
+            probe=probe,
+        )
+    if probe.file_type == "xlsx":
+        return IngestionPlan(
+            primary_reader="xlsx_loader",
+            use_ocr=False,
+            use_llm_preprocessing=False,
+            reason=(
+                "XLSX 使用 openpyxl 确定性提取工作表、数据区域、表头和行事实；"
+                "不执行逐行 LLM 预处理，避免大型表格产生过量调用。"
+            ),
+            probe=probe,
+        )
     if probe.file_type != "pdf":
         return IngestionPlan(
             primary_reader=f"{probe.file_type}_loader",
@@ -189,6 +234,9 @@ def _merge_llm_plan(probe: IngestionProbe, fallback: IngestionPlan) -> Ingestion
         "paddleocr",
         "txt_loader",
         "markdown_loader",
+        "docx_loader",
+        "pptx_loader",
+        "xlsx_loader",
     }:
         primary_reader = fallback.primary_reader
 
@@ -240,3 +288,165 @@ def _safe_table_count(page: Any) -> int:
     except Exception:
         return 0
     return len(getattr(table_finder, "tables", []) or [])
+
+
+def _probe_docx(path: Path, probe: IngestionProbe) -> IngestionProbe:
+    try:
+        from docx import Document
+    except ImportError:
+        probe.probe_error = "python-docx is not installed"
+        return probe
+
+    try:
+        document = Document(str(path))
+        paragraph_texts = [
+            paragraph.text.strip()
+            for paragraph in document.paragraphs
+            if paragraph.text.strip()
+        ]
+        sample_parts = paragraph_texts[:40]
+        for table in document.tables[:5]:
+            for row in table.rows[:5]:
+                sample_parts.append(
+                    " | ".join(cell.text.strip() for cell in row.cells)
+                )
+        probe.sample_text = "\n".join(sample_parts).strip()[:1500]
+        probe.text_chars = len(probe.sample_text)
+        probe.table_count = len(document.tables)
+        probe.quality = text_quality_summary(probe.sample_text)
+        probe.readable = is_text_usable(probe.sample_text)
+        if not probe.sample_text:
+            probe.probe_error = "DOCX contains no readable paragraphs or table text"
+    except Exception as exc:
+        probe.probe_error = str(exc)
+    return probe
+
+
+def _probe_pptx(path: Path, probe: IngestionProbe) -> IngestionProbe:
+    try:
+        from pptx import Presentation
+    except ImportError:
+        probe.probe_error = "python-pptx is not installed"
+        return probe
+
+    try:
+        presentation = Presentation(str(path))
+        probe.page_count = len(presentation.slides)
+        sample_count = min(
+            probe.page_count,
+            max(1, get_settings().INGESTION_AGENT_SAMPLE_PAGES),
+        )
+        probe.sampled_pages = sample_count
+        sample_parts: list[str] = []
+        for slide_index, slide in enumerate(presentation.slides, start=1):
+            for shape in _iter_pptx_shapes(slide.shapes):
+                if getattr(shape, "has_table", False):
+                    probe.table_count += 1
+                    if slide_index <= sample_count:
+                        for row in list(shape.table.rows)[:5]:
+                            sample_parts.append(
+                                " | ".join(cell.text.strip() for cell in row.cells)
+                            )
+                elif (
+                    slide_index <= sample_count
+                    and getattr(shape, "has_text_frame", False)
+                    and shape.text.strip()
+                ):
+                    sample_parts.append(shape.text.strip())
+            if (
+                slide_index <= sample_count
+                and bool(getattr(slide, "has_notes_slide", False))
+            ):
+                notes_frame = getattr(slide.notes_slide, "notes_text_frame", None)
+                if notes_frame is not None and notes_frame.text.strip():
+                    sample_parts.append(notes_frame.text.strip())
+
+        probe.sample_text = "\n".join(sample_parts).strip()[:1500]
+        probe.text_chars = len(probe.sample_text)
+        probe.quality = text_quality_summary(probe.sample_text)
+        probe.readable = is_text_usable(probe.sample_text)
+        if not probe.sample_text:
+            probe.probe_error = "PPTX contains no readable text, table text, or notes"
+    except Exception as exc:
+        probe.probe_error = str(exc)
+    return probe
+
+
+def _iter_pptx_shapes(shapes: Any) -> Any:
+    try:
+        from pptx.enum.shapes import MSO_SHAPE_TYPE
+    except ImportError:
+        yield from shapes
+        return
+
+    for shape in shapes:
+        if getattr(shape, "shape_type", None) == MSO_SHAPE_TYPE.GROUP:
+            yield from _iter_pptx_shapes(shape.shapes)
+        else:
+            yield shape
+
+
+def _probe_xlsx(path: Path, probe: IngestionProbe) -> IngestionProbe:
+    try:
+        from openpyxl import load_workbook
+    except ImportError:
+        probe.probe_error = "openpyxl is not installed"
+        return probe
+
+    workbook = None
+    try:
+        workbook = load_workbook(
+            str(path),
+            data_only=False,
+            read_only=True,
+        )
+        visible_sheets = [
+            sheet for sheet in workbook.worksheets if sheet.sheet_state == "visible"
+        ]
+        probe.page_count = len(visible_sheets)
+        sample_count = min(
+            len(visible_sheets),
+            max(1, get_settings().INGESTION_AGENT_SAMPLE_PAGES),
+        )
+        probe.sampled_pages = sample_count
+        sample_parts: list[str] = []
+        table_count = 0
+        for sheet in visible_sheets:
+            nonempty_rows = 0
+            for row_index, row in enumerate(
+                sheet.iter_rows(
+                    min_row=1,
+                    max_row=min(int(sheet.max_row or 0), 40),
+                    max_col=min(int(sheet.max_column or 0), 20),
+                    values_only=True,
+                ),
+                start=1,
+            ):
+                values = [
+                    " ".join(str(value).split())
+                    for value in row
+                    if value is not None and str(value).strip()
+                ]
+                if not values:
+                    continue
+                nonempty_rows += 1
+                if sheet in visible_sheets[:sample_count]:
+                    sample_parts.append(
+                        f"{sheet.title}!{row_index}: " + " | ".join(values)
+                    )
+            if nonempty_rows >= 2:
+                table_count += 1
+
+        probe.table_count = table_count
+        probe.sample_text = "\n".join(sample_parts).strip()[:1500]
+        probe.text_chars = len(probe.sample_text)
+        probe.quality = text_quality_summary(probe.sample_text)
+        probe.readable = is_text_usable(probe.sample_text)
+        if not probe.sample_text:
+            probe.probe_error = "XLSX contains no readable cells in visible worksheets"
+    except Exception as exc:
+        probe.probe_error = str(exc)
+    finally:
+        if workbook is not None:
+            workbook.close()
+    return probe

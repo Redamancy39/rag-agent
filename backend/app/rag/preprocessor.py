@@ -6,7 +6,7 @@ from app.core.logger import get_logger
 from app.rag.ingestion_enhancer import detect_bad_text_pages, enhance_loaded_parts
 from app.rag.normalizers.llm_normalizer import normalize_with_llm
 from app.rag.ocr.paddleocr_engine import PaddleOcrEngine
-from app.rag.schemas import LoadedDocumentPart
+from app.rag.schemas import DocumentBlock
 from app.rag.text_quality import is_text_usable, text_quality_summary
 
 logger = get_logger(__name__)
@@ -18,11 +18,11 @@ class DocumentPreprocessor:
         *,
         file_type: str,
         path: str | Path,
-        parts: list[LoadedDocumentPart],
+        parts: list[DocumentBlock],
         stage_callback: Callable[[str, str], None] | None = None,
         force_ocr: bool = False,
         use_llm_preprocessing: bool | None = None,
-    ) -> list[LoadedDocumentPart]:
+    ) -> list[DocumentBlock]:
         settings = get_settings()
         processed_parts = list(parts)
 
@@ -41,7 +41,7 @@ class DocumentPreprocessor:
             or _text_length(processed_parts) < settings.OCR_MIN_EXTRACTED_CHARS
             or not parts_usable
         )
-        ocr_parts: list[LoadedDocumentPart] = []
+        ocr_parts: list[DocumentBlock] = []
 
         if (
             file_type == "pdf"
@@ -103,17 +103,17 @@ class DocumentPreprocessor:
         return processed_parts
 
 
-def _text_length(parts: list[LoadedDocumentPart]) -> int:
+def _text_length(parts: list[DocumentBlock]) -> int:
     return sum(len(part.text.strip()) for part in parts)
 
 
-def _parts_are_usable(parts: list[LoadedDocumentPart]) -> bool:
+def _parts_are_usable(parts: list[DocumentBlock]) -> bool:
     if not parts:
         return False
     combined_text = "\n".join(part.text for part in parts[:8])
     return is_text_usable(combined_text)
 
 
-def _parts_quality_summary(parts: list[LoadedDocumentPart]) -> dict:
+def _parts_quality_summary(parts: list[DocumentBlock]) -> dict:
     combined_text = "\n".join(part.text for part in parts[:8])
     return text_quality_summary(combined_text)

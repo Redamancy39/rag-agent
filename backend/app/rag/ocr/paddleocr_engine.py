@@ -11,7 +11,7 @@ from tempfile import TemporaryDirectory
 from typing import Any
 
 from app.core.config import get_settings
-from app.rag.schemas import LoadedDocumentPart
+from app.rag.schemas import DocumentBlock, SourceLocator
 
 _DLL_DIRECTORY_HANDLES: list[Any] = []
 OCR_WORKER_JSON_MARKER = "__RAG_OCR_JSON_START__"
@@ -47,7 +47,7 @@ class PaddleOcrEngine:
         self,
         path: str | Path,
         page_numbers: set[int] | None = None,
-    ) -> list[LoadedDocumentPart]:
+    ) -> list[DocumentBlock]:
         try:
             import fitz
         except ImportError as exc:
@@ -64,7 +64,7 @@ class PaddleOcrEngine:
                 page_numbers=page_numbers,
             )
 
-        parts: list[LoadedDocumentPart] = []
+        parts: list[DocumentBlock] = []
         page_filter = set(page_numbers or set())
         with TemporaryDirectory(prefix="rag_ocr_") as temp_dir:
             with fitz.open(str(file_path)) as pdf:
@@ -80,16 +80,16 @@ class PaddleOcrEngine:
                     lines = self.extract_image_lines(image_path)
                     text = _render_ocr_text(lines)
                     if text.strip():
-                        metadata = {
-                            "source": file_path.name,
-                            "page": page_index,
-                            "chunk_type": "ocr_page_text",
-                            "extraction_method": "paddleocr",
-                        }
+                        metadata: dict[str, Any] = {}
                         metadata.update(_ocr_metadata(lines))
                         parts.append(
-                            LoadedDocumentPart(
+                            DocumentBlock(
                                 text=text,
+                                block_type="ocr_page_text",
+                                source=file_path.name,
+                                document_format="pdf",
+                                extraction_method="paddleocr",
+                                locator=SourceLocator(page=page_index),
                                 metadata=metadata,
                             )
                         )
@@ -503,7 +503,7 @@ def _extract_pdf_via_subprocess(
     max_pages: int | None,
     *,
     page_numbers: set[int] | None = None,
-) -> list[LoadedDocumentPart]:
+) -> list[DocumentBlock]:
     env = os.environ.copy()
     env["PADDLEOCR_FORCE_IN_PROCESS"] = "1"
     env["PYTHONIOENCODING"] = "utf-8"
@@ -534,7 +534,7 @@ def _extract_pdf_via_subprocess(
         raise RuntimeError(f"PaddleOCR subprocess failed: {output}")
     payload = _parse_worker_payload(completed.stdout)
     return [
-        LoadedDocumentPart(
+        DocumentBlock(
             text=str(item.get("text") or ""),
             metadata=dict(item.get("metadata") or {}),
         )

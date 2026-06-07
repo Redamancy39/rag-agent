@@ -40,11 +40,19 @@ class Settings(BaseSettings):
     RERANKER_MODEL_NAME: str | None = None
     RERANKER_ENABLED: bool = True
     RERANKER_DEVICE: str = "auto"
-    RERANKER_CANDIDATE_TOP_K: int = 20
+    RERANKER_CANDIDATE_TOP_K: int = 32
     CHUNK_SIZE: int = 800
     CHUNK_OVERLAP: int = 120
     MAX_UPLOAD_SIZE_MB: int = 50
-    ALLOWED_FILE_EXTENSIONS: list[str] = [".txt", ".md", ".markdown", ".pdf"]
+    ALLOWED_FILE_EXTENSIONS: list[str] = [
+        ".txt",
+        ".md",
+        ".markdown",
+        ".pdf",
+        ".docx",
+        ".pptx",
+        ".xlsx",
+    ]
 
     OPENAI_API_KEY: str | None = None
     OPENAI_BASE_URL: str | None = "https://api.deepseek.com"
@@ -79,27 +87,29 @@ class Settings(BaseSettings):
     OCR_MAX_PAGES: int | None = None
     PDF_REJECT_GARBLED_TEXT: bool = True
 
-    RAG_TOP_K: int = 5
-    RAG_CONTEXT_MAX_CHARS: int = 6000
+    RAG_TOP_K: int = 6
+    RAG_CONTEXT_MAX_CHARS: int = 8000
     RAG_MIN_SCORE: float = 0.35
     RAG_MIN_READABLE_CHARS: int = 30
     RAG_MAX_GARBLED_TOKEN_RATIO: float = 0.08
-    RAG_CHAIN_RETRIEVAL_ENABLED: bool = True
-    RAG_CHAIN_MAX_QUERIES: int = 4
-    RAG_CHAIN_PER_QUERY_TOP_K: int = 8
-    RAG_CHAIN_EXPANSION_SCORE_FACTOR: float = 0.97
+    RAG_PRESERVE_PRE_RERANK_TOP_K: int = 3
+    RAG_MAX_RETURNED_HITS: int = 8
     QUERY_AGENT_ENABLED: bool = True
-    QUERY_AGENT_LLM_ENABLED: bool = True
-    QUERY_AGENT_MAX_QUERIES: int = 5
-    QUERY_AGENT_MAX_SUB_QUESTIONS: int = 5
+    QUERY_AGENT_LLM_ENABLED: bool = False
+    QUERY_AGENT_MAX_QUERIES: int = 3
+    QUERY_AGENT_MAX_SUB_QUESTIONS: int = 3
+    QUERY_DECOMPOSITION_ENABLED: bool = True
+    QUERY_DECOMPOSITION_PER_QUERY_TOP_K: int = 16
+    QUERY_DECOMPOSITION_SCORE_FACTOR: float = 0.96
+    QUERY_DECOMPOSITION_MAX_CANDIDATES: int = 48
     QUERY_AGENT_EVIDENCE_JUDGE_ENABLED: bool = True
     QUERY_AGENT_EVIDENCE_LLM_ENABLED: bool = False
     HYBRID_RETRIEVAL_ENABLED: bool = True
-    HYBRID_KEYWORD_CANDIDATE_TOP_K: int = 20
-    HYBRID_KEYWORD_MAX_CHUNKS: int = 3000
+    HYBRID_KEYWORD_CANDIDATE_TOP_K: int = 32
+    HYBRID_KEYWORD_MAX_CHUNKS: int = 5000
     HYBRID_BM25_ENABLED: bool = True
-    HYBRID_BM25_CANDIDATE_TOP_K: int = 12
-    HYBRID_BM25_MAX_CHUNKS: int = 3000
+    HYBRID_BM25_CANDIDATE_TOP_K: int = 32
+    HYBRID_BM25_MAX_CHUNKS: int = 5000
     HYBRID_BM25_K1: float = 1.5
     HYBRID_BM25_B: float = 0.75
     HYBRID_VECTOR_WEIGHT: float = 0.62

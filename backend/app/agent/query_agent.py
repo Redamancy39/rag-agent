@@ -378,6 +378,21 @@ def _build_sub_questions(
             sub_questions.append(f"{ref} 的相关规定是什么")
     if len(refs) >= 2:
         sub_questions.append(f"{refs[0]} 与 {refs[-1]} 的引用或适用关系是什么")
+    leaf_entities = _leaf_entities(entities)
+    primary_metrics = _primary_metric_terms(metrics)
+    if len(leaf_entities) >= 2:
+        metric_text = " ".join(primary_metrics[:2]).strip()
+        for entity in leaf_entities:
+            sub_questions.append(
+                f"{entity} {metric_text} 的规定是什么"
+                if metric_text
+                else f"{entity} 的相关规定是什么"
+            )
+    elif len(leaf_entities) == 1 and len(primary_metrics) >= 2:
+        for metric in primary_metrics:
+            sub_questions.append(
+                f"{leaf_entities[0]} {metric} 的规定是什么"
+            )
     return _unique_queries(sub_questions, limit=max_items)
 
 
@@ -414,7 +429,11 @@ def _repair_plan(plan: QueryPlan, fallback: QueryPlan) -> QueryPlan:
 
 def _clean_entity(value: str) -> str:
     text = STANDARD_REF_PATTERN.sub("", value)
-    text = re.sub(r"^(根据|按照|现行|标准|中|和|及|以及|,|，|、)+", "", text)
+    text = re.sub(
+        r"^(根据|按照|现行|标准|比较|对比|中|和|及|以及|,|，|、)+",
+        "",
+        text,
+    )
     text = text.strip(" ,，。？?；;：:的")
     return text[-28:] if len(text) > 28 else text
 
@@ -426,9 +445,49 @@ def _append_entity_variants(entities: list[str], entity: str) -> None:
     match = re.match(r"(.+?)在(.+?)(?:中|里|上)?$", entity)
     if match:
         variants.extend([_clean_entity(match.group(1)), _clean_entity(match.group(2))])
+    if re.search(r"[、和与]", entity):
+        variants.extend(
+            _clean_entity(item)
+            for item in re.split(r"[、和与]", entity)
+        )
     for variant in variants:
         if variant and variant not in entities:
             entities.append(variant)
+
+
+def _leaf_entities(entities: list[str]) -> list[str]:
+    leaves = [
+        entity
+        for entity in entities
+        if entity and not re.search(r"[、和与]", entity)
+    ]
+    return _unique_queries(leaves, limit=5)
+
+
+def _primary_metric_terms(metrics: list[str]) -> list[str]:
+    generic = {"限量", "最大残留限量", "残留限量", "添加量"}
+    candidates = [
+        metric
+        for metric in metrics
+        if metric not in generic and re.search(r"[\u4e00-\u9fff]", metric)
+    ]
+    if not candidates:
+        candidates = [metric for metric in metrics if metric]
+    selected: list[str] = []
+    for candidate in candidates:
+        compact = normalize_for_search(candidate).replace(" ", "")
+        if not compact:
+            continue
+        if any(
+            compact in normalize_for_search(existing).replace(" ", "")
+            or normalize_for_search(existing).replace(" ", "") in compact
+            for existing in selected
+        ):
+            continue
+        selected.append(candidate)
+        if len(selected) >= 3:
+            break
+    return selected
 
 
 def _clean_str(value: object) -> str:

@@ -1,7 +1,7 @@
 import json
 from typing import Any
 
-from app.rag.schemas import LoadedDocumentPart
+from app.rag.schemas import DocumentBlock, SourceLocator
 
 SUBJECT_KEYWORDS = (
     "食品",
@@ -44,7 +44,8 @@ def normalize_table(
     page: int,
     table_index: int,
     table_title: str | None = None,
-) -> list[LoadedDocumentPart]:
+    source: str | None = None,
+) -> list[DocumentBlock]:
     cleaned_rows = _clean_rows(rows)
     if len(cleaned_rows) < 2:
         return []
@@ -53,7 +54,7 @@ def normalize_table(
     if not headers or not data_rows:
         return []
 
-    parts: list[LoadedDocumentPart] = []
+    parts: list[DocumentBlock] = []
     table_id = _table_id(page=page, table_index=table_index)
     table_metadata = {
         "page": page,
@@ -68,16 +69,20 @@ def normalize_table(
     markdown = table_to_markdown(headers, data_rows)
     if markdown:
         parts.append(
-            LoadedDocumentPart(
+            DocumentBlock(
                 text=_with_table_source(
                     "表格原文转写：\n" + markdown,
                     page=page,
                     table_index=table_index,
                     table_title=table_title,
                 ),
+                block_type="table_markdown",
+                source=source,
+                document_format="pdf",
+                extraction_method="pymupdf_table",
+                locator=SourceLocator(page=page, table_index=table_index),
                 metadata={
                     **table_metadata,
-                    "chunk_type": "table_markdown",
                     "table_chunking_strategy": "row_aware_markdown",
                 },
             )
@@ -95,13 +100,21 @@ def normalize_table(
         )
         if text:
             parts.append(
-                LoadedDocumentPart(
+                DocumentBlock(
                     text=text,
+                    block_type="table_row_fact",
+                    source=source,
+                    document_format="pdf",
+                    extraction_method="pymupdf_table",
+                    locator=SourceLocator(
+                        page=page,
+                        table_index=table_index,
+                        block_index=row_index,
+                    ),
                     metadata={
                         **table_metadata,
                         "table_row_index": row_index,
                         "table_row_fields_json": json.dumps(row_map, ensure_ascii=False),
-                        "chunk_type": "table_row_fact",
                         "table_chunking_strategy": "row_fact",
                         **row_semantics,
                     },

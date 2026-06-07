@@ -32,7 +32,7 @@ from app.rag.normalizers.llm_normalizer import (
     select_llm_normalization_candidates,
 )
 from app.rag.preprocessor import DocumentPreprocessor
-from app.rag.schemas import DocumentChunk, LoadedDocumentPart
+from app.rag.schemas import DocumentBlock, DocumentChunk
 from app.rag.vector_store import ChromaVectorStore
 
 logger = get_logger(__name__)
@@ -78,7 +78,7 @@ class IngestionContext:
     settings: Settings = field(default_factory=get_settings)
     probe: IngestionProbe | None = None
     plan: IngestionPlan | None = None
-    parts: list[LoadedDocumentPart] = field(default_factory=list)
+    parts: list[DocumentBlock] = field(default_factory=list)
     chunks: list[DocumentChunk] = field(default_factory=list)
     indexed_chunks: list[DocumentChunk] = field(default_factory=list)
     embeddings: list[list[float]] = field(default_factory=list)
@@ -164,7 +164,7 @@ class ParseOcrNode:
 
     def run(self, context: IngestionContext) -> None:
         plan = context.plan
-        parts: list[LoadedDocumentPart] = []
+        parts: list[DocumentBlock] = []
         force_ocr_after_parse_failure = False
         if not plan or plan.primary_reader != "paddleocr":
             context.callbacks.set_status(
@@ -252,10 +252,22 @@ class ParseOcrNode:
                 raise
         if not context.parts:
             raise ValueError("No text content extracted from document")
-        details = {"parsed_part_count": len(context.parts)}
+        block_type_counts: dict[str, int] = {}
+        for block in context.parts:
+            block_type = str(block.block_type or "text")
+            block_type_counts[block_type] = block_type_counts.get(block_type, 0) + 1
+        details = {
+            "parsed_part_count": len(context.parts),
+            "document_block_count": len(context.parts),
+            "block_type_counts": block_type_counts,
+        }
         if "parse_fallback" in context.report:
             details["parse_fallback"] = context.report["parse_fallback"]
         context.report["parsed_part_count"] = len(context.parts)
+        context.report["document_blocks"] = {
+            "count": len(context.parts),
+            "block_type_counts": block_type_counts,
+        }
         return NodeOutcome(details=details)
 
 

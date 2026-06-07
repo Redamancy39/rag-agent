@@ -6,7 +6,7 @@ from collections.abc import Callable
 from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.rag.llm_client import LLMConfigError, OpenAICompatibleLLM
-from app.rag.schemas import DocumentChunk, LoadedDocumentPart
+from app.rag.schemas import DocumentBlock, DocumentChunk
 
 logger = get_logger(__name__)
 
@@ -87,7 +87,7 @@ class StructuredFactNormalizer:
         self.settings = get_settings()
         self._llm: OpenAICompatibleLLM | None = None
 
-    def normalize(self, part: LoadedDocumentPart) -> list[LoadedDocumentPart]:
+    def normalize(self, part: DocumentBlock) -> list[DocumentBlock]:
         chunk_type = str(part.metadata.get("chunk_type") or "")
         if chunk_type not in self.settings.PREPROCESS_LLM_TARGET_CHUNK_TYPES:
             return []
@@ -100,7 +100,7 @@ class StructuredFactNormalizer:
         if not isinstance(facts, list):
             return []
 
-        normalized_parts: list[LoadedDocumentPart] = []
+        normalized_parts: list[DocumentBlock] = []
         for fact_index, fact in enumerate(facts, start=1):
             if not isinstance(fact, dict):
                 continue
@@ -117,7 +117,7 @@ class StructuredFactNormalizer:
                     "llm_model": self.settings.OPENAI_MODEL_NAME,
                 }
             )
-            normalized_parts.append(LoadedDocumentPart(text=text, metadata=metadata))
+            normalized_parts.append(DocumentBlock(text=text, metadata=metadata))
         return normalized_parts
 
     def _get_llm(self) -> OpenAICompatibleLLM:
@@ -125,7 +125,7 @@ class StructuredFactNormalizer:
             self._llm = OpenAICompatibleLLM()
         return self._llm
 
-    def _build_user_prompt(self, part: LoadedDocumentPart) -> str:
+    def _build_user_prompt(self, part: DocumentBlock) -> str:
         text = part.text[: self.settings.PREPROCESS_LLM_MAX_INPUT_CHARS]
         page = part.metadata.get("page") or ""
         table_index = part.metadata.get("table_index") or ""
@@ -141,13 +141,13 @@ class StructuredFactNormalizer:
         )
 
 
-def normalize_with_llm(parts: list[LoadedDocumentPart]) -> list[LoadedDocumentPart]:
+def normalize_with_llm(parts: list[DocumentBlock]) -> list[DocumentBlock]:
     settings = get_settings()
     if not settings.PREPROCESS_LLM_ENABLED:
         return []
 
     normalizer = StructuredFactNormalizer()
-    normalized_parts: list[LoadedDocumentPart] = []
+    normalized_parts: list[DocumentBlock] = []
     for part in parts:
         try:
             normalized_parts.extend(normalizer.normalize(part))

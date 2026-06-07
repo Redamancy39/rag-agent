@@ -1,5 +1,6 @@
 import type {
   AuditLogRead,
+  ChatJobRead,
   ChatResponse,
   ChatLogRead,
   DocumentChunkRead,
@@ -249,6 +250,25 @@ export async function askQuestion(
     token,
     body: JSON.stringify(payload)
   })
+}
+
+export async function createChatJob(
+  token: string,
+  payload: {
+    question: string
+    document_ids?: number[]
+    top_k?: number
+  }
+): Promise<ChatJobRead> {
+  return request<ChatJobRead>('/chat/jobs', {
+    method: 'POST',
+    token,
+    body: JSON.stringify(payload)
+  })
+}
+
+export async function getChatJob(token: string, jobId: number): Promise<ChatJobRead> {
+  return request<ChatJobRead>(`/chat/jobs/${jobId}`, { token })
 }
 
 export async function listChatHistory(token: string, limit = 50): Promise<ChatLogRead[]> {

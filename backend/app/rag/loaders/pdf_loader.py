@@ -4,13 +4,13 @@ from typing import Any
 from app.core.logger import get_logger
 from app.rag.loaders.base import BaseLoader
 from app.rag.normalizers.table_normalizer import normalize_table
-from app.rag.schemas import LoadedDocumentPart
+from app.rag.schemas import DocumentBlock, SourceLocator
 
 logger = get_logger(__name__)
 
 
 class PdfLoader(BaseLoader):
-    def load(self, path: str | Path) -> list[LoadedDocumentPart]:
+    def load(self, path: str | Path) -> list[DocumentBlock]:
         try:
             return self._load_with_pymupdf(path)
         except Exception as pymupdf_exc:
@@ -27,14 +27,14 @@ class PdfLoader(BaseLoader):
                     f"PyMuPDF error: {pymupdf_exc}; pypdf error: {pypdf_exc}"
                 ) from pypdf_exc
 
-    def _load_with_pymupdf(self, path: str | Path) -> list[LoadedDocumentPart]:
+    def _load_with_pymupdf(self, path: str | Path) -> list[DocumentBlock]:
         try:
             import fitz
         except ImportError as exc:
             raise exc
 
         file_path = Path(path)
-        parts: list[LoadedDocumentPart] = []
+        parts: list[DocumentBlock] = []
         with fitz.open(str(file_path)) as pdf:
             for page_index, page in enumerate(pdf, start=1):
                 tables = _find_tables(page)
@@ -44,14 +44,13 @@ class PdfLoader(BaseLoader):
                 text = _extract_text_outside_tables(page, table_bboxes)
                 if text.strip():
                     parts.append(
-                        LoadedDocumentPart(
+                        DocumentBlock(
                             text=text,
-                            metadata={
-                                "source": file_path.name,
-                                "page": page_index,
-                                "chunk_type": "page_text",
-                                "extraction_method": "pymupdf_text",
-                            },
+                            block_type="page_text",
+                            source=file_path.name,
+                            document_format="pdf",
+                            extraction_method="pymupdf_text",
+                            locator=SourceLocator(page=page_index),
                         )
                     )
 
@@ -64,12 +63,13 @@ class PdfLoader(BaseLoader):
                             page=page_index,
                             table_index=table_index,
                             table_title=title,
+                            source=file_path.name,
                         )
                     )
 
         return parts
 
-    def _load_with_pypdf(self, path: str | Path) -> list[LoadedDocumentPart]:
+    def _load_with_pypdf(self, path: str | Path) -> list[DocumentBlock]:
         try:
             from pypdf import PdfReader
         except ImportError as exc:
@@ -79,19 +79,18 @@ class PdfLoader(BaseLoader):
 
         file_path = Path(path)
         reader = PdfReader(str(file_path))
-        parts: list[LoadedDocumentPart] = []
+        parts: list[DocumentBlock] = []
         for page_index, page in enumerate(reader.pages, start=1):
             text = page.extract_text() or ""
             if text.strip():
                 parts.append(
-                    LoadedDocumentPart(
+                    DocumentBlock(
                         text=text,
-                        metadata={
-                            "source": file_path.name,
-                            "page": page_index,
-                            "chunk_type": "page_text",
-                            "extraction_method": "pypdf_text",
-                        },
+                        block_type="page_text",
+                        source=file_path.name,
+                        document_format="pdf",
+                        extraction_method="pypdf_text",
+                        locator=SourceLocator(page=page_index),
                     )
                 )
         return parts

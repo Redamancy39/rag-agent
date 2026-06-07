@@ -35,6 +35,16 @@ SYNONYM_GROUPS: tuple[SynonymGroup, ...] = (
         aliases=("tvb-n", "tvbn", "tvb n", "t-vbn", "挥发性盐基氮"),
         category="metric",
     ),
+    SynonymGroup(
+        canonical="山梨酸及其钾盐",
+        aliases=("山梨酸钾", "山梨酸钾盐", "山梨酸及其钾盐", "山梨酸"),
+        category="additive",
+    ),
+    SynonymGroup(
+        canonical="肉罐头类",
+        aliases=("午餐肉罐头", "肉罐头", "罐头肉制品", "08.03.08"),
+        category="food_category",
+    ),
 )
 
 

@@ -1,3 +1,4 @@
+import os
 from functools import lru_cache
 from typing import Any
 
@@ -161,6 +162,7 @@ def _document_where(document_ids: list[int]) -> dict[str, Any]:
 
 @lru_cache(maxsize=4)
 def _get_collection(path: str, name: str):
+    os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
     try:
         import chromadb
     except ImportError as exc:

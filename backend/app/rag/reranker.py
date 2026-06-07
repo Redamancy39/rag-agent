@@ -29,9 +29,11 @@ class BgeReranker:
         reranked_hits: list[dict] = []
         for hit, rerank_score in zip(hits, scores, strict=False):
             updated_hit = dict(hit)
-            updated_hit["vector_score"] = hit.get("score")
+            original_score = _safe_float(hit.get("score"))
+            updated_hit.setdefault("vector_score", original_score)
+            updated_hit["pre_rerank_score"] = original_score
             updated_hit["rerank_score"] = float(rerank_score)
-            updated_hit["score"] = float(rerank_score)
+            updated_hit["score"] = original_score
             reranked_hits.append(updated_hit)
         reranked_hits.sort(key=lambda item: float(item.get("rerank_score") or 0.0), reverse=True)
         return reranked_hits[:top_k]
@@ -91,3 +93,10 @@ def _resolve_device(configured_device: str) -> str:
     except ImportError:
         return "cpu"
     return "cuda" if torch.cuda.is_available() else "cpu"
+
+
+def _safe_float(value: object) -> float:
+    try:
+        return float(value or 0.0)
+    except (TypeError, ValueError):
+        return 0.0

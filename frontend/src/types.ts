@@ -33,6 +33,7 @@ export interface DocumentChunkRead {
   id: string
   text: string
   metadata: Record<string, string | number | boolean | null>
+  location: SourceLocation | null
 }
 
 export interface DocumentProcessingJobRead {
@@ -77,6 +78,7 @@ export interface DocumentQualityReportRead {
   status_message: string | null
   total_chunks: number
   unique_pages: number
+  unique_locations: number
   chunk_type_counts: Record<string, number>
   quality_counts: Record<string, number>
   average_quality_score: number | null
@@ -157,11 +159,34 @@ export interface AuditLogRead {
   created_at: string
 }
 
+export interface SourceLocation {
+  kind: string
+  key: string
+  label: string
+  page: number | null
+  slide: number | null
+  sheet: string | null
+  cell_range: string | null
+  section_path: string | null
+  paragraph_index: number | null
+  table_index: number | null
+  block_index: number | null
+}
+
 export interface Citation {
+  citation_id: number | null
   document_id: number
   filename: string
   chunk_id: string | null
   page: number | null
+  slide: number | null
+  sheet: string | null
+  cell_range: string | null
+  section_path: string | null
+  paragraph_index: number | null
+  table_index: number | null
+  block_index: number | null
+  location: SourceLocation | null
   table: string | null
   chunk_type: string | null
   score: number | null
@@ -180,6 +205,14 @@ export interface EvidenceRow {
   score: number | null
   filename: string
   page: number | null
+  slide: number | null
+  section_path: string | null
+  sheet: string | null
+  cell_range: string | null
+  paragraph_index: number | null
+  table_index: number | null
+  block_index: number | null
+  location: SourceLocation | null
   table: string | null
   chunk_id: string | null
   keywords: string
@@ -190,6 +223,14 @@ export interface RetrievalTraceHit {
   score: number | null
   filename: string
   page: number | null
+  slide: number | null
+  section_path: string | null
+  sheet: string | null
+  cell_range: string | null
+  paragraph_index: number | null
+  table_index: number | null
+  block_index: number | null
+  location: SourceLocation | null
   table: string | null
   chunk_id: string | null
   retrieval_source: string | null
@@ -232,6 +273,14 @@ export interface EvidenceDecisionRead {
   warnings: string[]
 }
 
+export interface CitationValidationRead {
+  valid: boolean
+  cited_indices: number[]
+  invalid_indices: number[]
+  uncited_sections: string[]
+  warnings: string[]
+}
+
 export interface ChatResponse {
   answer: string
   sections: AnswerSections
@@ -240,8 +289,30 @@ export interface ChatResponse {
   retrieval_trace: RetrievalTraceStep[]
   query_plan: QueryPlanRead | null
   evidence_decision: EvidenceDecisionRead | null
+  citation_validation: CitationValidationRead
   retrieval_only: boolean
   log_id: number | null
+}
+
+export interface ChatJobRead {
+  id: number
+  user_id: number
+  status: string
+  stage: string
+  message: string | null
+  error_message: string | null
+  question: string
+  document_ids_json: number[] | null
+  top_k: number
+  progress_percent: number
+  progress_detail: string | null
+  trace_json: Array<Record<string, unknown>> | null
+  response_json: ChatResponse | null
+  log_id: number | null
+  created_at: string
+  started_at: string | null
+  finished_at: string | null
+  updated_at: string | null
 }
 
 export interface ChatLogRead {

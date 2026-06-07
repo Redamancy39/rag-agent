@@ -1179,7 +1179,7 @@ textarea {
   gap: 10px;
 }
 
-.answer-line span {
+.answer-line > span {
   color: #475569;
   font-size: 13px;
   font-weight: 730;
@@ -1192,6 +1192,90 @@ textarea {
   color: #1f2937;
   font-size: 13px;
   line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.answer-validation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.answer-validation > span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.answer-rich-text {
+  display: inline;
+}
+
+.inline-citation {
+  margin: 0 2px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0f766e;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.inline-citation:hover {
+  color: #115e59;
+  text-decoration: underline;
+}
+
+.citation-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.citation-chip {
+  max-width: 100%;
+  padding: 5px 8px;
+  overflow: hidden;
+  border: 1px solid #b8d7d2;
+  border-radius: 6px;
+  background: #f0fdfa;
+  color: #115e59;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.citation-chip:hover {
+  border-color: #5ea99d;
+  background: #e6f7f4;
+}
+
+.citation-popover {
+  display: grid;
+  gap: 7px;
+}
+
+.citation-popover strong {
+  color: #111827;
+  font-size: 13px;
+}
+
+.citation-popover span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.citation-popover p {
+  max-height: 220px;
+  margin: 0;
+  overflow: auto;
+  color: #334155;
+  font-size: 12px;
+  line-height: 1.65;
   white-space: pre-wrap;
 }
 
@@ -1242,6 +1326,49 @@ textarea {
 .retrieval-trace-list {
   display: grid;
   gap: 12px;
+}
+
+.live-rag-trace {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.live-rag-trace-title {
+  color: #111827;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.live-rag-trace-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+}
+
+.live-rag-trace-item div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.live-rag-trace-item strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #111827;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.live-rag-trace-item span {
+  color: #64748b;
+  font-size: 12px;
 }
 
 .query-agent-summary {
@@ -1759,7 +1886,7 @@ textarea {
     font-size: 20px;
   }
 
-  .answer-line span {
+  .answer-line > span {
     text-align: left;
   }
 

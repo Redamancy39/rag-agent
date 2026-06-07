@@ -1,4 +1,4 @@
-import re
+from collections.abc import Callable
 
 from app.agent.query_agent import QueryAgent, QueryPlan
 from app.core.config import get_settings
@@ -7,46 +7,11 @@ from app.rag.bm25_retriever import BM25Retriever
 from app.rag.embeddings import BgeEmbeddingModel
 from app.rag.keyword_retriever import KeywordRetriever
 from app.rag.reranker import get_optional_reranker
+from app.rag.schemas import SourceLocator
 from app.rag.search_tokenizer import normalize_for_search
 from app.rag.vector_store import ChromaVectorStore
 
 logger = get_logger(__name__)
-
-STANDARD_REF_PATTERN = re.compile(
-    r"(?<![A-Za-z0-9])GB(?:/T)?\s*\d+(?:\.\d+)?(?:[-\u2010-\u2014\u2212]\d{4})?",
-    re.IGNORECASE,
-)
-CROSS_DOCUMENT_MARKERS = (
-    "应符合",
-    "引用",
-    "参照",
-    "同时符合",
-    "根据现行",
-    "有何不同",
-    "分别",
-    "都引用",
-)
-CROSS_DOCUMENT_TERMS = (
-    "污染物限量",
-    "食品添加剂",
-    "致病菌",
-    "微生物",
-    "铅",
-    "镉",
-    "砷",
-    "无机砷",
-    "甲基汞",
-    "黄曲霉毒素B1",
-    "菌落总数",
-    "大肠菌群",
-    "沙门氏菌",
-    "金黄色葡萄球菌",
-    "氨基酸态氮",
-    "酸价",
-    "过氧化值",
-    "限量",
-    "检验方法",
-)
 
 
 class PermissionAwareRetriever:
@@ -89,13 +54,33 @@ class PermissionAwareRetriever:
         question: str,
         allowed_document_ids: list[int],
         top_k: int | None = None,
+        progress_callback: Callable[[dict], None] | None = None,
     ) -> tuple[list[dict], list[dict], QueryPlan]:
         query_plan = QueryAgent().plan(question)
+        retrieval_queries = _retrieval_queries_from_plan(
+            query_plan,
+            enabled=self.settings.QUERY_DECOMPOSITION_ENABLED,
+            max_queries=self.settings.QUERY_AGENT_MAX_QUERIES,
+        )
+        _emit_progress(
+            progress_callback,
+            stage="query_decompose",
+            message=(
+                f"复杂问题已拆分为 {len(retrieval_queries)} 条检索查询"
+                if len(retrieval_queries) > 1
+                else "问题无需分解，使用归一化查询"
+            ),
+            progress=20,
+            query_count=len(retrieval_queries),
+            queries=[query for query, _source in retrieval_queries],
+            decomposed=len(retrieval_queries) > 1,
+        )
         hits, trace = self._retrieve_with_optional_trace(
             question,
             allowed_document_ids=allowed_document_ids,
             top_k=top_k,
             query_plan=query_plan,
+            retrieval_queries=retrieval_queries,
         )
         return hits, trace, query_plan
 
@@ -106,6 +91,7 @@ class PermissionAwareRetriever:
         allowed_document_ids: list[int],
         top_k: int | None,
         query_plan: QueryPlan | None,
+        retrieval_queries: list[tuple[str, str]] | None = None,
     ) -> tuple[list[dict], list[dict]]:
         final_top_k = top_k or self.settings.RAG_TOP_K
         candidate_top_k = (
@@ -113,46 +99,77 @@ class PermissionAwareRetriever:
             if self._should_rerank()
             else final_top_k
         )
-        queries = self._queries_from_plan(question, query_plan)
-        hits: list[dict] = []
+        planned_queries = retrieval_queries or [
+            (
+                query_plan.normalized_question
+                if query_plan is not None and query_plan.normalized_question
+                else question,
+                "normalized",
+            )
+        ]
+        primary_query = planned_queries[0][0]
+        lexical_chunks = self._load_lexical_chunks(allowed_document_ids)
+        all_hits: list[dict] = []
         trace: list[dict] = []
-        for query_index, query in enumerate(queries):
+        for query_index, (query, query_source) in enumerate(planned_queries):
             query_top_k = (
                 candidate_top_k
                 if query_index == 0
-                else max(final_top_k, self.settings.RAG_CHAIN_PER_QUERY_TOP_K)
+                else max(
+                    final_top_k,
+                    self.settings.QUERY_DECOMPOSITION_PER_QUERY_TOP_K,
+                )
             )
             query_hits = self._retrieve_single_query(
                 query,
                 allowed_document_ids=allowed_document_ids,
                 top_k=query_top_k,
+                lexical_chunks=lexical_chunks,
             )
             for hit in query_hits:
                 updated = dict(hit)
-                updated["chain_query"] = query
-                updated["chain_query_index"] = query_index
+                updated["retrieval_query"] = query
+                updated["retrieval_query_index"] = query_index
+                updated["retrieval_query_source"] = query_source
                 if query_index > 0:
-                    updated["score"] = _safe_float(updated.get("score")) * self.settings.RAG_CHAIN_EXPANSION_SCORE_FACTOR
-                    updated["chain_query_source"] = "expanded"
-                else:
-                    updated["chain_query_source"] = "original"
-                hits.append(updated)
+                    updated["score"] = (
+                        _safe_float(updated.get("score"))
+                        * self.settings.QUERY_DECOMPOSITION_SCORE_FACTOR
+                    )
+                all_hits.append(updated)
             trace.append(
                 _trace_step(
                     query_index=query_index,
                     query=query,
-                    source="original" if query_index == 0 else "expanded",
+                    source=query_source,
                     hits=query_hits,
                 )
             )
 
-        hits = self._merge_chain_hits(hits)
+        candidate_limit = (
+            max(
+                final_top_k,
+                self.settings.QUERY_DECOMPOSITION_MAX_CANDIDATES,
+            )
+            if len(planned_queries) > 1
+            else candidate_top_k
+        )
+        hits = _merge_decomposed_hits(all_hits)[:candidate_limit]
+        if len(planned_queries) > 1:
+            trace.append(
+                _trace_step(
+                    query_index=len(trace),
+                    query=primary_query,
+                    source="decomposition_merged",
+                    hits=hits,
+                )
+            )
         if not self._should_rerank() or not hits:
             final_hits = hits[:final_top_k]
             trace.append(
                 _trace_step(
                     query_index=len(trace),
-                    query=question,
+                    query=primary_query,
                     source="merged",
                     hits=final_hits,
                 )
@@ -164,19 +181,29 @@ class PermissionAwareRetriever:
             trace.append(
                 _trace_step(
                     query_index=len(trace),
-                    query=question,
+                    query=primary_query,
                     source="merged_without_reranker",
                     hits=final_hits,
                 )
             )
             return final_hits, trace
+        preserved_hits = hits[: self.settings.RAG_PRESERVE_PRE_RERANK_TOP_K]
         try:
-            final_hits = reranker.rerank(question, hits, final_top_k)
+            reranked_hits = reranker.rerank(primary_query, hits, final_top_k)
+            final_hits = _merge_preserved_hits(
+                reranked_hits,
+                preserved_hits,
+                limit=_return_limit(
+                    final_top_k=final_top_k,
+                    preserve_top_k=self.settings.RAG_PRESERVE_PRE_RERANK_TOP_K,
+                    max_returned_hits=self.settings.RAG_MAX_RETURNED_HITS,
+                ),
+            )
             trace.append(
                 _trace_step(
                     query_index=len(trace),
-                    query=question,
-                    source="reranked",
+                    query=primary_query,
+                    source="reranked_with_preserved_recall",
                     hits=final_hits,
                 )
             )
@@ -187,7 +214,7 @@ class PermissionAwareRetriever:
         trace.append(
             _trace_step(
                 query_index=len(trace),
-                query=question,
+                query=primary_query,
                 source="reranker_failed",
                 hits=final_hits,
             )
@@ -200,6 +227,7 @@ class PermissionAwareRetriever:
         *,
         allowed_document_ids: list[int],
         top_k: int,
+        lexical_chunks: list[dict] | None = None,
     ) -> list[dict]:
         hits: list[dict] = []
         try:
@@ -212,17 +240,8 @@ class PermissionAwareRetriever:
         except Exception as exc:
             logger.warning("Vector retrieval failed, falling back to lexical retrieval: %s", exc)
         if self.settings.HYBRID_RETRIEVAL_ENABLED:
-            try:
-                lexical_chunks = self.vector_store.get_chunks_for_documents(
-                    allowed_document_ids,
-                    limit=max(
-                        self.settings.HYBRID_KEYWORD_MAX_CHUNKS,
-                        self.settings.HYBRID_BM25_MAX_CHUNKS,
-                    ),
-                )
-            except Exception as exc:
-                logger.warning("Lexical chunk loading failed: %s", exc)
-                lexical_chunks = []
+            if lexical_chunks is None:
+                lexical_chunks = self._load_lexical_chunks(allowed_document_ids)
             keyword_hits = self.keyword_retriever.retrieve(
                 question,
                 allowed_document_ids=allowed_document_ids,
@@ -242,40 +261,23 @@ class PermissionAwareRetriever:
             hits = self._merge_hybrid_hits(hits, keyword_hits, bm25_hits)
         return hits[:top_k]
 
-    def _queries_from_plan(
-        self,
-        question: str,
-        query_plan: QueryPlan | None,
-    ) -> list[str]:
-        if query_plan is not None and query_plan.rewritten_queries:
-            return query_plan.rewritten_queries[: self.settings.QUERY_AGENT_MAX_QUERIES]
-        return self._expanded_queries(question)
+    def _load_lexical_chunks(self, allowed_document_ids: list[int]) -> list[dict]:
+        if not self.settings.HYBRID_RETRIEVAL_ENABLED:
+            return []
+        try:
+            return self.vector_store.get_chunks_for_documents(
+                allowed_document_ids,
+                limit=max(
+                    self.settings.HYBRID_KEYWORD_MAX_CHUNKS,
+                    self.settings.HYBRID_BM25_MAX_CHUNKS,
+                ),
+            )
+        except Exception as exc:
+            logger.warning("Lexical chunk loading failed: %s", exc)
+            return []
 
     def _should_rerank(self) -> bool:
         return bool(self.settings.RERANKER_ENABLED and self.settings.RERANKER_MODEL_NAME)
-
-    def _expanded_queries(self, question: str) -> list[str]:
-        if not self.settings.RAG_CHAIN_RETRIEVAL_ENABLED:
-            return [question]
-        if not _looks_like_cross_document_question(question):
-            return [question]
-
-        queries = [question]
-        refs = _standard_refs(question)
-        core_terms = _core_terms(question)
-        target_tail = _target_standard_tail(question)
-
-        for ref in refs:
-            if target_tail:
-                queries.append(f"{ref} {target_tail}")
-            if core_terms:
-                queries.append(f"{ref} {' '.join(core_terms)}")
-
-        if len(refs) >= 2 and core_terms:
-            queries.append(f"{refs[-1]} {' '.join(core_terms)}")
-            queries.append(f"{refs[0]} 引用 {refs[-1]} {' '.join(core_terms[:3])}")
-
-        return _unique_queries(queries, limit=self.settings.RAG_CHAIN_MAX_QUERIES)
 
     def _merge_hybrid_hits(
         self,
@@ -368,37 +370,6 @@ class PermissionAwareRetriever:
             reverse=True,
         )
 
-    def _merge_chain_hits(self, hits: list[dict]) -> list[dict]:
-        merged: dict[str, dict] = {}
-        for hit in hits:
-            chunk_id = str(hit.get("id") or "")
-            if not chunk_id:
-                continue
-            if chunk_id not in merged:
-                updated = dict(hit)
-                updated["chain_queries"] = [hit.get("chain_query")]
-                merged[chunk_id] = updated
-                continue
-
-            existing = merged[chunk_id]
-            if _safe_float(hit.get("score")) > _safe_float(existing.get("score")):
-                for key, value in hit.items():
-                    if key != "chain_query":
-                        existing[key] = value
-            existing["chain_queries"] = _merge_terms(
-                existing.get("chain_queries") or [],
-                [hit.get("chain_query")],
-            )
-            existing["retrieval_sources"] = _merge_terms(
-                existing.get("retrieval_sources") or [existing.get("retrieval_source") or "unknown"],
-                hit.get("retrieval_sources") or [hit.get("retrieval_source") or "unknown"],
-            )
-
-        return sorted(
-            merged.values(),
-            key=lambda item: float(item.get("score") or 0.0),
-            reverse=True,
-        )
 
 
 def _safe_float(value: object) -> float:
@@ -429,6 +400,39 @@ def _append_source(hit: dict, source: str) -> None:
     hit["retrieval_sources"] = sources
 
 
+def _merge_preserved_hits(
+    primary_hits: list[dict],
+    preserved_hits: list[dict],
+    *,
+    limit: int,
+) -> list[dict]:
+    merged: list[dict] = []
+    seen: set[str] = set()
+    for hit in [*primary_hits, *preserved_hits]:
+        chunk_id = str(hit.get("id") or "")
+        if not chunk_id or chunk_id in seen:
+            continue
+        updated = dict(hit)
+        if hit in preserved_hits and hit not in primary_hits:
+            updated["preserved_from_pre_rerank"] = True
+        merged.append(updated)
+        seen.add(chunk_id)
+        if len(merged) >= limit:
+            break
+    return merged
+
+
+def _return_limit(
+    *,
+    final_top_k: int,
+    preserve_top_k: int,
+    max_returned_hits: int,
+) -> int:
+    if preserve_top_k <= 0:
+        return final_top_k
+    return max(final_top_k, min(max_returned_hits, final_top_k + preserve_top_k))
+
+
 def _trace_step(
     *,
     query_index: int,
@@ -450,11 +454,20 @@ def _trace_step(
 
 def _trace_hit(*, rank: int, hit: dict) -> dict:
     metadata = hit.get("metadata") or {}
+    locator = SourceLocator.from_metadata(metadata)
     return {
         "rank": rank,
         "score": hit.get("score"),
         "filename": str(metadata.get("filename") or ""),
-        "page": _to_int_or_none(metadata.get("page")),
+        "page": locator.page,
+        "slide": locator.slide,
+        "section_path": locator.section_path,
+        "sheet": locator.sheet,
+        "cell_range": locator.cell_range,
+        "paragraph_index": locator.paragraph_index,
+        "table_index": locator.table_index,
+        "block_index": locator.block_index,
+        "location": locator.to_read_dict(),
         "table": str(metadata.get("table_label") or metadata.get("table_number") or "") or None,
         "chunk_id": hit.get("id"),
         "retrieval_source": str(hit.get("retrieval_source") or ""),
@@ -464,13 +477,6 @@ def _trace_hit(*, rank: int, hit: dict) -> dict:
             if str(term)
         ][:8],
     }
-
-
-def _to_int_or_none(value: object) -> int | None:
-    try:
-        return int(value) if value is not None else None
-    except (TypeError, ValueError):
-        return None
 
 
 def _merge_terms(left: list, right: list) -> list[str]:
@@ -485,93 +491,101 @@ def _merge_terms(left: list, right: list) -> list[str]:
     return merged[:16]
 
 
-def _looks_like_cross_document_question(question: str) -> bool:
-    normalized = normalize_for_search(question)
-    refs = _standard_refs(question)
-    if len(refs) >= 2:
-        return True
-    if any(marker in question for marker in CROSS_DOCUMENT_MARKERS):
-        return True
-    return "crossdoc" in normalized
+def _retrieval_queries_from_plan(
+    plan: QueryPlan,
+    *,
+    enabled: bool,
+    max_queries: int,
+) -> list[tuple[str, str]]:
+    primary = plan.normalized_question or plan.original_question
+    queries: list[tuple[str, str]] = [(primary, "normalized")]
+    if not enabled or max_queries <= 1 or not _should_decompose(plan):
+        return queries
 
-
-def _standard_refs(question: str) -> list[str]:
-    refs: list[str] = []
-    seen: set[str] = set()
-    for match in STANDARD_REF_PATTERN.finditer(question):
-        ref = _normalize_standard_ref(match.group(0))
-        key = normalize_for_search(ref).replace(" ", "")
-        if key in seen:
+    candidates = [
+        *[(query, "decomposed") for query in plan.sub_questions],
+        *[(query, "rewritten") for query in plan.rewritten_queries],
+    ]
+    seen = {normalize_for_search(primary).replace(" ", "")}
+    for query, source in candidates:
+        text = str(query or "").strip()
+        key = normalize_for_search(text).replace(" ", "")
+        if not key or key in seen:
             continue
         seen.add(key)
-        refs.append(ref)
-    return refs
-
-
-def _normalize_standard_ref(value: str) -> str:
-    text = value.upper().replace(" ", "")
-    text = re.sub(r"[\u2010-\u2014\u2212]", "-", text)
-    return text.replace("GB/T", "GB/T ")
-
-
-def _target_standard_tail(question: str) -> str:
-    refs = _standard_refs(question)
-    if not refs:
-        return ""
-    last_ref = refs[-1]
-    compact_question = question.replace(" ", "")
-    compact_ref = last_ref.replace(" ", "")
-    index = compact_question.rfind(compact_ref)
-    if index < 0:
-        return ""
-    tail = compact_question[index + len(compact_ref) :]
-    tail = re.sub(r"^[中，,：:的]*", "", tail)
-    tail = tail.replace("是多少？", "").replace("是什么？", "")
-    return tail[:80]
-
-
-def _core_terms(question: str) -> list[str]:
-    terms: list[str] = []
-    for term in CROSS_DOCUMENT_TERMS:
-        if term in question and term not in terms:
-            terms.append(term)
-    for term in _food_or_subject_terms(question):
-        if term not in terms:
-            terms.append(term)
-    return terms[:8]
-
-
-def _food_or_subject_terms(question: str) -> list[str]:
-    terms: list[str] = []
-    for indicator in CROSS_DOCUMENT_TERMS:
-        pattern = rf"([\u4e00-\u9fffA-Za-z0-9（）()、·\-]+?)的{re.escape(indicator)}"
-        for match in re.finditer(pattern, question):
-            value = _clean_subject_term(match.group(1))
-            if value and value not in terms:
-                terms.append(value)
-    return terms[:4]
-
-
-def _clean_subject_term(value: str) -> str:
-    text = re.sub(STANDARD_REF_PATTERN, "", value)
-    text = re.sub(r"^(中|，|,|和|与|及|根据|现行|标准体系)+", "", text)
-    text = re.sub(r"^(GB)?\d+(?:\.\d+)?(?:-\d{4})?", "", text, flags=re.I)
-    text = re.sub(r"^(中|，|,|和|与|及|根据|现行|标准体系)+", "", text)
-    text = text.strip(" ，,：:。？")
-    if len(text) > 24:
-        text = text[-24:]
-    return text
-
-
-def _unique_queries(queries: list[str], *, limit: int) -> list[str]:
-    unique: list[str] = []
-    seen: set[str] = set()
-    for query in queries:
-        normalized = normalize_for_search(query).replace(" ", "")
-        if not normalized or normalized in seen:
-            continue
-        seen.add(normalized)
-        unique.append(query)
-        if len(unique) >= limit:
+        queries.append((text, source))
+        if len(queries) >= max_queries:
             break
-    return unique or queries[:1]
+    return queries
+
+
+def _should_decompose(plan: QueryPlan) -> bool:
+    if plan.question_type in {"cross_document", "comparison", "multi_hop"}:
+        return True
+    if len(plan.standard_refs) >= 2 or len(plan.entities) >= 2:
+        return True
+    return len(plan.sub_questions) >= 2
+
+
+def _merge_decomposed_hits(hits: list[dict]) -> list[dict]:
+    merged: dict[str, dict] = {}
+    for hit in hits:
+        chunk_id = str(hit.get("id") or "")
+        if not chunk_id:
+            continue
+        query = str(hit.get("retrieval_query") or "")
+        query_source = str(hit.get("retrieval_query_source") or "")
+        if chunk_id not in merged:
+            updated = dict(hit)
+            updated["retrieval_queries"] = [query] if query else []
+            updated["retrieval_query_sources"] = (
+                [query_source] if query_source else []
+            )
+            merged[chunk_id] = updated
+            continue
+
+        existing = merged[chunk_id]
+        existing_queries = _merge_terms(
+            existing.get("retrieval_queries") or [],
+            [query] if query else [],
+        )
+        existing_query_sources = _merge_terms(
+            existing.get("retrieval_query_sources") or [],
+            [query_source] if query_source else [],
+        )
+        existing_retrieval_sources = _merge_terms(
+            existing.get("retrieval_sources")
+            or [existing.get("retrieval_source") or "unknown"],
+            hit.get("retrieval_sources")
+            or [hit.get("retrieval_source") or "unknown"],
+        )
+        existing_matched_terms = _merge_terms(
+            existing.get("matched_terms") or [],
+            hit.get("matched_terms") or [],
+        )
+        if _safe_float(hit.get("score")) > _safe_float(existing.get("score")):
+            replacement = dict(hit)
+            replacement["retrieval_queries"] = existing_queries
+            replacement["retrieval_query_sources"] = existing_query_sources
+            replacement["retrieval_sources"] = existing_retrieval_sources
+            replacement["matched_terms"] = existing_matched_terms
+            merged[chunk_id] = replacement
+        else:
+            existing["retrieval_queries"] = existing_queries
+            existing["retrieval_query_sources"] = existing_query_sources
+            existing["retrieval_sources"] = existing_retrieval_sources
+            existing["matched_terms"] = existing_matched_terms
+
+    return sorted(
+        merged.values(),
+        key=lambda item: _safe_float(item.get("score")),
+        reverse=True,
+    )
+
+
+def _emit_progress(
+    callback: Callable[[dict], None] | None,
+    **event: object,
+) -> None:
+    if callback is not None:
+        callback(dict(event))

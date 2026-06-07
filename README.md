@@ -6,7 +6,7 @@
 
 - **RAG 知识库系统**：支持文档上传、解析、分块、Embedding、ChromaDB 入库、权限过滤检索、引用返回和问答日志。
 - **轻量 Ingestion Agent**：已接入规则化文件探测与处理策略选择，负责判断是否需要 OCR、表格增强和 LLM 切块整理。
-- **Agent 化演进项目**：LangGraph 目录已预留，下一阶段会把入库和问答链路拆成可观测节点。
+- **高可靠问答链路**：在线问答使用单轮、权限约束的 RAG 流程；复杂问题按需拆成最多 3 条子查询并批量召回，简单问题仍只检索一次，不执行多轮 Agent 重试；生成后校验 `[n]` 引用编号与实际证据来源。
 
 ## 当前完成度
 
@@ -22,7 +22,7 @@
 | 混合检索 | 已接入 | 向量召回 + BM25 + 关键词召回 + Reranker 精排 |
 | 权限系统 | 已接入 | owner、用户授权、部门授权；后端接口和 RAG 检索阶段都做权限过滤 |
 | 日志与可观测性 | 已接入 | 文档处理任务、质量报告、问答日志、权限审计日志 |
-| LangGraph Agent | 预留/下一阶段 | 当前问答仍是服务链路，后续拆成 LangGraph 节点 |
+| 问答侧 Agent | 有意收缩 | 不启用多轮自主检索；保留规则化查询归一化、证据判断和引用校验，控制延迟与 API 成本 |
 
 ## 面试演示主线
 
@@ -44,17 +44,20 @@
 登录/JWT
   -> 上传文档
   -> Ingestion Agent 文件探测
-  -> PDF / Markdown / TXT 解析
+  -> PDF / DOCX / PPTX / XLSX / Markdown / TXT 解析
   -> OCR fallback / 表格事实化 / LLM 切块整理
   -> 规则分块 + chunk 质量评分
   -> BGE Embedding
   -> ChromaDB 入库
   -> 用户/部门权限过滤
+  -> 问题归一化 + 复杂问题按需分解
   -> 向量 + BM25 + 关键词混合召回
   -> BGE Reranker 精排
+  -> 规则证据充分性判断
   -> 证据约束 Prompt
-  -> LLM 生成四行结构化答案
-  -> 返回来源引用 + 写入问答日志
+  -> LLM 生成带 [n] 标注的四行结构化答案
+  -> 后端校验引用编号并绑定文件/页码/表号/块 ID
+  -> 返回可点击来源 + 写入问答日志
 ```
 
 回答格式默认按以下结构返回：
@@ -226,14 +229,14 @@ python scripts\rejudge_rag_eval.py `
 ## 当前工程边界
 
 - 当前 Agent 更准确地说是轻量 Ingestion Agent，不应包装成完整自主 Agent。
-- LangGraph 问答 Agent 目录已预留，后续会把权限获取、问题分类、检索规划、精排、证据检查、答案生成和日志拆成节点。
+- 在线问答采用单轮受控 RAG 链路：权限过滤、查询归一化、按需查询分解、混合检索、精排、证据判断、生成和引用校验。查询分解只扩展同一轮候选召回，不触发自动反思和多轮重试。
 - 文档处理任务目前使用 FastAPI BackgroundTasks + 本地 semaphore，后续可以迁移到 Celery / RQ。
 - 当前业务库是 SQLite，生产环境可以迁移 PostgreSQL。
 - ChromaDB 负责向量和 metadata 检索；后续建议增加 `document_chunks` 表，把 chunk 正文同步保存到 SQLite，提升 BM25 和质量报告稳定性。
 
 ## 后续路线
 
-下一阶段优先做 Agent 化重构：
+下一阶段优先增强文档适配和可解释性：
 
 1. **Ingestion Agent 节点化**
    - FileProbe
@@ -244,15 +247,14 @@ python scripts\rejudge_rag_eval.py `
    - Index
    - QualityReport
 
-2. **QA Agent 节点化**
-   - Permission
-   - QuestionClassifier
-   - RetrievalPlanner
-   - HybridRetrieve
-   - Rerank
-   - EvidenceCheck
-   - Answer
-   - Log
+2. **多类型文档与统一来源定位**
+   - 已完成 DOCX 标题层级、连续段落和表格行解析
+   - 已完成 PPTX 幻灯片、文本框、表格和演讲者备注解析
+   - 已完成 XLSX 工作表、数据区域、表头、公式和单元格范围解析
+   - 已完成统一 `DocumentBlock` 中间结构，现有 PDF / DOCX / PPTX / XLSX / TXT / Markdown
+     解析结果均转换为格式无关的文本块、内容类型、提取方式和来源定位
+   - PDF 页码 / DOCX 标题路径 / PPTX 幻灯片 / XLSX 工作表与单元格范围等来源定位
+   - 检索、引用、质量报告和前端统一使用 `SourceLocator` 的位置类型、稳定键和中文标签
 
 3. **工程稳定性**
    - 增加 `document_chunks` SQLite 表
@@ -267,6 +269,7 @@ python scripts\rejudge_rag_eval.py `
 - [PDF 预处理策略](docs/PDF_PREPROCESSING.md)
 - [切块质量检查](docs/CHUNK_QUALITY_CHECK.md)
 - [Ingestion Agent 设计](docs/INGESTION_AGENT_DESIGN.md)
+- [DocumentBlock 统一中间结构](docs/DOCUMENT_BLOCK.md)
 - [OCR GPU 与 MinerU 评估](docs/OCR_GPU_AND_MINERU.md)
 - [OCR、切块质量与 LLM 归一化](docs/OCR_CHUNK_QUALITY_LLM.md)
 - [用户组、部门权限与审计日志](docs/PERMISSION_AUDIT.md)

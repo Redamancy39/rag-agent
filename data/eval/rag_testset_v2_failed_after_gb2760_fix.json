@@ -1,0 +1,1608 @@
+{
+  "name": "rag-testset-v2-failed-after-gb2760-fix",
+  "cases": [
+    {
+      "id": "V2-B01-Q009",
+      "question": "GB 2760-2024中，日落黄用于食品分类号06.11（面糊（如用于鱼和禽肉的拖面糊）、裹粉、煎炸粉）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "06.11",
+        "面糊（如用于鱼和禽肉的拖面糊）、裹粉、煎炸粉",
+        "0.3 g/kg",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=6; page=; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q015",
+      "question": "GB 2760-2024中，己二酸在胶基糖果中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "己二酸",
+        "胶基糖果",
+        "4.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=15; page=54; table=表A.1; cleaned_expected_keywords_removed_unrelated_jelly_powder_remark"
+    },
+    {
+      "id": "V2-B01-Q018",
+      "question": "GB 2760-2024中，硫酸钙在豆类制品中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "硫酸钙",
+        "豆类制品",
+        "按生产需要适量使用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "mixed",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=18; page=79; table=表A.1; cleaned_expected_keywords_removed_unrelated_noodle_exception"
+    },
+    {
+      "id": "V2-B01-Q034",
+      "question": "GB 2760-2024中，亚硝酸钠用于食品分类号08.03.02（熏、烧、烤肉类）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "亚硝酸钠",
+        "08.03.02",
+        "熏、烧、烤肉类",
+        "0.15 g/kg",
+        "以亚硝酸钠计||残留量≤30 mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=9; page=; table=表A.1; cleaned_long_food_name_keyword"
+    },
+    {
+      "id": "V2-B01-Q041",
+      "question": "GB 2760-2024中，-酒石酸和dl-酒石酸的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-酒石酸和dl-酒石酸",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=44; page=10; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q046",
+      "question": "GB 2760-2024中，使用规定索引的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "使用规定索引",
+        "使用范围"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=49; page=2; table=表C.2"
+    },
+    {
+      "id": "V2-B01-Q047",
+      "question": "GB 2760-2024中，国际编码系统（INS）在食品添加剂编码中表示什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "国际编码系统||INS",
+        "食品添加剂编码",
+        "CAC"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表C.2"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=50; page=4; table=表C.2; cleaned_broken_ins_question"
+    },
+    {
+      "id": "V2-B01-Q049",
+      "question": "GB 2760-2024中，抗坏血酸的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "抗坏血酸",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=52; page=9; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q050",
+      "question": "GB 2760-2024中，-酒石酸、dl-酒石酸在腌渍的蔬菜中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-酒石酸、dl-酒石酸",
+        "腌渍的蔬菜",
+        "3.0 g/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=53; page=10; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q052",
+      "question": "GB 2760-2024中，植酸用于食品分类号02.01（基本不含水的脂肪和油）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "植酸",
+        "02.01",
+        "基本不含水的脂肪和油",
+        "0.2 g/kg",
+        "以植酸计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=28; page=; table=表A.1; cleaned_runon_remark_keyword"
+    },
+    {
+      "id": "V2-B01-Q054",
+      "question": "GB 2760-2024中，-胡萝卜素的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "-胡萝卜素",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=57; page=12; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q055",
+      "question": "GB 2760-2024中，日落黄用于食品分类号06.11（面糊、裹粉、煎炸粉）时，最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "日落黄",
+        "06.11",
+        "面糊||裹粉||煎炸粉",
+        "0.3",
+        "以日落黄计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "additive_usage",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; replacement_for_ambiguous_food_code; chunk=39; page=; table=表A.1; cleaned_long_food_name_keyword"
+    },
+    {
+      "id": "V2-B01-Q058",
+      "question": "GB 2760-2024中，ε-聚赖氨酸的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "ε-聚赖氨酸",
+        "17.037",
+        "防腐剂",
+        "无||未给出||—"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=63; page=16; table=表A.1; cleaned_missing_ins_alias"
+    },
+    {
+      "id": "V2-B01-Q071",
+      "question": "GB 2760-2024中，茶黄素的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "茶黄素",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=79; page=28; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q075",
+      "question": "GB 2760-2024中，刺梧桐胶的使用规定或适用范围是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "刺梧桐胶",
+        "最大使用量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=83; page=30; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q085",
+      "question": "GB 2760-2024中，二氧化碳的CNS号、INS号和功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "二氧化碳",
+        "17.014",
+        "防腐剂、其他",
+        "290"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=93; page=39; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q087",
+      "question": "GB 2760-2024中，番茄红在饮料类（14.01包装饮用水、14.02.01果蔬汁(浆)、14.02.02浓缩果蔬汁(浆)除外）中的最大使用量或备注是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "番茄红",
+        "饮料类",
+        "14.0",
+        "0.006 g/kg",
+        "以即饮状态计"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=tmp_gb2760_llm_chunks.json; chunk=95; page=40; table=表A.1; cleaned_broken_tomato_red_question_and_value"
+    },
+    {
+      "id": "V2-B01-Q108",
+      "question": "GB 2760-2024中，明胶的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "明胶",
+        "20.002",
+        "增稠剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "extra_cns_case; page=86; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q109",
+      "question": "GB 2760-2024中，木糖醇的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "木糖醇",
+        "19.007",
+        "甜味剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "extra_cns_case; page=86; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q112",
+      "question": "GB 2760-2024中，己二酸的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "己二酸",
+        "01.109",
+        "酸度调节剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "extra_cns_case; page=54; table=表A.1"
+    },
+    {
+      "id": "V2-B01-Q114",
+      "question": "GB 2760-2024中，甲壳素的CNS号和主要功能是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "甲壳素",
+        "20.018",
+        "增稠剂、稳定剂"
+      ],
+      "expected_citation_keywords": [
+        "GB 2760",
+        "表A.1"
+      ],
+      "document_ids": [
+        50
+      ],
+      "top_k": 8,
+      "tags": [
+        "v2",
+        "batch01",
+        "gb2760",
+        "factual_lookup",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "extra_cns_case; page=54; table=表A.1"
+    },
+    {
+      "id": "V2-B02-Q027",
+      "question": "GB 2762-2025中，调味品(固态调味品除外) 固态调味品的3-氯-1,2-丙二醇限量指标是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "3-氯-1,2-丙二醇",
+        "调味品(固态调味品除外) 固态调味品",
+        "0.4",
+        "mg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2762",
+        "表12"
+      ],
+      "document_ids": [
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch02",
+        "contaminants",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=52; chunk=126; page=14; table=表12"
+    },
+    {
+      "id": "V2-B02-Q039",
+      "question": "GB 2762-2025中，饮料类包装饮用水（饮用天然矿泉水除外）和饮用天然矿泉水的亚硝酸盐、硝酸盐限量指标是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "亚硝酸盐、硝酸盐",
+        "饮用天然矿泉水",
+        "0.1mg/L",
+        "45mg/L"
+      ],
+      "expected_citation_keywords": [
+        "GB 2762",
+        "表8"
+      ],
+      "document_ids": [
+        52
+      ],
+      "top_k": 12,
+      "tags": [
+        "v2",
+        "batch02",
+        "contaminants",
+        "mixed",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=52; chunk=104; page=12; table=表8; cleaned_wrong_unit_keyword_mgkg_to_mgl"
+    },
+    {
+      "id": "V2-B03-Q004",
+      "question": "GB 2763.1-2018 中最大残留限量用什么单位表示？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "最大残留限量",
+        "mg/kg",
+        "农药残留"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "definition",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=5; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q006",
+      "question": "GB/T 20769 在 GB 2763.1-2018 中主要对应哪类检测方法？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "水果",
+        "蔬菜",
+        "液相色谱串联质谱"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=5; page=5; table="
+    },
+    {
+      "id": "V2-B03-Q010",
+      "question": "虫酰肼相关残留检测在 GB 2763.1-2018 中引用哪个方法标准？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "虫酰肼||虫酰",
+        "GB/T 23211",
+        "检测方法"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "cross_reference",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表8"
+    },
+    {
+      "id": "V2-B03-Q017",
+      "question": "吡唑萘菌胺在蛋类（鲜蛋）中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "吡唑萘菌胺",
+        "蛋类",
+        "0.01"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=8; page=7; table=表3"
+    },
+    {
+      "id": "V2-B03-Q022",
+      "question": "丙溴磷在生乳中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "丙溴磷",
+        "生乳",
+        "0.01"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=10; page=8; table=表6"
+    },
+    {
+      "id": "V2-B03-Q028",
+      "question": "除虫脲的残留物和 ADI 是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "除虫脲||除脲",
+        "0.02",
+        "残留物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "factual_lookup",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=12; page=9; table=表9"
+    },
+    {
+      "id": "V2-B03-Q043",
+      "question": "肟菌酯在啤酒花中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "肟菌酯",
+        "啤酒花",
+        "40"
+      ],
+      "expected_citation_keywords": [
+        "GB 2763.1-2018"
+      ],
+      "document_ids": [
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "pesticide",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=53; chunk=32; page=21; table=表40"
+    },
+    {
+      "id": "V2-B03-Q058",
+      "question": "双氯芬酸在猪肌肉和猪肾中的最大残留限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "双氯芬酸",
+        "猪",
+        "肌肉",
+        "5",
+        "肾",
+        "10"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=35; page=8; table=表12"
+    },
+    {
+      "id": "V2-B03-Q070",
+      "question": "苯唑西林在家禽蛋中的最大残留限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "苯唑西林",
+        "家禽",
+        "蛋",
+        "4||4 μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 31650.1-2022"
+      ],
+      "document_ids": [
+        30
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch03",
+        "veterinary",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=chroma; doc_id=30; chunk=42; page=13; table=表30"
+    },
+    {
+      "id": "V2-B04-Q026",
+      "question": "GB 2749-2015中鲜蛋的蛋壳状态有什么要求？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "清洁完整",
+        "无裂纹",
+        "无霉斑"
+      ],
+      "expected_citation_keywords": [
+        "GB 2749",
+        "表1"
+      ],
+      "document_ids": [
+        31
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2749",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2749-2015 page 4; cleaned_extra_sensory_keywords_not_in_standard"
+    },
+    {
+      "id": "V2-B04-Q064",
+      "question": "根据GB 2707-2016，鲜冻畜禽产品的食品添加剂使用应符合哪个标准的规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760"
+      ],
+      "expected_citation_keywords": [
+        "GB 2707"
+      ],
+      "document_ids": [
+        32
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch04",
+        "gb2707",
+        "cross_reference",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2707-2016 page 4"
+    },
+    {
+      "id": "V2-B05-Q003",
+      "question": "GB 2711-2014面筋制品的感官要求中，状态指标有什么要求？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "应有形态",
+        "无霉变",
+        "无正常视力可见外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "表1"
+      ],
+      "document_ids": [
+        34
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2711",
+        "table_data",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2711-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q014",
+      "question": "GB 2712-2014即食豆制品的大肠菌群限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10²",
+        "M=10³",
+        "CFU/g或CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表3"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2712-2014 page 4"
+    },
+    {
+      "id": "V2-B05-Q018",
+      "question": "GB 2712-2014豆制品的感官要求中，状态指标有什么具体规定？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "应有状态",
+        "无霉变",
+        "无正常视力可见外来异物"
+      ],
+      "expected_citation_keywords": [
+        "GB 2712",
+        "表1"
+      ],
+      "document_ids": [
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2712",
+        "factual_lookup",
+        "easy",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2712-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q026",
+      "question": "GB 2713-2015淀粉制品感官要求中滋味和气味有什么规定？与面筋制品的感官要求有什么不同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "无异味",
+        "不酸"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "表1"
+      ],
+      "document_ids": [
+        39
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2713",
+        "mixed",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2713-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q036",
+      "question": "GB 2714-2015酱腌菜与GB 2711-2014面筋制品的感官要求中状态指标有何异同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "酱腌菜",
+        "无霉斑白膜",
+        "面筋制品",
+        "无霉变"
+      ],
+      "expected_citation_keywords": [
+        "GB 2714",
+        "表1",
+        "GB 2711"
+      ],
+      "document_ids": [
+        38
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2714",
+        "mixed",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2714-2015 page 3"
+    },
+    {
+      "id": "V2-B05-Q041",
+      "question": "GB 2717-2018酱油的菌落总数限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=5×10³",
+        "M=5×10⁴",
+        "CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "表3"
+      ],
+      "document_ids": [
+        33
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2717",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2717-2018 page 4"
+    },
+    {
+      "id": "V2-B05-Q054",
+      "question": "GB 2718-2014酿造酱与GB 2717-2018酱油的氨基酸态氮限量有何不同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "酿造酱",
+        "≥0.3",
+        "酱油",
+        "≥0.4"
+      ],
+      "expected_citation_keywords": [
+        "GB 2718",
+        "表2",
+        "GB 2717",
+        "表2"
+      ],
+      "document_ids": [
+        36
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2718",
+        "mixed",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2718-2014 page 3"
+    },
+    {
+      "id": "V2-B05-Q072",
+      "question": "GB 2720-2015加盐味精中谷氨酸钠（以干基计）的指标大约是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "80.0",
+        "%"
+      ],
+      "expected_citation_keywords": [
+        "GB 2720",
+        "表2"
+      ],
+      "document_ids": [
+        40
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2720",
+        "table_data",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2720-2015 page 4, OCR uncertain"
+    },
+    {
+      "id": "V2-B05-Q079",
+      "question": "GB 2721-2015低钠盐的产品标签有什么特殊要求？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "标示钾含量",
+        "高温作业者",
+        "肾功能障碍者",
+        "慎用"
+      ],
+      "expected_citation_keywords": [
+        "GB 2721",
+        "4"
+      ],
+      "document_ids": [
+        44
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2721",
+        "factual_lookup",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2721-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q090",
+      "question": "GB 2726-2016熟肉制品与GB 2730-2015腌腊肉制品的感官要求有何异同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "熟肉制品",
+        "无焦斑",
+        "无霉斑",
+        "腌腊肉制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "表1",
+        "GB 2730"
+      ],
+      "document_ids": [
+        45
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2726",
+        "mixed",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2726-2016 page 3"
+    },
+    {
+      "id": "V2-B05-Q103",
+      "question": "GB 2758-2012发酵酒中沙门氏菌的限量要求是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=0",
+        "m=0/25mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "表2"
+      ],
+      "document_ids": [
+        48
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2758",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2758-2012 page 4"
+    },
+    {
+      "id": "V2-B05-Q111",
+      "question": "GB 2759-2015冷冻饮品一般产品的菌落总数限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=2.5×10⁴",
+        "M=10⁵",
+        "CFU/g或CFU/mL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "表2"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "table_data",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    },
+    {
+      "id": "V2-B05-Q117",
+      "question": "GB 2759-2015冷冻饮品中大肠菌群的一般产品限量是多少？该限量不适用于含什么菌种的产品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "n=5",
+        "c=2",
+        "m=10",
+        "M=10²",
+        "活性菌种",
+        "益生菌"
+      ],
+      "expected_citation_keywords": [
+        "GB 2759",
+        "表2"
+      ],
+      "document_ids": [
+        49
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch05",
+        "gb2759",
+        "mixed",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "source=GB 2759-2015 page 4"
+    },
+    {
+      "id": "V2-B06-Q032",
+      "question": "GB 2760-2024食品工业用加工助剂使用标准中，用于油脂精炼的加工助剂有哪些？各自的最大残留量是多少？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "库外问题：GB 2760加工助剂部分的残留量数据可能不在库中"
+    },
+    {
+      "id": "V2-B06-Q037",
+      "question": "GB 2757-2012蒸馏酒标准中，污染物限量是否需要参照GB 2762？依据是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2757",
+        "GB 2762",
+        "污染物限量"
+      ],
+      "expected_citation_keywords": [
+        "GB 2757",
+        "GB 2762"
+      ],
+      "document_ids": [
+        47,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "库外问题：标准缺失原因分析不在知识库中; converted_dirty_negative_to_answerable_crossdoc_case"
+    },
+    {
+      "id": "V2-B06-Q038",
+      "question": "根据现行GB标准体系，婴幼儿罐装辅助食品需要同时符合哪些食品安全国家标准？请列出所有适用标准编号。",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "库外问题：标准体系梳理超出知识库范围"
+    },
+    {
+      "id": "V2-B06-Q040",
+      "question": "GB 2762-2025对婴幼儿谷类辅助食品中砷的限量标准与成人食品有何不同？为什么需要更严格？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "document_ids": [],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "negative",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "库外问题：婴幼儿砷限量对比和制定原因超出知识库范围"
+    },
+    {
+      "id": "V2-B06-Q051",
+      "question": "GB 2713-2015淀粉制品的污染物限量应符合GB 2762，GB 2762中淀粉制品的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "淀粉制品",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2713",
+        "GB 2762"
+      ],
+      "document_ids": [
+        39,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "跨文档：GB 2713→GB 2762，淀粉制品铅限量"
+    },
+    {
+      "id": "V2-B06-Q053",
+      "question": "GB 2716-2018植物油的污染物限量应符合GB 2762，GB 2762中植物油的黄曲霉毒素B1限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "植物油",
+        "黄曲霉毒素B1"
+      ],
+      "expected_citation_keywords": [
+        "GB 2716",
+        "GB 2762"
+      ],
+      "document_ids": [
+        42,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "跨文档：GB 2716→GB 2762，植物油黄曲霉毒素B1限量"
+    },
+    {
+      "id": "V2-B06-Q054",
+      "question": "GB 2758-2012发酵酒的污染物限量应符合GB 2762，GB 2762中发酵酒的铅限量是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "发酵酒",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2758",
+        "GB 2762"
+      ],
+      "document_ids": [
+        48,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "medium",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "跨文档：GB 2758→GB 2762，发酵酒铅限量"
+    },
+    {
+      "id": "V2-B06-Q056",
+      "question": "GB 2719-2018食醋引用了GB 2760和GB 14880，其中GB 2760中食醋允许使用的防腐剂有哪些？冰乙酸是否被允许？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "食醋",
+        "冰乙酸",
+        "不可用于食醋"
+      ],
+      "expected_citation_keywords": [
+        "GB 2719",
+        "GB 2760"
+      ],
+      "document_ids": [
+        37,
+        50
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "跨文档：GB 2719→GB 2760，需同时检索食醋的添加剂规定和冰乙酸禁用条款"
+    },
+    {
+      "id": "V2-B06-Q060",
+      "question": "GB 2715-2016粮食标准引用了GB 2763，而库中有GB 2763.1-2018，请说明GB 2763.1中粮食作物的农药残留限量涵盖哪些农药？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2763.1",
+        "粮食",
+        "农药残留",
+        "MRL"
+      ],
+      "expected_citation_keywords": [
+        "GB 2715",
+        "GB 2763.1"
+      ],
+      "document_ids": [
+        46,
+        53
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "跨文档：GB 2715→GB 2763.1，粮食作物的农药残留限量"
+    },
+    {
+      "id": "V2-B06-Q061",
+      "question": "GB 2726-2016熟肉制品引用了GB 2762和GB 29921，GB 2730-2015腌腊肉制品也引用了GB 2762，两类肉制品在GB 2762中的铅限量是否相同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2762",
+        "熟肉制品",
+        "腌腊肉制品",
+        "铅"
+      ],
+      "expected_citation_keywords": [
+        "GB 2726",
+        "GB 2730",
+        "GB 2762"
+      ],
+      "document_ids": [
+        45,
+        41,
+        52
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "跨文档：两个肉制品标准→GB 2762，对比铅限量"
+    },
+    {
+      "id": "V2-B06-Q066",
+      "question": "GB 2711-2014面筋制品和GB 2712-2014豆制品都引用了GB 29921和GB 2760，但面筋制品的致病菌应符合熟制粮食制品类，豆制品应符合哪个类别？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 29921",
+        "豆制品"
+      ],
+      "expected_citation_keywords": [
+        "GB 2711",
+        "GB 2712"
+      ],
+      "document_ids": [
+        34,
+        35
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "跨文档：GB 2711与GB 2712对比GB 29921适用类别"
+    },
+    {
+      "id": "V2-B06-Q067",
+      "question": "GB 2717-2018酱油和GB 2718-2014酿造酱都引用了GB 2760和GB 2761，在GB 2760中酱油和酿造酱的食品分类号是否相同？在GB 2761中的黄曲霉毒素B1限量是否相同？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "GB 2760",
+        "酱油",
+        "酿造酱",
+        "食品分类号",
+        "GB 2761",
+        "5.0",
+        "μg/kg"
+      ],
+      "expected_citation_keywords": [
+        "GB 2717",
+        "GB 2718",
+        "GB 2760",
+        "GB 2761"
+      ],
+      "document_ids": [
+        33,
+        36,
+        50,
+        51
+      ],
+      "top_k": 10,
+      "tags": [
+        "v2",
+        "batch06",
+        "crossdoc",
+        "cross_reference",
+        "hard",
+        "regression_failed_after_gb2760_fix"
+      ],
+      "notes": "跨文档：两个调味品标准→GB 2760+GB 2761，分类号和黄曲霉毒素限量对比"
+    }
+  ]
+}

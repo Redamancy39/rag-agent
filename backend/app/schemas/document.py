@@ -2,7 +2,10 @@ import json
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+
+from app.rag.schemas import SourceLocator
+from app.schemas.chat import SourceLocationRead
 
 
 class DocumentRead(BaseModel):
@@ -28,6 +31,14 @@ class DocumentChunkRead(BaseModel):
     id: str
     text: str
     metadata: dict
+    location: SourceLocationRead | None = None
+
+    @model_validator(mode="after")
+    def populate_location(self) -> "DocumentChunkRead":
+        self.location = SourceLocationRead.from_locator(
+            SourceLocator.from_metadata(self.metadata)
+        )
+        return self
 
 
 class DocumentProcessingJobRead(BaseModel):
@@ -91,6 +102,7 @@ class DocumentQualityReportRead(BaseModel):
     status_message: str | None = None
     total_chunks: int
     unique_pages: int
+    unique_locations: int = 0
     chunk_type_counts: dict[str, int]
     quality_counts: dict[str, int]
     average_quality_score: float | None = None

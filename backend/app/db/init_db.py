@@ -7,6 +7,7 @@ from app.db.session import SessionLocal, engine
 from app.models import (
     AuditLog,
     Base,
+    ChatJob,
     ChatLog,
     Document,
     DocumentProcessingJob,
@@ -78,6 +79,28 @@ def _ensure_sqlite_schema() -> None:
                     "Added missing document_processing_jobs.%s column",
                     column_name,
                 )
+
+        chat_job_columns = {
+            "message": "VARCHAR(512)",
+            "error_message": "TEXT",
+            "document_ids_json": "TEXT",
+            "progress_percent": "INTEGER DEFAULT 0",
+            "progress_detail": "VARCHAR(512)",
+            "trace_json": "TEXT",
+            "response_json": "TEXT",
+            "log_id": "INTEGER",
+            "started_at": "DATETIME",
+            "finished_at": "DATETIME",
+            "updated_at": "DATETIME",
+        }
+        rows = connection.exec_driver_sql("PRAGMA table_info(chat_jobs)").fetchall()
+        existing_columns = {row[1] for row in rows}
+        for column_name, column_definition in chat_job_columns.items():
+            if column_name not in existing_columns:
+                connection.exec_driver_sql(
+                    f"ALTER TABLE chat_jobs ADD COLUMN {column_name} {column_definition}"
+                )
+                logger.info("Added missing chat_jobs.%s column", column_name)
 
         audit_foreign_keys = connection.exec_driver_sql(
             "PRAGMA foreign_key_list(audit_logs)"

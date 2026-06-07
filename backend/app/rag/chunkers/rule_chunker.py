@@ -1,5 +1,5 @@
 from app.rag.chunkers.base_chunker import BaseChunker
-from app.rag.schemas import DocumentChunk, LoadedDocumentPart
+from app.rag.schemas import DocumentBlock, DocumentChunk
 from app.rag.table_utils import (
     augment_text_with_table_reference,
     is_table_like_text,
@@ -28,10 +28,10 @@ class RuleChunker(BaseChunker):
             start = max(end - self.chunk_overlap, start + 1)
         return chunks
 
-    def split_documents(self, parts: list[LoadedDocumentPart]) -> list[DocumentChunk]:
+    def split_documents(self, parts: list[DocumentBlock]) -> list[DocumentChunk]:
         chunks: list[DocumentChunk] = []
         for part in parts:
-            metadata = metadata_with_table_reference(part.metadata, part.text)
+            metadata = metadata_with_table_reference(part.to_metadata(), part.text)
             text = augment_text_with_table_reference(part.text, metadata)
             is_table = is_table_like_text(text, metadata)
             split_texts = (

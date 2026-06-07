@@ -17,7 +17,7 @@ import { ElMessage, ElMessageBox, type UploadRequestOptions } from 'element-plus
 import {
   AUTH_ERROR_EVENT,
   addGroupMember,
-  askQuestion,
+  createChatJob,
   createGroup,
   deleteChatLog,
   deleteDocument,
@@ -25,6 +25,7 @@ import {
   deleteGroupPermission,
   deletePermission,
   getApiBaseUrl,
+  getChatJob,
   getCurrentUser,
   getDocument,
   getDocumentQualityReport,
@@ -50,6 +51,7 @@ import {
 import type {
   AuditLogRead,
   AnswerSections,
+  ChatJobRead,
   ChatResponse,
   ChatLogRead,
   Citation,
@@ -62,6 +64,8 @@ import type {
   GroupPermissionRead,
   GroupRead,
   PermissionRead,
+  RetrievalTraceHit,
+  SourceLocation,
   UploadProgressItem,
   UserGroupRead,
   UserRead
@@ -81,6 +85,7 @@ interface ChatTurn {
   error: string | null
   progress: number
   progressMessage: string
+  jobTrace: Array<Record<string, unknown>>
 }
 
 const token = ref(localStorage.getItem('rag_agent_token') || '')
@@ -178,11 +183,11 @@ const demoOverviewCards = computed(() => [
 const ragPipelineStages = [
   {
     title: '1. Ingestion Agent 探测',
-    detail: '识别文件类型、PDF 可读性、表格密度、OCR 与 LLM 整理需求。'
+    detail: '识别 PDF、DOCX、PPTX、XLSX 的可读性、表格密度与处理策略。'
   },
   {
     title: '2. 解析与预处理',
-    detail: '优先 PyMuPDF / 文本层解析，必要时 PaddleOCR fallback，并保留页码。'
+    detail: 'PDF 使用 PyMuPDF / OCR，Office 文档提取标题、正文、表格和来源定位。'
   },
   {
     title: '3. 表格与切块质量增强',
@@ -199,7 +204,7 @@ const ragPipelineStages = [
 ]
 const capabilityCards = [
   { title: '权限控制', value: 'JWT + 用户 / 部门权限', status: '已接入' },
-  { title: '文档入库', value: 'PDF / Markdown / TXT + OCR fallback', status: '已跑通' },
+  { title: '文档入库', value: 'PDF / DOCX / PPTX / XLSX / Markdown / TXT', status: '已跑通' },
   { title: '检索增强', value: '向量 + BM25 + 关键词 + Reranker', status: '已接入' },
   { title: 'Agent 化', value: '轻量 Ingestion Agent，LangGraph 预留', status: '演示版' },
   { title: '可观测性', value: '任务表、质量报告、审计日志', status: '已接入' },
@@ -222,7 +227,7 @@ const pageSubtitle = computed(() => {
   if (activeView.value === 'settings') {
     return '当前先做只读展示，后续再接入管理员可编辑配置、权限策略和运行监控。'
   }
-  return '登录后上传 PDF / Markdown / TXT，后端自动解析、分块并写入 ChromaDB。'
+  return '登录后上传 PDF / DOCX / PPTX / XLSX / Markdown / TXT，后端自动解析、分块并写入 ChromaDB。'
 })
 const chunkDialogTitle = computed(() =>
   selectedDocument.value ? `分块预览：${selectedDocument.value.filename}` : '分块预览'
@@ -1140,6 +1145,7 @@ function chunkTypeLabel(chunk: DocumentChunkRead) {
 }
 
 function chunkSourceLabel(chunk: DocumentChunkRead) {
+  if (chunk.location?.label) return chunk.location.label
   const page = chunk.metadata.page ? `第 ${chunk.metadata.page} 页` : '无页码'
   const table = chunk.metadata.table_index ? ` / 表 ${chunk.metadata.table_index}` : ''
   return `${page}${table}`
@@ -1193,7 +1199,7 @@ async function submitChat() {
   }
 
   const documentIds = [...selectedChatDocumentIds.value]
-  const turn: ChatTurn = {
+  const turn = reactive<ChatTurn>({
     id: `turn-${Date.now()}`,
     logId: null,
     question,
@@ -1204,35 +1210,116 @@ async function submitChat() {
     loading: true,
     error: null,
     progress: 5,
-    progressMessage: '准备检索范围'
-  }
+    progressMessage: '创建问答任务',
+    jobTrace: []
+  })
   chatTurns.value.push(turn)
   chatQuestion.value = ''
   loadingChat.value = true
   await scrollChatToBottom()
 
-  const stopProgress = startChatProgress(turn)
   try {
-    const response = await askQuestion(token.value, {
+    const job = await createChatJob(token.value, {
       question,
       document_ids: documentIds.length ? documentIds : undefined,
       top_k: 5
     })
-    turn.response = response
-    turn.logId = response.log_id
-    turn.progress = 100
-    turn.progressMessage = '回答完成'
-    upsertChatHistoryTurn(turn)
+    updateTurnFromChatJob(turn, job)
+    const response = await pollChatJob(turn, job.id)
+    const activeTurn = resolveChatTurn(turn)
+    activeTurn.response = response
+    activeTurn.logId = response.log_id
+    activeTurn.progress = 100
+    activeTurn.progressMessage = '回答完成'
+    upsertChatHistoryTurn(activeTurn)
   } catch (error) {
-    turn.progress = 100
-    turn.progressMessage = '请求失败'
-    turn.error = error instanceof Error ? error.message : '问答请求失败'
+    const activeTurn = resolveChatTurn(turn)
+    activeTurn.progress = 100
+    activeTurn.progressMessage = '请求失败'
+    activeTurn.error = error instanceof Error ? error.message : '问答请求失败'
   } finally {
-    stopProgress()
-    turn.loading = false
+    resolveChatTurn(turn).loading = false
     loadingChat.value = false
     await scrollChatToBottom()
   }
+}
+
+async function pollChatJob(turn: ChatTurn, jobId: number): Promise<ChatResponse> {
+  if (!token.value) throw new Error('请先登录')
+  for (let attempt = 0; attempt < 600; attempt += 1) {
+    if (!token.value) throw new Error('登录状态已失效')
+    const job = await getChatJob(token.value, jobId)
+    updateTurnFromChatJob(turn, job)
+    if (job.status === 'completed') {
+      if (!job.response_json) {
+        throw new Error('问答任务已完成，但后端未返回答案')
+      }
+      return job.response_json
+    }
+    if (job.status === 'failed') {
+      throw new Error(job.error_message || job.message || '问答任务失败')
+    }
+    await new Promise((resolve) => window.setTimeout(resolve, 1000))
+  }
+  throw new Error('问答任务等待超时')
+}
+
+function resolveChatTurn(turn: ChatTurn) {
+  return chatTurns.value.find((item) => item.id === turn.id) || turn
+}
+
+function updateTurnFromChatJob(turn: ChatTurn, job: ChatJobRead) {
+  const activeTurn = resolveChatTurn(turn)
+  activeTurn.progress = Math.max(activeTurn.progress, job.progress_percent || 1)
+  activeTurn.progressMessage = job.message || job.progress_detail || chatStageLabel(job.stage)
+  activeTurn.jobTrace = job.trace_json || []
+}
+
+function chatStageLabel(stage: string) {
+  const labels: Record<string, string> = {
+    queued: '等待执行',
+    started: '初始化 RAG 链路',
+    query_normalize: '问题归一化',
+    query_decompose: '按需分解查询',
+    retrieve: '检索候选证据',
+    evidence_judge: '审查证据充分性',
+    generate: '调用大模型生成答案',
+    citation_validate: '校验答案引用',
+    completed: '回答完成',
+    failed: '问答任务失败'
+  }
+  return labels[stage] || '问答任务执行中'
+}
+
+function chatJobTraceItems(turn: ChatTurn) {
+  return turn.jobTrace.slice(-8)
+}
+
+function jobTraceStage(item: Record<string, unknown>) {
+  return String(item.stage || 'running')
+}
+
+function jobTraceMessage(item: Record<string, unknown>) {
+  return String(item.message || chatStageLabel(jobTraceStage(item)))
+}
+
+function jobTraceMeta(item: Record<string, unknown>) {
+  const parts: string[] = []
+  const progress = item.progress
+  if (typeof progress === 'number') parts.push(`${progress}%`)
+  const iteration = item.iteration
+  if (typeof iteration === 'number') parts.push(`第 ${iteration} 轮`)
+  const hitCount = item.hit_count
+  if (typeof hitCount === 'number') parts.push(`候选 ${hitCount}`)
+  const citationCount = item.citation_count
+  if (typeof citationCount === 'number') parts.push(`可用证据 ${citationCount}`)
+  const queryCount = item.query_count
+  if (typeof queryCount === 'number') parts.push(`查询 ${queryCount} 条`)
+  const retryReason = item.retry_reason
+  if (typeof retryReason === 'string' && retryReason) {
+    parts.push(`状态：${retryReason}`)
+  }
+  return parts.join(' · ') || '执行中'
 }
 
 function clearConversation() {
@@ -1287,6 +1374,7 @@ function cloneChatTurn(turn: ChatTurn): ChatTurn {
     ...turn,
     documentIds: [...turn.documentIds],
     documentNames: [...turn.documentNames],
+    jobTrace: [...turn.jobTrace],
     response: turn.response
       ? {
           ...turn.response,
@@ -1297,30 +1385,17 @@ function cloneChatTurn(turn: ChatTurn): ChatTurn {
           evidence_decision: turn.response.evidence_decision
             ? { ...turn.response.evidence_decision }
             : null,
+          citation_validation: {
+            ...turn.response.citation_validation,
+            cited_indices: [...(turn.response.citation_validation?.cited_indices || [])],
+            invalid_indices: [...(turn.response.citation_validation?.invalid_indices || [])],
+            uncited_sections: [...(turn.response.citation_validation?.uncited_sections || [])],
+            warnings: [...(turn.response.citation_validation?.warnings || [])]
+          },
           sections: { ...turn.response.sections }
         }
       : null
   }
-}
-
-function startChatProgress(turn: ChatTurn) {
-  const stages = [
-    { percent: 12, message: '准备检索范围' },
-    { percent: 28, message: '生成问题向量' },
-    { percent: 46, message: '检索向量库' },
-    { percent: 64, message: '重排候选片段' },
-    { percent: 82, message: '调用大模型生成答案' },
-    { percent: 94, message: '整理引用与依据' }
-  ]
-  let index = 0
-  const timer = window.setInterval(() => {
-    if (!turn.loading || turn.progress >= 94) return
-    const stage = stages[Math.min(index, stages.length - 1)]
-    turn.progress = Math.max(turn.progress, stage.percent)
-    turn.progressMessage = stage.message
-    index += 1
-  }, 900)
-  return () => window.clearInterval(timer)
 }
 
 function chatLogToTurn(log: ChatLogRead): ChatTurn {
@@ -1342,13 +1417,22 @@ function chatLogToTurn(log: ChatLogRead): ChatTurn {
       retrieval_trace: [],
       query_plan: null,
       evidence_decision: null,
+      citation_validation: {
+        valid: true,
+        cited_indices: citations
+          .map((citation, index) => citation.citation_id || index + 1),
+        invalid_indices: [],
+        uncited_sections: [],
+        warnings: []
+      },
       retrieval_only: false,
       log_id: log.id
     },
     loading: false,
     error: null,
     progress: 100,
-    progressMessage: '已完成'
+    progressMessage: '已完成',
+    jobTrace: []
   }
 }
 
@@ -1368,10 +1452,21 @@ function parseLogCitations(value: string | null): Citation[] {
         )
       })
       .map((item) => ({
+        citation_id:
+          typeof item.citation_id === 'number' ? item.citation_id : null,
         document_id: item.document_id as number,
         filename: item.filename as string,
         chunk_id: item.chunk_id ?? null,
         page: typeof item.page === 'number' ? item.page : null,
+        slide: typeof item.slide === 'number' ? item.slide : null,
+        sheet: typeof item.sheet === 'string' ? item.sheet : null,
+        cell_range: typeof item.cell_range === 'string' ? item.cell_range : null,
+        section_path: typeof item.section_path === 'string' ? item.section_path : null,
+        paragraph_index:
+          typeof item.paragraph_index === 'number' ? item.paragraph_index : null,
+        table_index: typeof item.table_index === 'number' ? item.table_index : null,
+        block_index: typeof item.block_index === 'number' ? item.block_index : null,
+        location: normalizeSourceLocation(item.location, item),
         table: typeof item.table === 'string' ? item.table : null,
         chunk_type: item.chunk_type ?? null,
         score: typeof item.score === 'number' ? item.score : null,
@@ -1406,13 +1501,81 @@ function parseAnswerSections(answer: string): AnswerSections {
   return sections
 }
 
+function normalizeSourceLocation(
+  location: SourceLocation | null | undefined,
+  fallback: Partial<SourceLocation>
+): SourceLocation {
+  const page = location?.page ?? fallback.page ?? null
+  const slide = location?.slide ?? fallback.slide ?? null
+  const sheet = location?.sheet ?? fallback.sheet ?? null
+  const cellRange = location?.cell_range ?? fallback.cell_range ?? null
+  const sectionPath = location?.section_path ?? fallback.section_path ?? null
+  const paragraphIndex = location?.paragraph_index ?? fallback.paragraph_index ?? null
+  const tableIndex = location?.table_index ?? fallback.table_index ?? null
+  const blockIndex = location?.block_index ?? fallback.block_index ?? null
+  const parts: string[] = []
+  if (page !== null) parts.push(`第 ${page} 页`)
+  if (slide !== null) parts.push(`第 ${slide} 张幻灯片`)
+  if (sectionPath) parts.push(`章节 ${sectionPath}`)
+  if (paragraphIndex !== null) parts.push(`段落 ${paragraphIndex}`)
+  if (sheet) parts.push(`工作表 ${sheet}`)
+  if (cellRange) parts.push(`单元格 ${cellRange}`)
+  if (tableIndex !== null) parts.push(`表格 ${tableIndex}`)
+  const kind = sheet
+    ? 'sheet'
+    : slide !== null
+      ? 'slide'
+      : page !== null
+        ? 'page'
+        : sectionPath
+          ? 'section'
+          : tableIndex !== null
+            ? 'table'
+            : blockIndex !== null
+              ? 'block'
+              : 'document'
+  const keyParts = [
+    ['page', page],
+    ['slide', slide],
+    ['sheet', sheet],
+    ['cell_range', cellRange],
+    ['section_path', sectionPath],
+    ['paragraph_index', paragraphIndex],
+    ['table_index', tableIndex],
+    ['block_index', blockIndex]
+  ]
+    .filter(([, value]) => value !== null && value !== '')
+    .map(([key, value]) => `${key}:${value}`)
+  return {
+    kind: location?.kind || kind,
+    key: location?.key || keyParts.join('|') || 'document',
+    label: location?.label || parts.join(' / ') || '文档级',
+    page,
+    slide,
+    sheet,
+    cell_range: cellRange,
+    section_path: sectionPath,
+    paragraph_index: paragraphIndex,
+    table_index: tableIndex,
+    block_index: blockIndex
+  }
+}
+
 function citationsToEvidenceRows(citations: Citation[]): EvidenceRow[] {
   return citations.map((citation, index) => ({
-    index: index + 1,
+    index: citation.citation_id || index + 1,
     score: citation.score,
     filename: citation.filename,
     page: citation.page,
-    table: null,
+    slide: citation.slide,
+    section_path: citation.section_path,
+    sheet: citation.sheet,
+    cell_range: citation.cell_range,
+    paragraph_index: citation.paragraph_index,
+    table_index: citation.table_index,
+    block_index: citation.block_index,
+    location: citation.location,
+    table: citation.table,
     chunk_id: citation.chunk_id,
     keywords: textPreview(citation.text, 100)
   }))
@@ -1444,11 +1607,19 @@ function getAnswerSections(response: ChatResponse): AnswerSections {
 function getEvidenceRows(response: ChatResponse): EvidenceRow[] {
   if (response.evidence_rows?.length) return response.evidence_rows
   return response.citations.map((citation, index) => ({
-    index: index + 1,
+    index: citation.citation_id || index + 1,
     score: citation.score,
     filename: citation.filename,
     page: citation.page,
-    table: null,
+    slide: citation.slide,
+    section_path: citation.section_path,
+    sheet: citation.sheet,
+    cell_range: citation.cell_range,
+    paragraph_index: citation.paragraph_index,
+    table_index: citation.table_index,
+    block_index: citation.block_index,
+    location: citation.location,
+    table: citation.table,
     chunk_id: citation.chunk_id,
     keywords: textPreview(citation.text, 100)
   }))
@@ -1498,6 +1669,10 @@ function evidenceDecisionLabel(response: ChatResponse) {
 
 function retrievalSourceLabel(source: string | null) {
   const labels: Record<string, string> = {
+    normalized: '归一化问题',
+    decomposed: '分解子查询',
+    rewritten: '规则改写查询',
+    decomposition_merged: '子查询融合',
     original: '原始问题',
     expanded: '扩展检索',
     merged: '融合结果',
@@ -1506,6 +1681,45 @@ function retrievalSourceLabel(source: string | null) {
     reranker_failed: '重排失败回退'
   }
   return labels[source || ''] || source || '-'
+}
+
+interface AnswerTextSegment {
+  text: string
+  citationId: number | null
+}
+
+function answerTextSegments(text: string): AnswerTextSegment[] {
+  const segments: AnswerTextSegment[] = []
+  const pattern = /\[(\d+)\]/g
+  let cursor = 0
+  for (const match of text.matchAll(pattern)) {
+    const index = match.index ?? 0
+    if (index > cursor) {
+      segments.push({ text: text.slice(cursor, index), citationId: null })
+    }
+    segments.push({ text: match[0], citationId: Number(match[1]) })
+    cursor = index + match[0].length
+  }
+  if (cursor < text.length) {
+    segments.push({ text: text.slice(cursor), citationId: null })
+  }
+  return segments.length ? segments : [{ text, citationId: null }]
+}
+
+function citationById(response: ChatResponse, citationId: number) {
+  return response.citations.find((citation, index) => {
+    return (citation.citation_id || index + 1) === citationId
+  })
+}
+
+function citationValidationLabel(response: ChatResponse) {
+  if (response.sections.classification === '未找到') return '知识库未找到'
+  return response.citation_validation?.valid ? '引用校验通过' : '引用校验未通过'
+}
+
+function citationValidationType(response: ChatResponse) {
+  if (response.sections.classification === '未找到') return 'info'
+  return response.citation_validation?.valid ? 'success' : 'danger'
 }
 
 function formatScore(score: number | null) {
@@ -1522,9 +1736,37 @@ function textPreview(text: string, maxLength = 1600) {
 }
 
 function citationSourceLabel(citation: Citation) {
-  const page = citation.page ? `第 ${citation.page} 页` : '无页码'
   const score = citation.score === null ? '-' : citation.score.toFixed(3)
-  return `${citation.filename} / ${page} / ${citation.chunk_type || 'unknown'} / score ${score}`
+  return `${citation.filename} / ${citationLocationLabel(citation)} / ${citation.chunk_type || 'unknown'} / score ${score}`
+}
+
+function citationLocationLabel(citation: Citation | undefined) {
+  if (!citation) return '无具体位置'
+  if (citation.location?.label) return citation.location.label
+  const parts: string[] = []
+  if (citation.page) parts.push(`第 ${citation.page} 页`)
+  if (citation.slide) parts.push(`第 ${citation.slide} 张幻灯片`)
+  if (citation.section_path) parts.push(`章节 ${citation.section_path}`)
+  if (citation.paragraph_index !== null) parts.push(`段落 ${citation.paragraph_index}`)
+  if (citation.sheet) parts.push(`工作表 ${citation.sheet}`)
+  if (citation.cell_range) parts.push(`单元格 ${citation.cell_range}`)
+  return parts.length ? parts.join(' / ') : '无具体位置'
+}
+
+function evidenceLocationLabel(
+  item: Pick<
+    EvidenceRow | RetrievalTraceHit,
+    'page' | 'slide' | 'section_path' | 'sheet' | 'cell_range' | 'location'
+  >
+) {
+  if (item.location?.label) return item.location.label
+  const parts: string[] = []
+  if (item.page) parts.push(`第 ${item.page} 页`)
+  if (item.slide) parts.push(`第 ${item.slide} 张`)
+  if (item.section_path) parts.push(item.section_path)
+  if (item.sheet) parts.push(`工作表 ${item.sheet}`)
+  if (item.cell_range) parts.push(item.cell_range)
+  return parts.length ? parts.join(' / ') : '-'
 }
 
 async function scrollChatToBottom() {
@@ -1662,8 +1904,8 @@ async function scrollChatToBottom() {
           <section v-if="isLoggedIn" class="upload-panel">
             <div class="panel-heading">
               <div>
-                <h2>上传 PDF / Markdown / TXT</h2>
-                <p>PDF 会优先提取正文与表格，表格会转成可检索事实，再写入向量库。</p>
+                <h2>上传 PDF / DOCX / PPTX / XLSX / Markdown / TXT</h2>
+                <p>系统会提取正文、Office 结构、工作表和表格，再转换为可检索内容。</p>
               </div>
               <el-tag type="info" effect="plain">单文件 50 MB</el-tag>
             </div>
@@ -1686,12 +1928,12 @@ async function scrollChatToBottom() {
               multiple
               :http-request="handleUpload"
               :show-file-list="false"
-              accept=".pdf,.md,.markdown,.txt"
+              accept=".pdf,.docx,.pptx,.xlsx,.md,.markdown,.txt"
               class="upload-drop"
             >
               <el-icon class="upload-icon"><Cloudy /></el-icon>
               <div class="upload-title">拖拽文件到这里，或点击选择文件</div>
-              <div class="upload-copy">支持 PDF、Markdown、TXT；建议先用 5-10 个国标 PDF 做小批量试验。</div>
+              <div class="upload-copy">支持 PDF、DOCX、PPTX、XLSX、Markdown、TXT；大型表格建议先小批量试验。</div>
             </el-upload>
 
             <div v-if="uploadItems.length" class="upload-list">
@@ -2285,10 +2527,38 @@ async function scrollChatToBottom() {
                     <el-skeleton :rows="4" animated />
                     <el-progress :percentage="turn.progress" :stroke-width="8" />
                     <p>{{ turn.progressMessage }}</p>
+                    <div v-if="chatJobTraceItems(turn).length" class="live-rag-trace">
+                      <div class="live-rag-trace-title">RAG 执行过程</div>
+                      <article
+                        v-for="(item, index) in chatJobTraceItems(turn)"
+                        :key="`${turn.id}-live-${index}-${jobTraceStage(item)}`"
+                        class="live-rag-trace-item"
+                      >
+                        <el-tag size="small" effect="plain">
+                          {{ chatStageLabel(jobTraceStage(item)) }}
+                        </el-tag>
+                        <div>
+                          <strong>{{ jobTraceMessage(item) }}</strong>
+                          <span>{{ jobTraceMeta(item) }}</span>
+                        </div>
+                      </article>
+                    </div>
                   </div>
                   <el-alert v-else-if="turn.error" type="error" :title="turn.error" show-icon :closable="false" />
 
                   <template v-else-if="turn.response">
+                    <div class="answer-validation">
+                      <el-tag
+                        size="small"
+                        effect="plain"
+                        :type="citationValidationType(turn.response)"
+                      >
+                        {{ citationValidationLabel(turn.response) }}
+                      </el-tag>
+                      <span v-if="turn.response.citation_validation?.valid">
+                        关键结论均已绑定知识库来源
+                      </span>
+                    </div>
                     <div class="answer-lines">
                       <div class="answer-line">
                         <span>分类判断：</span>
@@ -2296,15 +2566,100 @@ async function scrollChatToBottom() {
                       </div>
                       <div class="answer-line">
                         <span>结论：</span>
-                        <p>{{ getAnswerSections(turn.response).conclusion }}</p>
+                        <p class="answer-rich-text">
+                          <template
+                            v-for="(segment, segmentIndex) in answerTextSegments(
+                              getAnswerSections(turn.response).conclusion
+                            )"
+                            :key="`${turn.id}-conclusion-${segmentIndex}`"
+                          >
+                            <span v-if="segment.citationId === null">{{ segment.text }}</span>
+                            <el-popover v-else trigger="click" placement="top" :width="420">
+                              <template #reference>
+                                <button type="button" class="inline-citation">
+                                  {{ segment.text }}
+                                </button>
+                              </template>
+                              <div class="citation-popover">
+                                <strong>
+                                  [{{ segment.citationId }}]
+                                  {{ citationById(turn.response, segment.citationId)?.filename || '来源不存在' }}
+                                </strong>
+                                <span>
+                                  {{ citationLocationLabel(citationById(turn.response, segment.citationId)) }}
+                                  · {{ citationById(turn.response, segment.citationId)?.table || '无表号' }}
+                                  · {{ citationById(turn.response, segment.citationId)?.chunk_id || '无块 ID' }}
+                                </span>
+                                <p>{{ citationById(turn.response, segment.citationId)?.text || '未找到对应来源' }}</p>
+                              </div>
+                            </el-popover>
+                          </template>
+                        </p>
                       </div>
                       <div class="answer-line">
                         <span>依据：</span>
-                        <p>{{ getAnswerSections(turn.response).basis }}</p>
+                        <p class="answer-rich-text">
+                          <template
+                            v-for="(segment, segmentIndex) in answerTextSegments(
+                              getAnswerSections(turn.response).basis
+                            )"
+                            :key="`${turn.id}-basis-${segmentIndex}`"
+                          >
+                            <span v-if="segment.citationId === null">{{ segment.text }}</span>
+                            <el-popover v-else trigger="click" placement="top" :width="420">
+                              <template #reference>
+                                <button type="button" class="inline-citation">
+                                  {{ segment.text }}
+                                </button>
+                              </template>
+                              <div class="citation-popover">
+                                <strong>
+                                  [{{ segment.citationId }}]
+                                  {{ citationById(turn.response, segment.citationId)?.filename || '来源不存在' }}
+                                </strong>
+                                <span>
+                                  {{ citationLocationLabel(citationById(turn.response, segment.citationId)) }}
+                                  · {{ citationById(turn.response, segment.citationId)?.table || '无表号' }}
+                                  · {{ citationById(turn.response, segment.citationId)?.chunk_id || '无块 ID' }}
+                                </span>
+                                <p>{{ citationById(turn.response, segment.citationId)?.text || '未找到对应来源' }}</p>
+                              </div>
+                            </el-popover>
+                          </template>
+                        </p>
                       </div>
                       <div class="answer-line">
                         <span>引用：</span>
-                        <p>{{ getAnswerSections(turn.response).citation }}</p>
+                        <div v-if="turn.response.citations.length" class="citation-chip-list">
+                          <el-popover
+                            v-for="(citation, citationIndex) in turn.response.citations"
+                            :key="citation.chunk_id || `${turn.id}-citation-${citationIndex}`"
+                            trigger="click"
+                            placement="top"
+                            :width="420"
+                          >
+                            <template #reference>
+                              <button type="button" class="citation-chip">
+                                [{{ citation.citation_id || citationIndex + 1 }}]
+                                {{ citation.filename }}
+                                · {{ citationLocationLabel(citation) }}
+                                <template v-if="citation.table"> · {{ citation.table }}</template>
+                              </button>
+                            </template>
+                            <div class="citation-popover">
+                              <strong>
+                                [{{ citation.citation_id || citationIndex + 1 }}]
+                                {{ citation.filename }}
+                              </strong>
+                              <span>
+                                {{ citationLocationLabel(citation) }} · {{ citation.table || '无表号' }}
+                                · {{ citation.chunk_id || '无块 ID' }}
+                              </span>
+                              <p>{{ citation.text }}</p>
+                            </div>
+                          </el-popover>
+                        </div>
+                        <p v-else>{{ getAnswerSections(turn.response).citation }}</p>
                       </div>
                     </div>
 
@@ -2326,8 +2681,8 @@ async function scrollChatToBottom() {
                             <template #default="{ row }">{{ formatScore(row.score) }}</template>
                           </el-table-column>
                           <el-table-column prop="filename" label="文件" min-width="220" show-overflow-tooltip />
-                          <el-table-column label="页码" width="80">
-                            <template #default="{ row }">{{ formatPage(row.page) }}</template>
+                          <el-table-column label="位置" min-width="140" show-overflow-tooltip>
+                            <template #default="{ row }">{{ evidenceLocationLabel(row) }}</template>
                           </el-table-column>
                           <el-table-column label="表号" width="120">
                             <template #default="{ row }">{{ row.table || '-' }}</template>
@@ -2344,7 +2699,7 @@ async function scrollChatToBottom() {
                     >
                       <el-collapse-item :name="`${turn.id}-trace`">
                         <template #title>
-                          <span class="evidence-title">链式检索过程</span>
+                          <span class="evidence-title">检索与证据判断过程</span>
                         </template>
                         <div
                           v-if="getQueryPlan(turn.response) || getEvidenceDecision(turn.response)"
@@ -2352,17 +2707,9 @@ async function scrollChatToBottom() {
                         >
                           <div v-if="getQueryPlan(turn.response)" class="query-agent-card">
                             <div class="query-agent-card-title">
-                              <strong>查询规划</strong>
+                              <strong>查询规范化</strong>
                               <el-tag size="small" effect="plain">
                                 {{ getQueryPlan(turn.response)?.source }}
-                              </el-tag>
-                              <el-tag
-                                v-if="getQueryPlan(turn.response)?.llm_used"
-                                size="small"
-                                type="success"
-                                effect="plain"
-                              >
-                                LLM
                               </el-tag>
                             </div>
                             <div class="query-agent-grid">
@@ -2378,10 +2725,15 @@ async function scrollChatToBottom() {
                               <p>{{ joinPlanItems(getQueryPlan(turn.response)?.entities) }}</p>
                               <span>指标词</span>
                               <p>{{ joinPlanItems(getQueryPlan(turn.response)?.metrics) }}</p>
-                              <span>改写查询</span>
-                              <p>{{ joinPlanItems(getQueryPlan(turn.response)?.rewritten_queries) }}</p>
-                              <span>子问题</span>
-                              <p>{{ joinPlanItems(getQueryPlan(turn.response)?.sub_questions) }}</p>
+                              <span>查询分解</span>
+                              <p>
+                                {{
+                                  joinPlanItems(
+                                    getQueryPlan(turn.response)?.sub_questions,
+                                    '简单问题，无需分解'
+                                  )
+                                }}
+                              </p>
                             </div>
                           </div>
                           <div v-if="getEvidenceDecision(turn.response)" class="query-agent-card">
@@ -2431,8 +2783,8 @@ async function scrollChatToBottom() {
                                 <template #default="{ row }">{{ formatScore(row.score) }}</template>
                               </el-table-column>
                               <el-table-column prop="filename" label="文件" min-width="220" show-overflow-tooltip />
-                              <el-table-column label="页码" width="80">
-                                <template #default="{ row }">{{ formatPage(row.page) }}</template>
+                              <el-table-column label="位置" min-width="140" show-overflow-tooltip>
+                                <template #default="{ row }">{{ evidenceLocationLabel(row) }}</template>
                               </el-table-column>
                               <el-table-column label="来源" width="110">
                                 <template #default="{ row }">{{ row.retrieval_source || '-' }}</template>
@@ -2575,8 +2927,8 @@ async function scrollChatToBottom() {
                 <strong>{{ selectedQualityReport.total_chunks }}</strong>
               </div>
               <div>
-                <span>覆盖页数</span>
-                <strong>{{ selectedQualityReport.unique_pages }}</strong>
+                <span>覆盖位置</span>
+                <strong>{{ selectedQualityReport.unique_locations ?? selectedQualityReport.unique_pages }}</strong>
               </div>
               <div>
                 <span>平均质量</span>

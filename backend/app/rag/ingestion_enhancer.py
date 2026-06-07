@@ -3,7 +3,7 @@ from collections import defaultdict
 from collections.abc import Iterable
 from typing import Any
 
-from app.rag.schemas import LoadedDocumentPart
+from app.rag.schemas import DocumentBlock
 from app.rag.text_quality import is_text_usable, text_quality_summary
 
 RESIDUE_CONTEXT_PATTERN = re.compile(
@@ -47,7 +47,7 @@ OCR_MIN_ACCEPTABLE_SCORE = 0.32
 
 
 def detect_bad_text_pages(
-    parts: Iterable[LoadedDocumentPart],
+    parts: Iterable[DocumentBlock],
     *,
     min_page_chars: int = 80,
 ) -> dict[int, list[str]]:
@@ -74,14 +74,14 @@ def detect_bad_text_pages(
 
 
 def enhance_loaded_parts(
-    parts: list[LoadedDocumentPart],
+    parts: list[DocumentBlock],
     *,
-    ocr_parts: list[LoadedDocumentPart] | None = None,
+    ocr_parts: list[DocumentBlock] | None = None,
     replace_bad_pages: set[int] | None = None,
     replace_detected_bad_pages: bool = True,
     replace_all_text_layer: bool = False,
     repair_text: bool = True,
-) -> list[LoadedDocumentPart]:
+) -> list[DocumentBlock]:
     bad_page_reasons = detect_bad_text_pages(parts)
     ocr_by_page = _group_parts_by_page(ocr_parts or [])
     original_by_page = _group_parts_by_page(parts)
@@ -99,7 +99,7 @@ def enhance_loaded_parts(
         bad_page_reasons=bad_page_reasons,
     )
 
-    enhanced_parts: list[LoadedDocumentPart] = []
+    enhanced_parts: list[DocumentBlock] = []
     kept_pages: set[int] = set()
     for part in parts:
         page = _metadata_page(part.metadata)
@@ -115,7 +115,7 @@ def enhance_loaded_parts(
         if decision and not _is_ocr_part(part):
             metadata.update(_decision_metadata(decision))
         enhanced = _enhance_part(
-            LoadedDocumentPart(text=part.text, metadata=metadata),
+            DocumentBlock(text=part.text, metadata=metadata),
             bad_page_reasons=bad_page_reasons,
             repair_text=repair_text,
         )
@@ -137,7 +137,7 @@ def enhance_loaded_parts(
                 metadata["bad_text_layer_reasons"] = ",".join(bad_page_reasons[page])
             enhanced_parts.append(
                 _enhance_part(
-                    LoadedDocumentPart(text=part.text, metadata=metadata),
+                    DocumentBlock(text=part.text, metadata=metadata),
                     bad_page_reasons=bad_page_reasons,
                     repair_text=repair_text,
                 )
@@ -148,8 +148,8 @@ def enhance_loaded_parts(
 
 def _choose_text_or_ocr_pages(
     *,
-    original_by_page: dict[int, list[LoadedDocumentPart]],
-    ocr_by_page: dict[int, list[LoadedDocumentPart]],
+    original_by_page: dict[int, list[DocumentBlock]],
+    ocr_by_page: dict[int, list[DocumentBlock]],
     requested_replace_pages: set[int],
     bad_page_reasons: dict[int, list[str]],
 ) -> dict[int, dict[str, Any]]:
@@ -194,7 +194,7 @@ def _choose_text_or_ocr_pages(
 
 
 def _score_page_parts(
-    parts: list[LoadedDocumentPart],
+    parts: list[DocumentBlock],
     *,
     bad_flags: list[str],
     is_ocr: bool,
@@ -232,7 +232,7 @@ def _score_page_parts(
     return max(0.0, min(1.0, score))
 
 
-def _parts_text(parts: list[LoadedDocumentPart]) -> str:
+def _parts_text(parts: list[DocumentBlock]) -> str:
     return "\n".join(part.text.strip() for part in parts if part.text.strip())
 
 
@@ -244,7 +244,7 @@ def _has_table_signals(text: str) -> bool:
     return hits >= 2
 
 
-def _ocr_confidence_bonus(parts: list[LoadedDocumentPart]) -> float:
+def _ocr_confidence_bonus(parts: list[DocumentBlock]) -> float:
     scores = [
         _metadata_float(part.metadata.get("ocr_avg_score"))
         for part in parts
@@ -344,11 +344,11 @@ def text_quality_flags(text: str) -> list[str]:
 
 
 def _enhance_part(
-    part: LoadedDocumentPart,
+    part: DocumentBlock,
     *,
     bad_page_reasons: dict[int, list[str]],
     repair_text: bool,
-) -> LoadedDocumentPart:
+) -> DocumentBlock:
     metadata = dict(part.metadata)
     text = part.text
     page = _metadata_page(metadata)
@@ -365,13 +365,13 @@ def _enhance_part(
 
     if flags:
         metadata["preprocess_quality_flags"] = ",".join(_unique_flags(flags))
-    return LoadedDocumentPart(text=text, metadata=metadata)
+    return DocumentBlock(text=text, metadata=metadata)
 
 
 def _group_parts_by_page(
-    parts: Iterable[LoadedDocumentPart],
-) -> dict[int, list[LoadedDocumentPart]]:
-    grouped: dict[int, list[LoadedDocumentPart]] = defaultdict(list)
+    parts: Iterable[DocumentBlock],
+) -> dict[int, list[DocumentBlock]]:
+    grouped: dict[int, list[DocumentBlock]] = defaultdict(list)
     for part in parts:
         page = _metadata_page(part.metadata)
         if page is not None:
@@ -387,7 +387,7 @@ def _metadata_page(metadata: dict[str, Any]) -> int | None:
         return None
 
 
-def _is_ocr_part(part: LoadedDocumentPart) -> bool:
+def _is_ocr_part(part: DocumentBlock) -> bool:
     extraction_method = str(part.metadata.get("extraction_method") or "")
     chunk_type = str(part.metadata.get("chunk_type") or "")
     return extraction_method == "paddleocr" or chunk_type.startswith("ocr")

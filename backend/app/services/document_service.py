@@ -35,7 +35,7 @@ from app.rag.normalizers.llm_normalizer import (
     normalize_chunks_with_llm,
     select_llm_normalization_candidates,
 )
-from app.rag.schemas import DocumentChunk
+from app.rag.schemas import DocumentChunk, SourceLocator
 from app.rag.vector_store import ChromaVectorStore
 
 logger = get_logger(__name__)
@@ -196,11 +196,11 @@ def get_document_quality_report(db: Session, document_id: int, user: User) -> di
         _quality_label(_safe_float(metadata.get("chunk_quality_score")))
         for metadata in metadata_items
     )
-    pages = {
-        int(page)
-        for page in (_safe_int(metadata.get("page")) for metadata in metadata_items)
-        if page is not None
-    }
+    locations: set[str] = set()
+    for metadata in metadata_items:
+        locator = SourceLocator.from_metadata(metadata)
+        if locator.kind != "document":
+            locations.add(locator.canonical_key())
     ocr_scores = [
         _safe_float(metadata.get("ocr_avg_score"))
         for metadata in metadata_items
@@ -212,7 +212,8 @@ def get_document_quality_report(db: Session, document_id: int, user: User) -> di
         "status": document.status,
         "status_message": document.status_message,
         "total_chunks": len(chunks),
-        "unique_pages": len(pages),
+        "unique_pages": len(locations),
+        "unique_locations": len(locations),
         "chunk_type_counts": dict(chunk_type_counts),
         "quality_counts": dict(quality_counts),
         "average_quality_score": _average(quality_scores),
@@ -943,6 +944,12 @@ def _parser_status_message(file_type: str) -> str:
         return "正在读取 Markdown 文本"
     if file_type == "txt":
         return "正在读取 TXT 文本"
+    if file_type == "docx":
+        return "正在使用 python-docx 读取标题、段落和表格"
+    if file_type == "pptx":
+        return "正在使用 python-pptx 读取幻灯片文本、表格和演讲者备注"
+    if file_type == "xlsx":
+        return "正在使用 openpyxl 识别工作表、数据区域、表头和单元格范围"
     return "正在读取文件内容"
 
 
@@ -978,15 +985,11 @@ def _add_provenance_to_chunk_text(
     metadata: dict,
 ) -> str:
     parts = [f"来源文件：{document.filename}"]
-    page = metadata.get("page")
-    if page:
-        parts.append(f"页码：第{page}页")
+    locator = SourceLocator.from_metadata(metadata)
+    parts.extend(locator.provenance_parts())
     chunk_type = metadata.get("chunk_type")
     if chunk_type:
         parts.append(f"内容类型：{chunk_type}")
-    table_index = metadata.get("table_index")
-    if table_index:
-        parts.append(f"表格：{table_index}")
     table_title = metadata.get("table_title")
     if table_title:
         parts.append(f"表题：{table_title}")

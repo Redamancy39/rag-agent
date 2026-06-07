@@ -203,6 +203,40 @@ PDF 入库策略：
 - 表格行会转成类似“某添加剂在某食品中的限量为多少”的检索事实，并保留页码、表格序号和表题。
 - 写入 Chroma 的文本会加上来源文件、页码、内容类型等前缀，方便后续引用溯源。
 
+所有 loader 和 OCR 结果会先转换为统一的 `DocumentBlock` 中间结构，再进入文本修复、
+LLM 整理、切块质量评分和向量化。该结构统一保存 `text`、`block_type`、
+`extraction_method` 和 `SourceLocator`。来源定位会扁平化为 ChromaDB 可接受的
+`page`、`slide`、`sheet`、`cell_range`、`section_path`、`paragraph_index`、
+`table_index` 等标量字段。后续新增其他格式时，只需实现对应 loader，
+无需复制后续处理链路。
+
+DOCX 使用 `python-docx` 解析，不依赖大模型：
+
+- 按 Heading 1-9 维护 `section_path`。
+- 合并同一标题下的连续段落，避免产生大量过短切块。
+- 表格生成 `table_markdown` 原表块和 `table_row_fact` 逐行事实块。
+- 引用定位保留章节路径、段落序号、表格序号和表格行号。
+- 纯图片或扫描版 DOCX 当前不会自动 OCR，应先转换为 PDF 或后续接入图片 OCR。
+
+PPTX 使用 `python-pptx` 解析：
+
+- 每张幻灯片聚合标题和普通文本框，避免文本框级碎片化。
+- 表格生成 `table_markdown` 和 `table_row_fact` 两类块。
+- 演讲者备注生成独立 `speaker_notes` 块。
+- 引用定位保留幻灯片编号、标题、形状序号和表格序号。
+- 图片、SmartArt 和图表中的视觉信息当前只做数量记录，不执行视觉识别。
+
+XLSX 使用 `openpyxl` 确定性解析：
+
+- 仅处理可见工作表，跳过隐藏辅助表。
+- 按空行和空列识别连续数据区域，并自动选择表头行。
+- 合并单元格标题生成 `sheet_context`，不会重复展开标题文本。
+- 表格每 40 行生成一个 `table_markdown` 块，每个数据行生成精确事实块。
+- 公式优先读取缓存计算值；没有缓存值时保留原公式，避免丢失信息。
+- 引用定位保存工作表名和单元格范围。
+- 安全扫描上限为前 20000 行、前 256 列，超限时在质量内容中增加提示。
+- XLSX 不执行逐行 LLM 预处理；上传开关只作用于后续经过质量筛选的有限候选块。
+
 ## 5. 数据与日志
 
 - SQLite 默认路径：`E:\rag_project\rag-agent-kb-system\data\app.db`
@@ -315,24 +349,30 @@ GET /api/v1/permissions/audit-logs?limit=100
 
 详细说明见 `docs/PERMISSION_AUDIT.md`。
 
-## 11. Query Agent 检索规划
+## 11. 查询归一化、证据判断与引用校验
 
-问答阶段已加入轻量 Query Agent，位置在权限过滤之后、正式检索之前。它不会直接回答问题，只负责把用户问题整理成更适合检索的计划：
+在线问答采用单轮、权限约束的 RAG 链路，不执行生成后的多轮自动重试。查询层保留以下受控能力：
 
 - 查询归一化：统一标准号、空格、括号、单位和常见符号。
-- 查询改写：生成适合向量检索、BM25 和关键词检索的多个 query。
-- 查询分解：跨文档、对比、多实体问题会拆成子问题。
+- 本地同义词转换：例如 `TVBN` 转为“挥发性盐基氮（TVB-N）”。
+- 按需查询分解：仅对跨文档、比较、多跳或多对象问题生成子查询，默认最多 3 条；简单事实问题仍只检索一次。
+- 单轮混合检索：向量召回、BM25、关键词召回和 Reranker 精排。
 - 证据充分性判断：检索后判断证据是否覆盖标准号、核心对象和指标；证据不足时直接返回“未找到”，避免幻觉。
+- 引用一致性校验：结论和依据必须包含 `[n]`，后端校验编号、重新连续编号并绑定文件、页码、表号和 chunk ID。
 
-默认配置会开启 LLM 查询规划：规则层先判断问题是否需要改写；如果命中复杂检索场景，会让 DeepSeek 等 OpenAI-compatible API 一次性完成“是否需要改写、归一化、改写、分解、证据需求提取”。简单问题仍会直接走规则归一化，不强制调用大模型。
+复杂查询规划代码仍可作为实验能力继续演进，但默认关闭，避免简单问题额外调用大模型和执行多轮检索。
 
 ```env
 QUERY_AGENT_ENABLED=true
-QUERY_AGENT_LLM_ENABLED=true
-QUERY_AGENT_MAX_QUERIES=5
-QUERY_AGENT_MAX_SUB_QUESTIONS=5
+QUERY_AGENT_LLM_ENABLED=false
+QUERY_AGENT_MAX_QUERIES=3
+QUERY_AGENT_MAX_SUB_QUESTIONS=3
+QUERY_DECOMPOSITION_ENABLED=true
+QUERY_DECOMPOSITION_PER_QUERY_TOP_K=16
+QUERY_DECOMPOSITION_SCORE_FACTOR=0.96
+QUERY_DECOMPOSITION_MAX_CANDIDATES=48
 QUERY_AGENT_EVIDENCE_JUDGE_ENABLED=true
 QUERY_AGENT_EVIDENCE_LLM_ENABLED=false
 ```
 
-`QUERY_AGENT_EVIDENCE_LLM_ENABLED=true` 会在检索后再调用一次大模型审查证据充分性，成本和耗时更高，建议只在调试复杂跨文档问题时开启。接口返回中会包含 `query_plan`、`evidence_decision` 和 `retrieval_trace`，前端“链式检索过程”可以展开查看。
+子查询会在同一轮内完成候选召回，复用一次加载的关键词/BM25语料，合并去重后统一进入一次 Reranker，不会为每条子查询分别生成答案。接口返回中包含 `query_plan`、`evidence_decision`、`retrieval_trace` 和 `citation_validation`。前端可以展开实际使用的归一化查询、分解子查询和融合结果，并直接点击答案中的 `[n]` 查看对应证据来源。
