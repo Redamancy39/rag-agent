@@ -72,7 +72,7 @@ PDF_REJECT_GARBLED_TEXT=true
 
 ```env
 CORS_ORIGINS=["http://localhost:5173","http://127.0.0.1:5173"]
-ALLOWED_FILE_EXTENSIONS=[".txt",".md",".markdown",".pdf"]
+ALLOWED_FILE_EXTENSIONS=[".txt",".md",".markdown",".pdf",".doc",".docx",".ppt",".pptx",".xls",".xlsx"]
 ```
 
 ## 3. 启动
@@ -182,6 +182,7 @@ Authorization: Bearer <access_token>
 Content-Type: multipart/form-data
 
 file=<txt/md/pdf file>
+collection_id=<optional document collection id>
 ```
 
 PowerShell 示例：
@@ -190,7 +191,8 @@ PowerShell 示例：
 $token = "<access_token>"
 curl.exe -X POST "http://127.0.0.1:8000/api/v1/documents/upload" `
   -H "Authorization: Bearer $token" `
-  -F "file=@E:\path\to\demo.md"
+  -F "file=@E:\path\to\demo.md" `
+  -F "collection_id=1"
 ```
 
 上传成功后，原始文件保存到 `data/uploads/<user_id>/`，分块和向量写入 `data/chroma`。
@@ -210,13 +212,21 @@ LLM 整理、切块质量评分和向量化。该结构统一保存 `text`、`bl
 `table_index` 等标量字段。后续新增其他格式时，只需实现对应 loader，
 无需复制后续处理链路。
 
-DOCX 使用 `python-docx` 解析，不依赖大模型：
+DOCX 使用 `python-docx` 优先解析：
 
 - 按 Heading 1-9 维护 `section_path`。
 - 合并同一标题下的连续段落，避免产生大量过短切块。
 - 表格生成 `table_markdown` 原表块和 `table_row_fact` 逐行事实块。
 - 引用定位保留章节路径、段落序号、表格序号和表格行号。
-- 纯图片或扫描版 DOCX 当前不会自动 OCR，应先转换为 PDF 或后续接入图片 OCR。
+- 原生探测不可读、图片内容占主导或解析失败时，会回退 LiteParse。
+
+上传接口的 `llm_chunk_normalization_mode` 支持三种策略：
+
+- `auto`：默认值，由 FileProbe / StrategyPlanner 判断文档是否需要 LLM 整理。
+- `enabled`：强制允许 LLM 整理，但仍只处理质量评分筛选出的候选切块。
+- `disabled`：完全跳过 LLM 整理。
+
+旧参数 `enable_llm_chunk_normalization=true/false` 继续兼容。
 
 PPTX 使用 `python-pptx` 解析：
 
@@ -224,7 +234,8 @@ PPTX 使用 `python-pptx` 解析：
 - 表格生成 `table_markdown` 和 `table_row_fact` 两类块。
 - 演讲者备注生成独立 `speaker_notes` 块。
 - 引用定位保留幻灯片编号、标题、形状序号和表格序号。
-- 图片、SmartArt 和图表中的视觉信息当前只做数量记录，不执行视觉识别。
+- 图片、SmartArt 和图表中的文本在原生解析不足时可回退 LiteParse 选择性 OCR；
+  图形关系和图表含义仍需要后续视觉模型理解。
 
 XLSX 使用 `openpyxl` 确定性解析：
 
@@ -236,6 +247,43 @@ XLSX 使用 `openpyxl` 确定性解析：
 - 引用定位保存工作表名和单元格范围。
 - 安全扫描上限为前 20000 行、前 256 列，超限时在质量内容中增加提示。
 - XLSX 不执行逐行 LLM 预处理；上传开关只作用于后续经过质量筛选的有限候选块。
+
+### LiteParse 与旧 Office
+
+`.doc/.ppt/.xls` 没有可靠的纯 Python 原生解析链路，系统将它们路由到
+LiteParse。LiteParse 调用 LibreOffice 转换为 PDF，再进行 PDFium 版面提取和
+选择性 OCR，最终映射为统一 `DocumentBlock`。现代 DOCX/PPTX/XLSX 仍优先使用
+现有原生 loader，以保留标题、幻灯片、工作表、公式和单元格范围等精确结构。
+
+安装：
+
+```powershell
+pip install -r requirements-rag.txt
+choco install libreoffice-fresh
+```
+
+Windows 安装后需确认 `lit --help` 和 `soffice --version` 可执行。若 LibreOffice
+没有自动加入 PATH，可将 `C:\Program Files\LibreOffice\program` 加入 PATH。
+
+```env
+LITEPARSE_ENABLED=true
+LITEPARSE_COMMAND=lit
+LITEPARSE_OCR_ENABLED=true
+LITEPARSE_OCR_LANGUAGE=chi_sim
+LITEPARSE_TIMEOUT_SECONDS=180
+LITEPARSE_NUM_WORKERS=2
+```
+
+LiteParse/PaddleOCR 产物会写入 `parser_family`、`extraction_method`、页码和 OCR
+置信度等 metadata。在 LLM 三态为 `auto` 时，这些块会比普通原生文本更优先进入
+质量筛选后的结构化整理；仍受候选比例和每文档最大块数限制。
+
+旧 Office 默认先执行 LibreOffice 转换和 LiteParse 文本层提取；仅在没有得到
+可读文本时再调用 LiteParse OCR，避免对可读的长 PPT/XLS 做无必要的逐页 OCR。
+
+若 LiteParse 内置 OCR 在当前 Windows 环境启动失败，适配器会自动使用
+`--no-ocr` 重试并把失败原因写入 `liteparse_ocr_fallback_reason`，避免可读文本
+因 OCR 组件异常而整份入库失败。中文扫描 PDF 仍优先使用现有 PaddleOCR 路径。
 
 ## 5. 数据与日志
 
@@ -273,7 +321,9 @@ Authorization: Bearer <admin_access_token>
 当前已接入轻量入库 Agent，不是完整 LangGraph 工作流。上传文件后会先执行轻量探测，再生成处理计划：
 
 - PDF 探测：采样前几页，记录页数、文本字符数、表格数、可读性、文本质量和错误信息。
-- 规则兜底：文本层不可读或字符数过低时选择 OCR；表格明显时开启 LLM 表格归一化。
+- 规则兜底：PDF 文本层不可读时选择 PaddleOCR；DOC/PPT/XLS 选择 LiteParse；
+  现代 Office 不可读或原生解析失败时回退 LiteParse；OCR/LiteParse/表格结果
+  优先进入有限候选块的 LLM 结构化整理。
 - LLM 规划：`INGESTION_AGENT_LLM_ENABLED=true` 且配置了 OpenAI-compatible API 时，会让 DeepSeek 等模型基于探测结果给出处理建议；规则仍作为安全兜底。
 - 任务记录：`document_processing_jobs.probe_json` 保存探测结果，`plan_json` 保存最终策略。前端文档列表点击“任务”可查看。
 
@@ -286,7 +336,8 @@ INGESTION_AGENT_SAMPLE_PAGES=3
 INGESTION_EXECUTOR=pipeline
 ```
 
-如果上传速度或 API 成本敏感，可以先把 `INGESTION_AGENT_LLM_ENABLED=false`，系统仍会使用规则规划 PyMuPDF / pypdf / PaddleOCR / LLM 表格预处理。
+如果上传速度或 API 成本敏感，可以先把 `INGESTION_AGENT_LLM_ENABLED=false`，
+系统仍会使用规则规划 PyMuPDF / pypdf / PaddleOCR / LiteParse / LLM 表格预处理。
 
 `INGESTION_EXECUTOR` 默认使用稳定的 `pipeline`。如果已经安装 `requirements-rag.txt` 中的 `langgraph`，可以改为：
 
@@ -320,13 +371,22 @@ RELEASE_GPU_CACHE_AFTER_INGESTION=true
 
 当前实现为 FastAPI 进程内队列，适合本地演示和单机开发；后续如果需要多进程或服务器部署，应升级为 Redis/RQ、Celery 或独立 worker。
 
-## 10. 用户组/部门权限与审计日志
+## 10. 文档集、用户组/部门权限与审计日志
+
+文档可以归属一个文档集，已有文档默认处于“未分组”。上传接口可以传
+`collection_id`，管理员也可以在前端文档列表多选文档后批量移动。移动操作只更新
+SQLite 归属关系，不重新解析、切块或向量化。
+
+文档集支持一次授权给用户或用户组/部门。集合权限会自动覆盖其中当前和后续移入的
+全部文档；删除文档集时，文档会回到“未分组”，原文件和 ChromaDB 向量不会删除。
 
 当前已经支持管理员维护用户组/部门，并按部门给文档批量授权。普通用户最终可访问范围为：
 
 - 自己上传的文档。
 - 管理员直接授权给该用户的文档。
 - 用户所在部门/用户组被授权的文档。
+- 直接授权给该用户的文档集中的文档。
+- 用户所在部门被授权的文档集中的文档。
 
 这些权限会在后端文档列表、文档详情、切块预览、质量报告和 RAG 检索阶段统一生效，不依赖前端隐藏按钮。
 
@@ -340,11 +400,20 @@ POST /api/v1/permissions/groups/{group_id}/members
 GET /api/v1/permissions/documents/{document_id}/group-permissions
 POST /api/v1/permissions/group-permissions
 GET /api/v1/permissions/audit-logs?limit=100
+GET /api/v1/document-collections/
+POST /api/v1/document-collections/
+POST /api/v1/document-collections/move-documents
+GET /api/v1/document-collections/{collection_id}/user-permissions
+POST /api/v1/document-collections/{collection_id}/user-permissions
+GET /api/v1/document-collections/{collection_id}/group-permissions
+POST /api/v1/document-collections/{collection_id}/group-permissions
 ```
 
 前端入口：
 
-- `系统配置`：创建部门、维护成员、查看权限审计日志。
+- `系统配置`：创建文档集、为文档集授权、创建部门、维护成员、查看权限审计日志。
+- `文档列表`：多选文档并批量移动到目标文档集。
+- `文档上传`：上传前选择目标文档集；普通用户只能选择具有写权限的文档集。
 - `文档列表 -> 权限`：按用户授权或按部门授权。
 
 详细说明见 `docs/PERMISSION_AUDIT.md`。
@@ -373,6 +442,7 @@ QUERY_DECOMPOSITION_SCORE_FACTOR=0.96
 QUERY_DECOMPOSITION_MAX_CANDIDATES=48
 QUERY_AGENT_EVIDENCE_JUDGE_ENABLED=true
 QUERY_AGENT_EVIDENCE_LLM_ENABLED=false
+RAG_TRACE_TOP_HITS=12
 ```
 
-子查询会在同一轮内完成候选召回，复用一次加载的关键词/BM25语料，合并去重后统一进入一次 Reranker，不会为每条子查询分别生成答案。接口返回中包含 `query_plan`、`evidence_decision`、`retrieval_trace` 和 `citation_validation`。前端可以展开实际使用的归一化查询、分解子查询和融合结果，并直接点击答案中的 `[n]` 查看对应证据来源。
+子查询会在同一轮内完成候选召回，复用一次加载的关键词/BM25语料，合并去重后统一进入一次 Reranker，不会为每条子查询分别生成答案。接口返回中包含 `query_plan`、`evidence_decision`、`retrieval_scope`、`retrieval_trace` 和 `citation_validation`。检索 trace 同步写入 `chat_logs`，记录权限过滤后的文档范围、各阶段耗时、候选块位置、向量/BM25/关键词/Reranker 分数和最终采用的引用编号；前端刷新后仍可展开完整过程。

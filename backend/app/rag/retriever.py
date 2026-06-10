@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from time import perf_counter
 
 from app.agent.query_agent import QueryAgent, QueryPlan
 from app.core.config import get_settings
@@ -112,6 +113,7 @@ class PermissionAwareRetriever:
         all_hits: list[dict] = []
         trace: list[dict] = []
         for query_index, (query, query_source) in enumerate(planned_queries):
+            query_started = perf_counter()
             query_top_k = (
                 candidate_top_k
                 if query_index == 0
@@ -143,9 +145,11 @@ class PermissionAwareRetriever:
                     query=query,
                     source=query_source,
                     hits=query_hits,
+                    duration_ms=_elapsed_ms(query_started),
                 )
             )
 
+        merge_started = perf_counter()
         candidate_limit = (
             max(
                 final_top_k,
@@ -162,6 +166,7 @@ class PermissionAwareRetriever:
                     query=primary_query,
                     source="decomposition_merged",
                     hits=hits,
+                    duration_ms=_elapsed_ms(merge_started),
                 )
             )
         if not self._should_rerank() or not hits:
@@ -172,6 +177,7 @@ class PermissionAwareRetriever:
                     query=primary_query,
                     source="merged",
                     hits=final_hits,
+                    duration_ms=_elapsed_ms(merge_started),
                 )
             )
             return final_hits, trace
@@ -184,10 +190,12 @@ class PermissionAwareRetriever:
                     query=primary_query,
                     source="merged_without_reranker",
                     hits=final_hits,
+                    duration_ms=_elapsed_ms(merge_started),
                 )
             )
             return final_hits, trace
         preserved_hits = hits[: self.settings.RAG_PRESERVE_PRE_RERANK_TOP_K]
+        rerank_started = perf_counter()
         try:
             reranked_hits = reranker.rerank(primary_query, hits, final_top_k)
             final_hits = _merge_preserved_hits(
@@ -205,6 +213,7 @@ class PermissionAwareRetriever:
                     query=primary_query,
                     source="reranked_with_preserved_recall",
                     hits=final_hits,
+                    duration_ms=_elapsed_ms(rerank_started),
                 )
             )
             return final_hits, trace
@@ -217,6 +226,7 @@ class PermissionAwareRetriever:
                 query=primary_query,
                 source="reranker_failed",
                 hits=final_hits,
+                duration_ms=_elapsed_ms(rerank_started),
             )
         )
         return final_hits, trace
@@ -439,15 +449,18 @@ def _trace_step(
     query: str,
     source: str,
     hits: list[dict],
+    duration_ms: int | None = None,
 ) -> dict:
+    trace_limit = max(1, get_settings().RAG_TRACE_TOP_HITS)
     return {
         "query_index": query_index,
         "query": query,
         "source": source,
         "hit_count": len(hits),
+        "duration_ms": duration_ms,
         "top_hits": [
             _trace_hit(rank=index, hit=hit)
-            for index, hit in enumerate(hits[:5], start=1)
+            for index, hit in enumerate(hits[:trace_limit], start=1)
         ],
     }
 
@@ -458,6 +471,13 @@ def _trace_hit(*, rank: int, hit: dict) -> dict:
     return {
         "rank": rank,
         "score": hit.get("score"),
+        "vector_score": hit.get("vector_score"),
+        "keyword_score": hit.get("keyword_score"),
+        "bm25_score": hit.get("bm25_score"),
+        "raw_bm25_score": hit.get("raw_bm25_score"),
+        "pre_rerank_score": hit.get("pre_rerank_score"),
+        "rerank_score": hit.get("rerank_score"),
+        "distance": hit.get("distance"),
         "filename": str(metadata.get("filename") or ""),
         "page": locator.page,
         "slide": locator.slide,
@@ -476,7 +496,15 @@ def _trace_hit(*, rank: int, hit: dict) -> dict:
             for term in (hit.get("matched_terms") or [])
             if str(term)
         ][:8],
+        "preserved_from_pre_rerank": bool(hit.get("preserved_from_pre_rerank")),
+        "selected_for_answer": False,
+        "citation_id": None,
+        "text_preview": " ".join(str(hit.get("text") or "").split())[:220],
     }
+
+
+def _elapsed_ms(started: float) -> int:
+    return max(0, int((perf_counter() - started) * 1000))
 
 
 def _merge_terms(left: list, right: list) -> list[str]:

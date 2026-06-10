@@ -67,6 +67,10 @@ def score_chunk(
     table_like = _is_table_like(stripped, metadata, lines, short_line_ratio, numeric_line_ratio)
     preprocess_flags = _split_flags(metadata.get("preprocess_quality_flags"))
     repair_flags = _split_flags(metadata.get("preprocess_repair_flags"))
+    is_liteparse = (
+        str(metadata.get("parser_family") or "").lower() == "liteparse"
+        or str(metadata.get("extraction_method") or "").lower().startswith("liteparse")
+    )
 
     score = 1.0
     flags: list[str] = []
@@ -112,6 +116,8 @@ def score_chunk(
 
     if table_like:
         flags.append("table_like")
+    if is_liteparse:
+        flags.append("liteparse_extraction")
     if metadata.get("bad_text_layer") or "unusable_text" in preprocess_flags:
         score -= 0.2
         flags.append("bad_text_layer")
@@ -154,7 +160,16 @@ def _needs_llm_normalization(
         return False
     if metadata.get("llm_normalized"):
         return False
-    is_ocr = chunk_type.startswith("ocr") or metadata.get("extraction_method") == "paddleocr"
+    extraction_method = str(metadata.get("extraction_method") or "").lower()
+    is_ocr = (
+        chunk_type.startswith("ocr")
+        or extraction_method == "paddleocr"
+        or extraction_method == "liteparse_ocr"
+    )
+    is_liteparse = (
+        str(metadata.get("parser_family") or "").lower() == "liteparse"
+        or extraction_method.startswith("liteparse")
+    )
     high_value_flags = {
         "preprocess_repair_hint",
         "suspicious_power_notation",
@@ -164,6 +179,7 @@ def _needs_llm_normalization(
     }
     is_candidate = (
         is_ocr
+        or is_liteparse
         or "table_like" in flags
         or bool(set(flags) & high_value_flags)
         or score < settings.CHUNK_LLM_MIN_QUALITY_SCORE

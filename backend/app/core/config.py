@@ -49,8 +49,11 @@ class Settings(BaseSettings):
         ".md",
         ".markdown",
         ".pdf",
+        ".doc",
         ".docx",
+        ".ppt",
         ".pptx",
+        ".xls",
         ".xlsx",
     ]
 
@@ -82,6 +85,15 @@ class Settings(BaseSettings):
     INGESTION_MAX_CONCURRENT_JOBS: int = 1
     RELEASE_GPU_CACHE_AFTER_INGESTION: bool = True
 
+    LITEPARSE_ENABLED: bool = True
+    LITEPARSE_COMMAND: str = "lit"
+    LITEPARSE_TIMEOUT_SECONDS: float = 180.0
+    LITEPARSE_OCR_ENABLED: bool = True
+    LITEPARSE_OCR_LANGUAGE: str = "chi_sim"
+    LITEPARSE_MAX_PAGES: int = 1000
+    LITEPARSE_DPI: int = 180
+    LITEPARSE_NUM_WORKERS: int = 2
+
     PREPROCESS_OCR_FALLBACK_ENABLED: bool = False
     OCR_MIN_EXTRACTED_CHARS: int = 50
     OCR_MAX_PAGES: int | None = None
@@ -94,6 +106,7 @@ class Settings(BaseSettings):
     RAG_MAX_GARBLED_TOKEN_RATIO: float = 0.08
     RAG_PRESERVE_PRE_RERANK_TOP_K: int = 3
     RAG_MAX_RETURNED_HITS: int = 8
+    RAG_TRACE_TOP_HITS: int = 12
     QUERY_AGENT_ENABLED: bool = True
     QUERY_AGENT_LLM_ENABLED: bool = False
     QUERY_AGENT_MAX_QUERIES: int = 3

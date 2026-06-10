@@ -3,7 +3,10 @@ import type {
   ChatJobRead,
   ChatResponse,
   ChatLogRead,
+  CollectionGroupPermissionRead,
+  CollectionUserPermissionRead,
   DocumentChunkRead,
+  DocumentCollectionRead,
   DocumentProcessingJobRead,
   DocumentQualityReportRead,
   DocumentRead,
@@ -76,6 +79,118 @@ export async function listUsers(token: string): Promise<UserRead[]> {
 
 export async function listDocuments(token: string): Promise<DocumentRead[]> {
   return request<DocumentRead[]>('/documents/', { token })
+}
+
+export async function listDocumentCollections(
+  token: string
+): Promise<DocumentCollectionRead[]> {
+  return request<DocumentCollectionRead[]>('/document-collections/', { token })
+}
+
+export async function createDocumentCollection(
+  token: string,
+  payload: { name: string; description?: string }
+): Promise<DocumentCollectionRead> {
+  return request<DocumentCollectionRead>('/document-collections/', {
+    method: 'POST',
+    token,
+    body: JSON.stringify(payload)
+  })
+}
+
+export async function deleteDocumentCollection(
+  token: string,
+  collectionId: number
+): Promise<void> {
+  await request<void>(`/document-collections/${collectionId}`, {
+    method: 'DELETE',
+    token
+  })
+}
+
+export async function moveDocumentsToCollection(
+  token: string,
+  documentIds: number[],
+  collectionId: number | null
+): Promise<{ moved_count: number; document_ids: number[]; collection_id: number | null }> {
+  return request('/document-collections/move-documents', {
+    method: 'POST',
+    token,
+    body: JSON.stringify({
+      document_ids: documentIds,
+      collection_id: collectionId
+    })
+  })
+}
+
+export async function listCollectionUserPermissions(
+  token: string,
+  collectionId: number
+): Promise<CollectionUserPermissionRead[]> {
+  return request<CollectionUserPermissionRead[]>(
+    `/document-collections/${collectionId}/user-permissions`,
+    { token }
+  )
+}
+
+export async function upsertCollectionUserPermission(
+  token: string,
+  collectionId: number,
+  payload: { user_id: number; can_read: boolean; can_write: boolean }
+): Promise<CollectionUserPermissionRead> {
+  return request<CollectionUserPermissionRead>(
+    `/document-collections/${collectionId}/user-permissions`,
+    {
+      method: 'POST',
+      token,
+      body: JSON.stringify(payload)
+    }
+  )
+}
+
+export async function deleteCollectionUserPermission(
+  token: string,
+  permissionId: number
+): Promise<void> {
+  await request<void>(`/document-collections/user-permissions/${permissionId}`, {
+    method: 'DELETE',
+    token
+  })
+}
+
+export async function listCollectionGroupPermissions(
+  token: string,
+  collectionId: number
+): Promise<CollectionGroupPermissionRead[]> {
+  return request<CollectionGroupPermissionRead[]>(
+    `/document-collections/${collectionId}/group-permissions`,
+    { token }
+  )
+}
+
+export async function upsertCollectionGroupPermission(
+  token: string,
+  collectionId: number,
+  payload: { group_id: number; can_read: boolean; can_write: boolean }
+): Promise<CollectionGroupPermissionRead> {
+  return request<CollectionGroupPermissionRead>(
+    `/document-collections/${collectionId}/group-permissions`,
+    {
+      method: 'POST',
+      token,
+      body: JSON.stringify(payload)
+    }
+  )
+}
+
+export async function deleteCollectionGroupPermission(
+  token: string,
+  permissionId: number
+): Promise<void> {
+  await request<void>(`/document-collections/group-permissions/${permissionId}`, {
+    method: 'DELETE',
+    token
+  })
 }
 
 export async function getDocument(token: string, documentId: number): Promise<DocumentRead> {
@@ -285,13 +400,17 @@ export async function deleteChatLog(token: string, logId: number): Promise<void>
 export function uploadDocument(
   token: string,
   file: File,
-  enableLlmChunkNormalization: boolean,
+  llmChunkNormalizationMode: 'auto' | 'enabled' | 'disabled',
+  collectionId: number | null,
   onProgress: (percent: number) => void
 ): Promise<DocumentRead> {
   return new Promise((resolve, reject) => {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('enable_llm_chunk_normalization', String(enableLlmChunkNormalization))
+    formData.append('llm_chunk_normalization_mode', llmChunkNormalizationMode)
+    if (collectionId !== null) {
+      formData.append('collection_id', String(collectionId))
+    }
 
     const xhr = new XMLHttpRequest()
     xhr.open('POST', `${API_V1}/documents/upload`)

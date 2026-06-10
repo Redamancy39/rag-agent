@@ -22,6 +22,11 @@ from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.db.session import SessionLocal
 from app.models.document import Document
+from app.models.document_collection import (
+    CollectionGroupPermission,
+    CollectionUserPermission,
+    DocumentCollection,
+)
 from app.models.document_job import DocumentProcessingJob
 from app.models.group import GroupPermission, UserGroup
 from app.models.permission import Permission
@@ -52,7 +57,10 @@ def list_accessible_documents(db: Session, user: User) -> list[Document]:
         return list(
             db.scalars(
                 select(Document)
-                .options(selectinload(Document.owner))
+                .options(
+                    selectinload(Document.owner),
+                    selectinload(Document.collection),
+                )
                 .order_by(Document.id.desc())
             )
         )
@@ -69,14 +77,31 @@ def list_accessible_documents(db: Session, user: User) -> list[Document]:
             GroupPermission.can_read.is_(True),
         )
     )
+    owned_collection_ids = select(DocumentCollection.id).where(
+        DocumentCollection.owner_id == user.id
+    )
+    direct_collection_ids = select(CollectionUserPermission.collection_id).where(
+        CollectionUserPermission.user_id == user.id,
+        CollectionUserPermission.can_read.is_(True),
+    )
+    group_collection_ids = select(CollectionGroupPermission.collection_id).where(
+        CollectionGroupPermission.group_id.in_(group_ids),
+        CollectionGroupPermission.can_read.is_(True),
+    )
     statement = (
         select(Document)
-        .options(selectinload(Document.owner))
+        .options(
+            selectinload(Document.owner),
+            selectinload(Document.collection),
+        )
         .where(
             or_(
                 Document.owner_id == user.id,
                 Document.id.in_(direct_document_ids),
                 Document.id.in_(group_document_ids),
+                Document.collection_id.in_(owned_collection_ids),
+                Document.collection_id.in_(direct_collection_ids),
+                Document.collection_id.in_(group_collection_ids),
             )
         )
         .distinct()
@@ -110,7 +135,9 @@ def get_accessible_document(db: Session, document_id: int, user: User) -> Docume
             GroupPermission.can_read.is_(True),
         )
     )
-    return document if group_permission else None
+    if group_permission:
+        return document
+    return document if _has_collection_access(db, document, user, write=False) else None
 
 
 def get_writable_document(db: Session, document_id: int, user: User) -> Document | None:
@@ -138,7 +165,53 @@ def get_writable_document(db: Session, document_id: int, user: User) -> Document
             GroupPermission.can_write.is_(True),
         )
     )
-    return document if group_permission else None
+    if group_permission:
+        return document
+    return document if _has_collection_access(db, document, user, write=True) else None
+
+
+def _has_collection_access(
+    db: Session,
+    document: Document,
+    user: User,
+    *,
+    write: bool,
+) -> bool:
+    if document.collection_id is None:
+        return False
+    collection = db.get(DocumentCollection, document.collection_id)
+    if not collection:
+        return False
+    if user.is_admin or collection.owner_id == user.id:
+        return True
+    user_flag = (
+        CollectionUserPermission.can_write
+        if write
+        else CollectionUserPermission.can_read
+    )
+    direct = db.scalar(
+        select(CollectionUserPermission.id).where(
+            CollectionUserPermission.collection_id == collection.id,
+            CollectionUserPermission.user_id == user.id,
+            user_flag.is_(True),
+        )
+    )
+    if direct:
+        return True
+    group_ids = select(UserGroup.group_id).where(UserGroup.user_id == user.id)
+    group_flag = (
+        CollectionGroupPermission.can_write
+        if write
+        else CollectionGroupPermission.can_read
+    )
+    inherited = db.scalar(
+        select(CollectionGroupPermission.id).where(
+            CollectionGroupPermission.collection_id == collection.id,
+            CollectionGroupPermission.group_id.in_(group_ids),
+            group_flag.is_(True),
+        )
+    )
+    return inherited is not None
 
 
 def list_document_chunks(
@@ -294,14 +367,25 @@ async def create_document_record(
     user: User,
     upload_file: UploadFile,
     *,
-    enable_llm_chunk_normalization: bool | None = True,
+    llm_chunk_normalization_mode: str | bool | None = "auto",
+    collection_id: int | None = None,
 ) -> Document:
     settings = get_settings()
+    normalization_mode = _parse_llm_chunk_normalization_mode(
+        llm_chunk_normalization_mode
+    )
     original_filename = sanitize_filename(upload_file.filename or "uploaded_file")
     file_type = detect_file_type(original_filename)
     suffix = Path(original_filename).suffix.lower()
     if suffix not in settings.ALLOWED_FILE_EXTENSIONS:
         raise ValueError(f"File extension is not allowed: {suffix}")
+    collection = None
+    if collection_id is not None:
+        collection = db.get(DocumentCollection, collection_id)
+        if not collection:
+            raise ValueError("Document collection not found")
+        if not _can_write_collection(db, collection, user):
+            raise PermissionError("No write permission for this document collection")
 
     user_upload_dir = settings.UPLOAD_DIR / str(user.id)
     user_upload_dir.mkdir(parents=True, exist_ok=True)
@@ -319,6 +403,7 @@ async def create_document_record(
         status="queued",
         status_message="文件已保存，等待后台入库",
         owner_id=user.id,
+        collection_id=collection.id if collection else None,
     )
     db.add(document)
     db.commit()
@@ -327,10 +412,37 @@ async def create_document_record(
         db,
         document,
         options={
-            "enable_llm_chunk_normalization": enable_llm_chunk_normalization,
+            "llm_chunk_normalization_mode": normalization_mode,
         },
     )
     return document
+
+
+def _can_write_collection(
+    db: Session,
+    collection: DocumentCollection,
+    user: User,
+) -> bool:
+    if user.is_admin or collection.owner_id == user.id:
+        return True
+    direct = db.scalar(
+        select(CollectionUserPermission.id).where(
+            CollectionUserPermission.collection_id == collection.id,
+            CollectionUserPermission.user_id == user.id,
+            CollectionUserPermission.can_write.is_(True),
+        )
+    )
+    if direct:
+        return True
+    group_ids = select(UserGroup.group_id).where(UserGroup.user_id == user.id)
+    inherited = db.scalar(
+        select(CollectionGroupPermission.id).where(
+            CollectionGroupPermission.collection_id == collection.id,
+            CollectionGroupPermission.group_id.in_(group_ids),
+            CollectionGroupPermission.can_write.is_(True),
+        )
+    )
+    return inherited is not None
 
 
 async def create_and_index_document(
@@ -396,7 +508,7 @@ def queue_document_chunk_normalization(
         document,
         options={
             "action": "manual_llm_chunk_normalization",
-            "enable_llm_chunk_normalization": True,
+            "llm_chunk_normalization_mode": "enabled",
         },
     )
     _set_document_status(
@@ -897,12 +1009,46 @@ def _is_chunk_llm_enabled_for_document(
         return False
 
     options = _get_processing_options(db, document)
-    user_choice = options.get("enable_llm_chunk_normalization")
-    if user_choice is not None:
-        return bool(user_choice)
+    mode = _processing_llm_normalization_mode(options)
+    if mode == "enabled":
+        return True
+    if mode == "disabled":
+        return False
     if ingestion_plan_use_llm is not None:
         return bool(ingestion_plan_use_llm)
     return bool(settings.CHUNK_LLM_NORMALIZATION_ENABLED)
+
+
+def _parse_llm_chunk_normalization_mode(value: str | bool | None) -> str:
+    if isinstance(value, bool):
+        return "enabled" if value else "disabled"
+    normalized = str(value or "auto").strip().lower()
+    aliases = {
+        "true": "enabled",
+        "false": "disabled",
+        "on": "enabled",
+        "off": "disabled",
+        "force": "enabled",
+    }
+    normalized = aliases.get(normalized, normalized)
+    if normalized not in {"auto", "enabled", "disabled"}:
+        raise ValueError(
+            "Invalid LLM chunk normalization mode. "
+            "Expected: auto, enabled, or disabled."
+        )
+    return normalized
+
+
+def _processing_llm_normalization_mode(options: dict) -> str:
+    if "llm_chunk_normalization_mode" in options:
+        return _parse_llm_chunk_normalization_mode(
+            options.get("llm_chunk_normalization_mode")
+        )
+    if "enable_llm_chunk_normalization" in options:
+        return _parse_llm_chunk_normalization_mode(
+            options.get("enable_llm_chunk_normalization")
+        )
+    return "auto"
 
 
 def _get_processing_options(db: Session, document: Document) -> dict:
@@ -946,10 +1092,16 @@ def _parser_status_message(file_type: str) -> str:
         return "正在读取 TXT 文本"
     if file_type == "docx":
         return "正在使用 python-docx 读取标题、段落和表格"
+    if file_type == "doc":
+        return "正在使用 LiteParse / LibreOffice 转换并解析旧版 DOC"
     if file_type == "pptx":
         return "正在使用 python-pptx 读取幻灯片文本、表格和演讲者备注"
+    if file_type == "ppt":
+        return "正在使用 LiteParse / LibreOffice 转换并解析旧版 PPT"
     if file_type == "xlsx":
         return "正在使用 openpyxl 识别工作表、数据区域、表头和单元格范围"
+    if file_type == "xls":
+        return "正在使用 LiteParse / LibreOffice 转换并解析旧版 XLS"
     return "正在读取文件内容"
 
 

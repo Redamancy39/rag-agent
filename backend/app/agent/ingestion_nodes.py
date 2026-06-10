@@ -42,6 +42,7 @@ NODE_LABELS = {
     "StrategyPlanner": "策略规划",
     "RouteTextFirst": "文本优先路由",
     "RouteOcrFirst": "OCR 优先路由",
+    "RouteLiteParse": "LiteParse 版面解析路由",
     "RouteLlmNormalize": "LLM 整理路由",
     "RouteSkipLlmNormalize": "跳过 LLM 整理路由",
     "Parse/OCR": "解析 / OCR",
@@ -152,6 +153,7 @@ class StrategyPlannerNode:
         context.report["plan"] = {
             "primary_reader": context.plan.primary_reader,
             "use_ocr": context.plan.use_ocr,
+            "use_liteparse": bool(getattr(context.plan, "use_liteparse", False)),
             "use_llm_preprocessing": context.plan.use_llm_preprocessing,
             "source": context.plan.source,
             "reason": context.plan.reason,
@@ -167,15 +169,61 @@ class ParseOcrNode:
         parts: list[DocumentBlock] = []
         force_ocr_after_parse_failure = False
         if not plan or plan.primary_reader != "paddleocr":
-            context.callbacks.set_status(
-                "parse_ocr",
-                context.callbacks.parser_status_message(context.document.file_type),
+            if plan and getattr(plan, "use_liteparse", False):
+                context.callbacks.set_status(
+                    "liteparse",
+                    "正在使用 LiteParse 进行格式转换、版面文本提取和选择性 OCR",
+                )
+            else:
+                context.callbacks.set_status(
+                    "parse_ocr",
+                    context.callbacks.parser_status_message(context.document.file_type),
+                )
+            loader = get_loader(
+                context.document.file_type,
+                preferred_reader=(
+                    "liteparse"
+                    if plan and getattr(plan, "use_liteparse", False)
+                    else None
+                ),
+                use_ocr=(plan.use_ocr if plan is not None else None),
             )
-            loader = get_loader(context.document.file_type)
             try:
                 parts = loader.load(context.document.storage_path)
             except Exception as exc:
                 if (
+                    context.settings.LITEPARSE_ENABLED
+                    and context.document.file_type in {"docx", "pptx", "xlsx"}
+                    and not (plan and getattr(plan, "use_liteparse", False))
+                ):
+                    context.callbacks.set_status(
+                        "liteparse",
+                        "原生 Office 解析失败，正在回退 LiteParse 进行格式转换和版面提取",
+                    )
+                    context.report["parse_fallback"] = {
+                        "from": context.document.file_type + "_loader",
+                        "to": "liteparse",
+                        "reason": str(exc)[:500],
+                    }
+                    fallback_loader = get_loader(
+                        context.document.file_type,
+                        preferred_reader="liteparse",
+                        use_ocr=context.settings.LITEPARSE_OCR_ENABLED,
+                    )
+                    parts = fallback_loader.load(context.document.storage_path)
+                    if plan is not None:
+                        plan.primary_reader = "liteparse"
+                        plan.use_liteparse = True
+                        plan.use_ocr = context.settings.LITEPARSE_OCR_ENABLED
+                        plan.use_llm_preprocessing = (
+                            context.settings.PREPROCESS_LLM_ENABLED
+                        )
+                        plan.reason = (
+                            f"{plan.reason} 原生解析失败后已回退 LiteParse；"
+                            "转换/OCR结果优先进入结构化整理。"
+                        )
+                        context.callbacks.store_plan(plan)
+                elif (
                     context.document.file_type == "pdf"
                     and context.settings.PREPROCESS_OCR_FALLBACK_ENABLED
                 ):
@@ -211,6 +259,10 @@ class ParseOcrNode:
             )
             raise ValueError("OCR fallback is required by the plan but disabled")
 
+        use_llm_preprocessing = context.callbacks.should_normalize_chunks(
+            context.plan
+        )
+        context.report["effective_llm_preprocessing"] = use_llm_preprocessing
         try:
             context.parts = DocumentPreprocessor().preprocess(
                 file_type=context.document.file_type,
@@ -218,9 +270,7 @@ class ParseOcrNode:
                 parts=parts,
                 stage_callback=context.callbacks.set_status,
                 force_ocr=bool(plan and plan.use_ocr) or force_ocr_after_parse_failure,
-                use_llm_preprocessing=(
-                    plan.use_llm_preprocessing if plan is not None else None
-                ),
+                use_llm_preprocessing=use_llm_preprocessing,
             )
         except Exception as exc:
             if (
@@ -244,22 +294,36 @@ class ParseOcrNode:
                     parts=[],
                     stage_callback=context.callbacks.set_status,
                     force_ocr=True,
-                    use_llm_preprocessing=(
-                        plan.use_llm_preprocessing if plan is not None else None
-                    ),
+                    use_llm_preprocessing=use_llm_preprocessing,
                 )
             else:
                 raise
         if not context.parts:
             raise ValueError("No text content extracted from document")
         block_type_counts: dict[str, int] = {}
+        extraction_method_counts: dict[str, int] = {}
         for block in context.parts:
             block_type = str(block.block_type or "text")
             block_type_counts[block_type] = block_type_counts.get(block_type, 0) + 1
+            extraction_method = str(block.extraction_method or "unknown")
+            extraction_method_counts[extraction_method] = (
+                extraction_method_counts.get(extraction_method, 0) + 1
+            )
         details = {
             "parsed_part_count": len(context.parts),
             "document_block_count": len(context.parts),
             "block_type_counts": block_type_counts,
+            "extraction_method_counts": extraction_method_counts,
+            "parser": (
+                "liteparse"
+                if any(
+                    block.metadata.get("parser_family") == "liteparse"
+                    for block in context.parts
+                )
+                else plan.primary_reader
+                if plan is not None
+                else context.document.file_type
+            ),
         }
         if "parse_fallback" in context.report:
             details["parse_fallback"] = context.report["parse_fallback"]
@@ -267,6 +331,7 @@ class ParseOcrNode:
         context.report["document_blocks"] = {
             "count": len(context.parts),
             "block_type_counts": block_type_counts,
+            "extraction_method_counts": extraction_method_counts,
         }
         return NodeOutcome(details=details)
 
@@ -564,6 +629,7 @@ def _node_summary(context: IngestionContext, node_name: str) -> dict[str, Any]:
         return {
             "主解析器": context.plan.primary_reader,
             "启用 OCR": context.plan.use_ocr,
+            "启用 LiteParse": bool(getattr(context.plan, "use_liteparse", False)),
             "启用 LLM 整理": context.plan.use_llm_preprocessing,
             "策略来源": context.plan.source,
         }

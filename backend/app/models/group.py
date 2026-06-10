@@ -8,6 +8,7 @@ from app.models.base import Base
 
 if TYPE_CHECKING:
     from app.models.document import Document
+    from app.models.document_collection import CollectionGroupPermission
     from app.models.user import User
 
 
@@ -28,6 +29,10 @@ class Group(Base):
         cascade="all, delete-orphan",
     )
     permissions: Mapped[list["GroupPermission"]] = relationship(
+        back_populates="group",
+        cascade="all, delete-orphan",
+    )
+    collection_permissions: Mapped[list["CollectionGroupPermission"]] = relationship(
         back_populates="group",
         cascade="all, delete-orphan",
     )
@@ -88,5 +93,6 @@ class AuditLog(Base):
     document_id: Mapped[int | None] = mapped_column(Integer, index=True)
     user_id: Mapped[int | None] = mapped_column(Integer, index=True)
     group_id: Mapped[int | None] = mapped_column(Integer, index=True)
+    collection_id: Mapped[int | None] = mapped_column(Integer, index=True)
     detail_json: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)

@@ -9,7 +9,10 @@ from app.models import (
     Base,
     ChatJob,
     ChatLog,
+    CollectionGroupPermission,
+    CollectionUserPermission,
     Document,
+    DocumentCollection,
     DocumentProcessingJob,
     Group,
     GroupPermission,
@@ -43,6 +46,7 @@ def _ensure_sqlite_schema() -> None:
         "status_message": "VARCHAR(512)",
         "chunk_count": "INTEGER DEFAULT 0",
         "error_message": "TEXT",
+        "collection_id": "INTEGER",
         "updated_at": "DATETIME",
     }
     job_columns = {
@@ -102,6 +106,35 @@ def _ensure_sqlite_schema() -> None:
                 )
                 logger.info("Added missing chat_jobs.%s column", column_name)
 
+        chat_log_columns = {
+            "retrieval_trace_json": "TEXT",
+            "query_plan_json": "TEXT",
+            "evidence_decision_json": "TEXT",
+            "citation_validation_json": "TEXT",
+            "retrieval_scope_json": "TEXT",
+            "response_json": "TEXT",
+        }
+        rows = connection.exec_driver_sql("PRAGMA table_info(chat_logs)").fetchall()
+        existing_columns = {row[1] for row in rows}
+        for column_name, column_definition in chat_log_columns.items():
+            if column_name not in existing_columns:
+                connection.exec_driver_sql(
+                    f"ALTER TABLE chat_logs ADD COLUMN {column_name} {column_definition}"
+                )
+                logger.info("Added missing chat_logs.%s column", column_name)
+
+        audit_log_columns = {
+            "collection_id": "INTEGER",
+        }
+        rows = connection.exec_driver_sql("PRAGMA table_info(audit_logs)").fetchall()
+        existing_columns = {row[1] for row in rows}
+        for column_name, column_definition in audit_log_columns.items():
+            if column_name not in existing_columns:
+                connection.exec_driver_sql(
+                    f"ALTER TABLE audit_logs ADD COLUMN {column_name} {column_definition}"
+                )
+                logger.info("Added missing audit_logs.%s column", column_name)
+
         audit_foreign_keys = connection.exec_driver_sql(
             "PRAGMA foreign_key_list(audit_logs)"
         ).fetchall()
@@ -112,11 +145,11 @@ def _ensure_sqlite_schema() -> None:
                 """
                 INSERT INTO audit_logs (
                     id, actor_user_id, action, target_type, target_id,
-                    document_id, user_id, group_id, detail_json, created_at
+                    document_id, user_id, group_id, collection_id, detail_json, created_at
                 )
                 SELECT
                     id, actor_user_id, action, target_type, target_id,
-                    document_id, user_id, group_id, detail_json, created_at
+                    document_id, user_id, group_id, collection_id, detail_json, created_at
                 FROM audit_logs_old
                 """
             )

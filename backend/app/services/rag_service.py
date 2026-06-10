@@ -22,6 +22,7 @@ from app.schemas.chat import (
     EvidenceDecisionRead,
     EvidenceRow,
     QueryPlanRead,
+    RetrievalScopeRead,
     RetrievalTraceStep,
     SourceLocationRead,
 )
@@ -84,15 +85,26 @@ class RagService:
         top_k: int | None = None,
         progress_callback: Callable[[dict], None] | None = None,
     ) -> ChatResponse:
+        resolved_top_k = top_k or self.settings.RAG_TOP_K
         allowed_document_ids = self._allowed_document_ids(
             db,
             user=user,
             requested_document_ids=requested_document_ids,
         )
+        retrieval_scope = RetrievalScopeRead(
+            requested_document_ids=sorted(set(requested_document_ids or [])),
+            allowed_document_ids=allowed_document_ids,
+            top_k=resolved_top_k,
+        )
         if not allowed_document_ids:
             response = _not_found_response("当前账号没有可检索的已入库文档。")
-            response.log_id = self._write_log(db, user=user, question=question, response=response)
-            return response
+            return self._finalize_response(
+                db,
+                user=user,
+                question=question,
+                response=response,
+                retrieval_scope=retrieval_scope,
+            )
 
         _emit_progress(
             progress_callback,
@@ -104,7 +116,7 @@ class RagService:
         hits, retrieval_trace, query_plan = PermissionAwareRetriever().retrieve_with_plan(
             question,
             allowed_document_ids=allowed_document_ids,
-            top_k=top_k or self.settings.RAG_TOP_K,
+            top_k=resolved_top_k,
             progress_callback=progress_callback,
         )
         citations = self._filter_usable_citations([_hit_to_citation(hit) for hit in hits])
@@ -127,8 +139,13 @@ class RagService:
                 progress=100,
                 citation_count=0,
             )
-            response.log_id = self._write_log(db, user=user, question=question, response=response)
-            return response
+            return self._finalize_response(
+                db,
+                user=user,
+                question=question,
+                response=response,
+                retrieval_scope=retrieval_scope,
+            )
 
         _emit_progress(
             progress_callback,
@@ -156,8 +173,13 @@ class RagService:
                 progress=100,
                 citation_count=len(citations),
             )
-            response.log_id = self._write_log(db, user=user, question=question, response=response)
-            return response
+            return self._finalize_response(
+                db,
+                user=user,
+                question=question,
+                response=response,
+                retrieval_scope=retrieval_scope,
+            )
 
         _emit_progress(
             progress_callback,
@@ -189,8 +211,13 @@ class RagService:
             progress=100,
             citation_valid=response.citation_validation.valid,
         )
-        response.log_id = self._write_log(db, user=user, question=question, response=response)
-        return response
+        return self._finalize_response(
+            db,
+            user=user,
+            question=question,
+            response=response,
+            retrieval_scope=retrieval_scope,
+        )
 
     def _allowed_document_ids(
         self,
@@ -301,10 +328,28 @@ class RagService:
             db,
             user=user,
             question=question,
-            answer=response.answer,
-            citations=response.citations,
+            response=response,
         )
         return chat_log.id if chat_log else None
+
+    def _finalize_response(
+        self,
+        db: Session,
+        *,
+        user: User,
+        question: str,
+        response: ChatResponse,
+        retrieval_scope: RetrievalScopeRead,
+    ) -> ChatResponse:
+        response.retrieval_scope = retrieval_scope
+        _mark_selected_trace_hits(response)
+        response.log_id = self._write_log(
+            db,
+            user=user,
+            question=question,
+            response=response,
+        )
+        return response
 
 
 def _hit_to_citation(hit: dict) -> Citation:
@@ -339,6 +384,25 @@ def _parse_retrieval_trace(trace: list[dict]) -> list[RetrievalTraceStep]:
         except Exception:
             continue
     return steps
+
+
+def _mark_selected_trace_hits(response: ChatResponse) -> None:
+    cited_indices = set(response.citation_validation.cited_indices)
+    if not cited_indices:
+        return
+
+    citation_ids_by_chunk = {
+        citation.chunk_id: citation.citation_id
+        for citation in response.citations
+        if citation.chunk_id and citation.citation_id in cited_indices
+    }
+    for step in response.retrieval_trace:
+        for hit in step.top_hits:
+            citation_id = citation_ids_by_chunk.get(hit.chunk_id)
+            if citation_id is None:
+                continue
+            hit.selected_for_answer = True
+            hit.citation_id = citation_id
 
 
 def _parse_query_plan(plan: QueryPlan | None) -> QueryPlanRead | None:

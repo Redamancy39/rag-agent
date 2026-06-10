@@ -23,6 +23,8 @@ class DocumentRead(BaseModel):
     error_message: str | None
     owner_id: int
     owner_username: str | None = None
+    collection_id: int | None = None
+    collection_name: str | None = None
     created_at: datetime
     updated_at: datetime | None
 

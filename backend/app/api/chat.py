@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 
 from app.api.auth import get_current_user
 from app.db.session import get_db
-from app.models.chat_log import ChatLog
 from app.models.user import User
 from app.schemas.chat import ChatJobRead, ChatLogRead, ChatRequest, ChatResponse
 from app.services import chat_job_service, log_service
@@ -61,8 +60,11 @@ def chat_history(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     limit: int = Query(default=50, ge=1, le=200),
-) -> list[ChatLog]:
-    return log_service.list_user_chat_logs(db, current_user, limit=limit)
+) -> list[ChatLogRead]:
+    return [
+        log_service.chat_log_to_read(chat_log)
+        for chat_log in log_service.list_user_chat_logs(db, current_user, limit=limit)
+    ]
 
 
 @router.delete("/history/{log_id}", status_code=status.HTTP_204_NO_CONTENT)

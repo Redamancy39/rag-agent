@@ -307,52 +307,69 @@ textarea {
   padding: 12px 14px;
 }
 
-.upload-options div {
+.upload-collection-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 12px 14px;
+}
+
+.upload-collection-row > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.upload-collection-row strong {
+  color: #111827;
+  font-size: 13px;
+}
+
+.upload-collection-row span {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.upload-options > div {
   display: grid;
   gap: 4px;
   min-width: 0;
 }
 
 .upload-option-action {
-  display: flex !important;
+  display: flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px !important;
-  min-width: 104px;
+  min-width: 220px;
 }
 
-.upload-option-action span {
-  width: 34px;
-  color: #64748b;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.upload-option-action span.active {
-  color: #0f766e;
-}
-
-.upload-options strong {
+.upload-options > div:first-child > strong {
   color: #111827;
   font-size: 13px;
 }
 
-.upload-options span {
+.upload-options > div:first-child > span {
   color: #64748b;
   font-size: 12px;
   line-height: 1.5;
 }
 
-.upload-options .upload-option-action span {
-  width: 34px;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
-  text-align: right;
+.llm-mode-control {
+  width: 220px;
+}
+
+.llm-mode-control .el-segmented__item {
+  min-width: 64px;
+}
+
+.llm-mode-control .el-segmented__item-label {
   white-space: nowrap;
 }
 
@@ -440,15 +457,42 @@ textarea {
 
 .table-wrap {
   min-width: 0;
-  overflow-x: auto;
+  overflow: hidden;
+}
+
+.document-batch-toolbar {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(220px, 320px) auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 10px 12px;
+}
+
+.document-batch-toolbar > span {
+  color: #475569;
+  font-size: 13px;
+  font-weight: 650;
 }
 
 .document-table {
   --el-table-header-bg-color: #f8fafc;
   --el-table-header-text-color: #475569;
-  min-width: 1440px;
+  width: 100%;
+  min-width: 0;
   border-radius: 6px;
   overflow: hidden;
+}
+
+.document-table .el-scrollbar__bar.is-horizontal {
+  height: 10px;
+}
+
+.document-table .el-scrollbar__thumb {
+  background-color: #94a3b8;
 }
 
 .chat-form {
@@ -861,6 +905,7 @@ textarea {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(340px, 0.72fr);
   gap: 14px;
+  height: 100%;
   min-width: 0;
 }
 
@@ -922,11 +967,12 @@ textarea {
 
 .qa-sidebar {
   display: grid;
-  align-content: start;
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 14px;
   min-width: 0;
+  min-height: 0;
   max-height: calc(100vh - 118px);
-  overflow: auto;
+  overflow: hidden;
   position: sticky;
   top: 20px;
   border: 1px solid #dce3ea;
@@ -939,6 +985,26 @@ textarea {
   display: grid;
   gap: 10px;
   min-width: 0;
+}
+
+.qa-settings {
+  align-content: start;
+}
+
+.qa-history {
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.qa-history-list {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+  scrollbar-gutter: stable;
 }
 
 .qa-side-section + .qa-side-section {
@@ -1016,6 +1082,17 @@ textarea {
 .setting-row span {
   color: #64748b;
   font-size: 12px;
+}
+
+.qa-settings .el-select {
+  width: 100%;
+}
+
+.retrieval-scope-hint {
+  margin-top: -4px !important;
+  color: #0f766e !important;
+  font-size: 11px !important;
+  font-weight: 650;
 }
 
 .setting-row {
@@ -1424,7 +1501,7 @@ textarea {
 
 .retrieval-trace-head {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 8px;
   color: #526172;
@@ -1436,6 +1513,26 @@ textarea {
   overflow: hidden;
   color: #111827;
   font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retrieval-score-cell {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.retrieval-score-cell strong {
+  color: #111827;
+  font-size: 12px;
+}
+
+.retrieval-score-cell span {
+  overflow: hidden;
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.35;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1786,9 +1883,15 @@ textarea {
 
   .qa-sidebar {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: none;
+    height: auto;
     max-height: none;
     overflow: visible;
     position: static;
+  }
+
+  .qa-history-list {
+    max-height: 240px;
   }
 
   .qa-side-section + .qa-side-section {
@@ -1822,6 +1925,10 @@ textarea {
   .chat-thread {
     max-height: none;
   }
+
+  .qa-history-list {
+    max-height: 220px;
+  }
 }
 
 @media (max-width: 760px) {
@@ -1842,6 +1949,11 @@ textarea {
   .upload-options {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .upload-collection-row,
+  .document-batch-toolbar {
+    grid-template-columns: 1fr;
   }
 
   .upload-option-action {

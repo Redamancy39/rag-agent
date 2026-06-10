@@ -5,8 +5,11 @@ SUPPORTED_FILE_TYPES = {
     ".md": "markdown",
     ".markdown": "markdown",
     ".pdf": "pdf",
+    ".doc": "doc",
     ".docx": "docx",
+    ".ppt": "ppt",
     ".pptx": "pptx",
+    ".xls": "xls",
     ".xlsx": "xlsx",
 }
 

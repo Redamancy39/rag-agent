@@ -364,6 +364,7 @@ def write_audit_log(
     document_id: int | None = None,
     user_id: int | None = None,
     group_id: int | None = None,
+    collection_id: int | None = None,
     detail: dict | None = None,
 ) -> AuditLog:
     audit_log = AuditLog(
@@ -374,6 +375,7 @@ def write_audit_log(
         document_id=document_id,
         user_id=user_id,
         group_id=group_id,
+        collection_id=collection_id,
         detail_json=json.dumps(detail or {}, ensure_ascii=False),
     )
     db.add(audit_log)

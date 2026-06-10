@@ -9,6 +9,7 @@ from app.models.base import Base
 if TYPE_CHECKING:
     from app.models.chat_log import ChatLog
     from app.models.document import Document
+    from app.models.document_collection import CollectionUserPermission, DocumentCollection
     from app.models.group import UserGroup
     from app.models.permission import Permission
 
@@ -29,6 +30,13 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
     documents: Mapped[list["Document"]] = relationship(back_populates="owner")
+    owned_document_collections: Mapped[list["DocumentCollection"]] = relationship(
+        back_populates="owner"
+    )
+    collection_permissions: Mapped[list["CollectionUserPermission"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
     permissions: Mapped[list["Permission"]] = relationship(back_populates="user")
     group_memberships: Mapped[list["UserGroup"]] = relationship(
         back_populates="user",

@@ -68,6 +68,11 @@ NODE_CONTRACTS: dict[str, dict[str, list[str]]] = {
         "writes": ["trace.route"],
         "side_effects": [],
     },
+    "RouteLiteParse": {
+        "reads": ["context.plan"],
+        "writes": ["trace.route"],
+        "side_effects": [],
+    },
     "RouteLlmNormalize": {
         "reads": ["context.plan"],
         "writes": ["trace.route"],
@@ -81,7 +86,11 @@ NODE_CONTRACTS: dict[str, dict[str, list[str]]] = {
     "Parse/OCR": {
         "reads": ["context.plan", "document.storage_path", "document.file_type"],
         "writes": ["context.parts", "report.parsed_part_count"],
-        "side_effects": ["optional PaddleOCR inference", "optional LLM part preprocessing"],
+        "side_effects": [
+            "optional PaddleOCR inference",
+            "optional LiteParse/LibreOffice conversion",
+            "optional LLM part preprocessing",
+        ],
     },
     "Normalize": {
         "reads": ["context.parts", "context.plan", "settings"],
@@ -127,6 +136,7 @@ def _plan_snapshot(plan: Any | None) -> dict[str, Any] | None:
     return {
         "primary_reader": plan.primary_reader,
         "use_ocr": plan.use_ocr,
+        "use_liteparse": bool(getattr(plan, "use_liteparse", False)),
         "use_llm_preprocessing": plan.use_llm_preprocessing,
         "source": plan.source,
         "reason": plan.reason,

@@ -49,6 +49,11 @@ data/models/ocr/*
 data/models/llm/*
 !data/models/llm/.gitkeep
 
+# Local public sample documents used for ingestion testing
+data/sample_documents/*
+!data/sample_documents/SOURCES.md
+data/tmp_liteparse_validation/
+
 # Local one-off analysis files
 eval_questions_easy.json
 pdf_analysis.py

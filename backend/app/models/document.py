@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
 if TYPE_CHECKING:
+    from app.models.document_collection import DocumentCollection
     from app.models.document_job import DocumentProcessingJob
     from app.models.group import GroupPermission
     from app.models.permission import Permission
@@ -31,6 +32,11 @@ class Document(Base):
     chunk_count: Mapped[int] = mapped_column(Integer, default=0)
     error_message: Mapped[str | None] = mapped_column(Text)
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    collection_id: Mapped[int | None] = mapped_column(
+        ForeignKey("document_collections.id"),
+        index=True,
+        nullable=True,
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -39,6 +45,9 @@ class Document(Base):
     )
 
     owner: Mapped["User"] = relationship(back_populates="documents")
+    collection: Mapped["DocumentCollection | None"] = relationship(
+        back_populates="documents"
+    )
     permissions: Mapped[list["Permission"]] = relationship(
         back_populates="document",
         cascade="all, delete-orphan",
@@ -55,3 +64,7 @@ class Document(Base):
     @property
     def owner_username(self) -> str | None:
         return self.owner.username if self.owner else None
+
+    @property
+    def collection_name(self) -> str | None:
+        return self.collection.name if self.collection else None

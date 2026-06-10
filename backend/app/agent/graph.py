@@ -44,6 +44,11 @@ class RouteDecisionNode:
                     context.plan.primary_reader if context.plan is not None else None
                 ),
                 "use_ocr": context.plan.use_ocr if context.plan is not None else None,
+                "use_liteparse": (
+                    bool(getattr(context.plan, "use_liteparse", False))
+                    if context.plan is not None
+                    else None
+                ),
                 "use_llm_preprocessing": (
                     context.plan.use_llm_preprocessing if context.plan is not None else None
                 ),
@@ -127,6 +132,11 @@ def _build_default_ingestion_graph(StateGraph: Any, START: Any, END: Any) -> Any
             "策略要求 OCR，按 OCR 优先路径继续",
             "ocr_first",
         ),
+        "route_liteparse": RouteDecisionNode(
+            "RouteLiteParse",
+            "策略要求 LiteParse，按格式转换与版面解析路径继续",
+            "liteparse",
+        ),
         "parse_ocr": ParseOcrNode(),
         "route_llm_normalize": RouteDecisionNode(
             "RouteLlmNormalize",
@@ -154,10 +164,12 @@ def _build_default_ingestion_graph(StateGraph: Any, START: Any, END: Any) -> Any
         {
             "text_first": "route_text_first",
             "ocr_first": "route_ocr_first",
+            "liteparse": "route_liteparse",
         },
     )
     workflow.add_edge("route_text_first", "parse_ocr")
     workflow.add_edge("route_ocr_first", "parse_ocr")
+    workflow.add_edge("route_liteparse", "parse_ocr")
     workflow.add_conditional_edges(
         "parse_ocr",
         _llm_route,
@@ -195,14 +207,19 @@ def _make_graph_node(node: IngestionNode):
 
 def _parse_route(state: IngestionGraphState) -> str:
     plan = state["context"].plan
+    if plan is not None and (
+        bool(getattr(plan, "use_liteparse", False))
+        or plan.primary_reader == "liteparse"
+    ):
+        return "liteparse"
     if plan is not None and (plan.use_ocr or plan.primary_reader == "paddleocr"):
         return "ocr_first"
     return "text_first"
 
 
 def _llm_route(state: IngestionGraphState) -> str:
-    plan = state["context"].plan
-    if plan is not None and plan.use_llm_preprocessing:
+    context = state["context"]
+    if context.callbacks.should_normalize_chunks(context.plan):
         return "llm_normalize"
     return "skip_llm_normalize"
 

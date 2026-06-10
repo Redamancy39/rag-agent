@@ -52,6 +52,7 @@ CHUNK_NORMALIZATION_PROMPT = """你是严谨的 RAG 入库清洗助手。你的�
 3. 如果某个数值或列关系无法从原文确定，必须写“待核验”或“无法确定”，不能猜测。
 4. 保留文件名、页码、条款号、表号、项目名、限量值、单位、适用条件等可溯源信息。
 5. 只返回 JSON，不要返回 Markdown。
+6. LiteParse/OCR 结果可能来自格式转换或版面投影；应优先恢复标题、段落和表格行列语义，但不得改写数字事实。
 
 JSON 格式：
 {
@@ -214,7 +215,10 @@ class ChunkTextNormalizer:
         return (
             f"文件名: {metadata.get('filename') or metadata.get('source') or ''}\n"
             f"页码: {metadata.get('page') or ''}\n"
+            f"幻灯片: {metadata.get('slide') or ''}\n"
+            f"工作表/单元格: {metadata.get('sheet') or ''} {metadata.get('cell_range') or ''}\n"
             f"内容类型: {metadata.get('chunk_type') or ''}\n"
+            f"解析器: {metadata.get('parser_family') or metadata.get('extraction_method') or ''}\n"
             f"质量分: {metadata.get('chunk_quality_score') or ''}\n"
             f"质量标记: {metadata.get('chunk_quality_flags') or ''}\n"
             f"预处理标记: {metadata.get('preprocess_quality_flags') or ''}\n"
@@ -455,6 +459,14 @@ def _candidate_priority(chunk: DocumentChunk) -> int:
         priority += 55
     if chunk_type.startswith("ocr") or metadata.get("extraction_method") == "paddleocr":
         priority += 35
+    extraction_method = str(metadata.get("extraction_method") or "").lower()
+    if extraction_method == "liteparse_ocr":
+        priority += 65
+    elif (
+        str(metadata.get("parser_family") or "").lower() == "liteparse"
+        or extraction_method.startswith("liteparse")
+    ):
+        priority += 45
     quality_score = _safe_float(metadata.get("chunk_quality_score"))
     if quality_score is not None:
         priority += max(0, int((1.0 - quality_score) * 40))

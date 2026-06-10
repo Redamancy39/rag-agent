@@ -15,11 +15,13 @@ INGESTION_AGENT_PROMPT = """你是文档入库工具选择 Agent。你只能根�
 1. pymupdf_text_table：适合有正常 PDF 文本层、需要表格探测的 PDF。
 2. pypdf_text：适合没有 PyMuPDF 时的普通文本层 PDF。
 3. paddleocr：适合扫描件、文本层为空、乱码、不可读文本。
-4. llm_table_normalizer：适合表格多、需要把表格行整理成事实句。
+4. liteparse：适合旧版 DOC/PPT/XLS、图片密集 Office、原生解析失败或需要版面坐标的文档。
+5. llm_table_normalizer：适合 OCR、LiteParse、表格多或需要把表格行整理成事实句的结果。
 
 要求：
 - 如果文本长度很低、readable=false、乱码比例高，应选择 OCR。
-- 如果表格数量大于 0，建议启用 llm_table_normalizer。
+- DOC/PPT/XLS 必须选择 liteparse。
+- 如果使用 OCR、LiteParse 或表格数量大于 0，建议启用 llm_table_normalizer。
 - 不要建议不存在的工具。
 - 只输出 JSON。
 
@@ -27,6 +29,7 @@ JSON:
 {
   "primary_reader": "pymupdf_text_table",
   "use_ocr": false,
+  "use_liteparse": false,
   "use_llm_preprocessing": true,
   "reason": "简短原因"
 }
@@ -51,6 +54,7 @@ class IngestionProbe:
 class IngestionPlan:
     primary_reader: str
     use_ocr: bool
+    use_liteparse: bool
     use_llm_preprocessing: bool
     reason: str
     probe: IngestionProbe
@@ -61,6 +65,8 @@ class IngestionPlan:
         tools = [self.primary_reader]
         if self.use_ocr:
             tools.append("paddleocr")
+        if self.use_liteparse and "liteparse" not in tools:
+            tools.append("liteparse")
         if self.use_llm_preprocessing:
             tools.append("llm_table_normalizer")
         return f"入库 Agent 已选择工具：{', '.join(tools)}。原因：{self.reason}"
@@ -75,10 +81,15 @@ def plan_ingestion(path: str | Path, file_type: str) -> IngestionPlan:
 def plan_from_probe(probe: IngestionProbe) -> IngestionPlan:
     settings = get_settings()
     plan = _rule_based_plan(probe)
-    if (
+    needs_llm_planner = (
         probe.file_type == "pdf"
-        and settings.INGESTION_AGENT_LLM_ENABLED
+        or bool(probe.probe_error)
+        or not probe.readable
+    )
+    if (
+        settings.INGESTION_AGENT_LLM_ENABLED
         and settings.OPENAI_API_KEY
+        and needs_llm_planner
     ):
         plan = _merge_llm_plan(probe, plan)
     return plan
@@ -92,6 +103,7 @@ def plan_to_dict(plan: IngestionPlan) -> dict[str, Any]:
     return {
         "primary_reader": plan.primary_reader,
         "use_ocr": plan.use_ocr,
+        "use_liteparse": plan.use_liteparse,
         "use_llm_preprocessing": plan.use_llm_preprocessing,
         "reason": plan.reason,
         "source": plan.source,
@@ -142,7 +154,22 @@ def probe_document(path: Path, file_type: str) -> IngestionProbe:
 
 def _rule_based_plan(probe: IngestionProbe) -> IngestionPlan:
     settings = get_settings()
+    if probe.file_type in {"doc", "ppt", "xls"}:
+        return IngestionPlan(
+            primary_reader="liteparse",
+            use_ocr=False,
+            use_liteparse=True,
+            use_llm_preprocessing=settings.PREPROCESS_LLM_ENABLED,
+            reason=(
+                f"旧版 {probe.file_type.upper()} 使用 LiteParse 调用 LibreOffice "
+                "转换并优先提取文本层；无可读文本时再自动尝试 OCR。"
+                "此类转换结果优先进入大模型质量整理。"
+            ),
+            probe=probe,
+        )
     if probe.file_type == "docx":
+        if settings.LITEPARSE_ENABLED and (probe.probe_error or not probe.readable):
+            return _liteparse_fallback_plan(probe, "DOCX 原生探测不可读或解析失败")
         use_llm = settings.PREPROCESS_LLM_ENABLED and probe.table_count > 0
         reason = "DOCX 使用 python-docx 提取标题、段落和表格。"
         if probe.table_count > 0:
@@ -152,11 +179,14 @@ def _rule_based_plan(probe: IngestionProbe) -> IngestionPlan:
         return IngestionPlan(
             primary_reader="docx_loader",
             use_ocr=False,
+            use_liteparse=False,
             use_llm_preprocessing=use_llm,
             reason=reason,
             probe=probe,
         )
     if probe.file_type == "pptx":
+        if settings.LITEPARSE_ENABLED and (probe.probe_error or not probe.readable):
+            return _liteparse_fallback_plan(probe, "PPTX 原生探测不可读或图片内容占主导")
         use_llm = settings.PREPROCESS_LLM_ENABLED and probe.table_count > 0
         reason = "PPTX 使用 python-pptx 提取幻灯片文本、表格和演讲者备注。"
         if probe.table_count > 0:
@@ -166,14 +196,18 @@ def _rule_based_plan(probe: IngestionProbe) -> IngestionPlan:
         return IngestionPlan(
             primary_reader="pptx_loader",
             use_ocr=False,
+            use_liteparse=False,
             use_llm_preprocessing=use_llm,
             reason=reason,
             probe=probe,
         )
     if probe.file_type == "xlsx":
+        if settings.LITEPARSE_ENABLED and (probe.probe_error or not probe.readable):
+            return _liteparse_fallback_plan(probe, "XLSX 原生探测不可读或图片内容占主导")
         return IngestionPlan(
             primary_reader="xlsx_loader",
             use_ocr=False,
+            use_liteparse=False,
             use_llm_preprocessing=False,
             reason=(
                 "XLSX 使用 openpyxl 确定性提取工作表、数据区域、表头和行事实；"
@@ -185,6 +219,7 @@ def _rule_based_plan(probe: IngestionProbe) -> IngestionPlan:
         return IngestionPlan(
             primary_reader=f"{probe.file_type}_loader",
             use_ocr=False,
+            use_liteparse=False,
             use_llm_preprocessing=False,
             reason="非 PDF 文件，直接使用对应文本 loader。",
             probe=probe,
@@ -211,6 +246,7 @@ def _rule_based_plan(probe: IngestionProbe) -> IngestionPlan:
     return IngestionPlan(
         primary_reader=primary_reader,
         use_ocr=use_ocr,
+        use_liteparse=False,
         use_llm_preprocessing=use_llm,
         reason=reason,
         probe=probe,
@@ -237,21 +273,46 @@ def _merge_llm_plan(probe: IngestionProbe, fallback: IngestionPlan) -> Ingestion
         "docx_loader",
         "pptx_loader",
         "xlsx_loader",
+        "liteparse",
     }:
         primary_reader = fallback.primary_reader
 
     llm_use_ocr = bool(payload.get("use_ocr", fallback.use_ocr))
+    liteparse_capable = probe.file_type in {
+        "pdf",
+        "doc",
+        "docx",
+        "ppt",
+        "pptx",
+        "xls",
+        "xlsx",
+    }
+    llm_use_liteparse = liteparse_capable and (
+        bool(payload.get("use_liteparse", fallback.use_liteparse))
+        or primary_reader == "liteparse"
+        or (llm_use_ocr and probe.file_type != "pdf")
+    )
     llm_use_llm = bool(payload.get("use_llm_preprocessing", fallback.use_llm_preprocessing))
 
-    # Deterministic safety gates: do not let the LLM turn off OCR when probing found unusable text.
-    use_ocr = fallback.use_ocr or llm_use_ocr
+    # Deterministic safety gates keep mandatory legacy conversion and OCR fallbacks enabled.
+    use_ocr = fallback.use_ocr or (
+        llm_use_ocr and (probe.file_type == "pdf" or llm_use_liteparse)
+    )
+    use_liteparse = fallback.use_liteparse or llm_use_liteparse
     use_llm = fallback.use_llm_preprocessing or llm_use_llm
     reason = str(payload.get("reason") or fallback.reason).strip()[:500]
     if not reason:
         reason = fallback.reason
     return IngestionPlan(
-        primary_reader="paddleocr" if use_ocr else primary_reader,
+        primary_reader=(
+            "liteparse"
+            if use_liteparse
+            else "paddleocr"
+            if use_ocr and probe.file_type == "pdf"
+            else primary_reader
+        ),
         use_ocr=use_ocr,
+        use_liteparse=use_liteparse,
         use_llm_preprocessing=use_llm,
         reason=reason,
         probe=probe,
@@ -273,9 +334,28 @@ def _probe_prompt(probe: IngestionProbe, fallback: IngestionPlan) -> str:
         f"- probe_error: {probe.probe_error}\n"
         f"- rule_plan: {fallback.primary_reader}, "
         f"use_ocr={fallback.use_ocr}, "
+        f"use_liteparse={fallback.use_liteparse}, "
         f"use_llm_preprocessing={fallback.use_llm_preprocessing}, "
         f"reason={fallback.reason}\n"
         f"文本样本：\n{probe.sample_text[:800]}"
+    )
+
+
+def _liteparse_fallback_plan(
+    probe: IngestionProbe,
+    reason: str,
+) -> IngestionPlan:
+    settings = get_settings()
+    return IngestionPlan(
+        primary_reader="liteparse",
+        use_ocr=settings.LITEPARSE_OCR_ENABLED,
+        use_liteparse=True,
+        use_llm_preprocessing=settings.PREPROCESS_LLM_ENABLED,
+        reason=(
+            f"{reason}，回退 LiteParse 进行格式转换、版面提取和选择性 OCR；"
+            "解析结果优先进入大模型结构化整理。"
+        ),
+        probe=probe,
     )
 
 

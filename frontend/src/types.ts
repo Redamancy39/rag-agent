@@ -25,6 +25,8 @@ export interface DocumentRead {
   error_message: string | null
   owner_id: number
   owner_username: string | null
+  collection_id: number | null
+  collection_name: string | null
   created_at: string
   updated_at: string | null
 }
@@ -146,6 +148,39 @@ export interface GroupPermissionRead {
   created_at: string
 }
 
+export interface DocumentCollectionRead {
+  id: number
+  name: string
+  description: string | null
+  owner_id: number
+  owner_username: string | null
+  document_count: number
+  can_read: boolean
+  can_write: boolean
+  created_at: string
+  updated_at: string | null
+}
+
+export interface CollectionUserPermissionRead {
+  id: number
+  collection_id: number
+  user_id: number
+  user_username: string | null
+  can_read: boolean
+  can_write: boolean
+  created_at: string
+}
+
+export interface CollectionGroupPermissionRead {
+  id: number
+  collection_id: number
+  group_id: number
+  group_name: string | null
+  can_read: boolean
+  can_write: boolean
+  created_at: string
+}
+
 export interface AuditLogRead {
   id: number
   actor_user_id: number | null
@@ -155,6 +190,7 @@ export interface AuditLogRead {
   document_id: number | null
   user_id: number | null
   group_id: number | null
+  collection_id: number | null
   detail_json: string | null
   created_at: string
 }
@@ -221,6 +257,13 @@ export interface EvidenceRow {
 export interface RetrievalTraceHit {
   rank: number
   score: number | null
+  vector_score: number | null
+  keyword_score: number | null
+  bm25_score: number | null
+  raw_bm25_score: number | null
+  pre_rerank_score: number | null
+  rerank_score: number | null
+  distance: number | null
   filename: string
   page: number | null
   slide: number | null
@@ -235,6 +278,10 @@ export interface RetrievalTraceHit {
   chunk_id: string | null
   retrieval_source: string | null
   matched_terms: string[]
+  preserved_from_pre_rerank: boolean
+  selected_for_answer: boolean
+  citation_id: number | null
+  text_preview: string
 }
 
 export interface RetrievalTraceStep {
@@ -242,6 +289,7 @@ export interface RetrievalTraceStep {
   query: string
   source: string
   hit_count: number
+  duration_ms: number | null
   top_hits: RetrievalTraceHit[]
 }
 
@@ -281,6 +329,12 @@ export interface CitationValidationRead {
   warnings: string[]
 }
 
+export interface RetrievalScopeRead {
+  requested_document_ids: number[]
+  allowed_document_ids: number[]
+  top_k: number
+}
+
 export interface ChatResponse {
   answer: string
   sections: AnswerSections
@@ -290,6 +344,7 @@ export interface ChatResponse {
   query_plan: QueryPlanRead | null
   evidence_decision: EvidenceDecisionRead | null
   citation_validation: CitationValidationRead
+  retrieval_scope: RetrievalScopeRead
   retrieval_only: boolean
   log_id: number | null
 }
@@ -321,6 +376,12 @@ export interface ChatLogRead {
   question: string
   answer: string
   citations_json: string | null
+  retrieval_trace: RetrievalTraceStep[]
+  query_plan: QueryPlanRead | null
+  evidence_decision: EvidenceDecisionRead | null
+  citation_validation: CitationValidationRead
+  retrieval_scope: RetrievalScopeRead
+  response: ChatResponse | null
   created_at: string
 }
 

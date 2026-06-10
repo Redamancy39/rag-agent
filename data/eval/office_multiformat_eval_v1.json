@@ -1,0 +1,167 @@
+{
+  "name": "office-multiformat-ingestion-eval-v1",
+  "cases": [
+    {
+      "id": "office-easy-001",
+      "question": "课程支撑材料应按什么格式合并提交，文件大小不能超过多少？",
+      "expected_found": true,
+      "expected_answer_keywords": ["单个PDF", "30M"],
+      "expected_citation_keywords": ["课程支撑材料一览表"],
+      "tags": ["easy", "docx", "strict_citation"],
+      "document_ids": [197],
+      "top_k": 5
+    },
+    {
+      "id": "office-easy-002",
+      "question": "按照课件中的中国食品安全法定义，什么是食品添加剂？",
+      "expected_found": true,
+      "expected_answer_keywords": ["改善食品品质", "防腐", "人工合成", "天然物质"],
+      "expected_citation_keywords": ["第一章_添加剂概论"],
+      "tags": ["easy", "pptx", "strict_citation"],
+      "document_ids": [199],
+      "top_k": 6
+    },
+    {
+      "id": "office-easy-003",
+      "question": "食品添加剂的基本使用原则包括哪些要求？",
+      "expected_found": true,
+      "expected_answer_keywords": ["健康危害", "掩盖食品", "营养价值", "尽可能降低"],
+      "expected_citation_keywords": ["第一章_添加剂概论"],
+      "tags": ["easy", "pptx", "strict_citation"],
+      "document_ids": [199],
+      "top_k": 6
+    },
+    {
+      "id": "office-medium-004",
+      "question": "NOAEL是什么意思，课件中给出的单位和试验对象是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": ["最大未观察到有害作用剂量", "mg/kg", "动物"],
+      "expected_citation_keywords": ["第一章_添加剂概论"],
+      "tags": ["medium", "pptx", "strict_citation"],
+      "document_ids": [199],
+      "top_k": 6
+    },
+    {
+      "id": "office-medium-005",
+      "question": "苯甲酸的最适抑菌pH范围和ADI值分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": ["2.5～4.0||2.5-4.0", "0～5mg/kg||0-5mg/kg"],
+      "expected_citation_keywords": ["第二章_防腐剂"],
+      "tags": ["medium", "pptx", "strict_citation"],
+      "document_ids": [200],
+      "top_k": 6
+    },
+    {
+      "id": "office-medium-006",
+      "question": "乳酸链球菌素由多少个氨基酸组成，其ADI值是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": ["34个氨基酸", "0～0.875mg/kg||0-0.875mg/kg"],
+      "expected_citation_keywords": ["第二章_防腐剂"],
+      "tags": ["medium", "pptx", "strict_citation"],
+      "document_ids": [200],
+      "top_k": 6
+    },
+    {
+      "id": "office-hard-007",
+      "question": "比较苯甲酸和山梨酸的ADI值及适宜发挥防腐作用的酸度条件。",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "苯甲酸",
+        "0～5mg/kg||0-5mg/kg",
+        "2.5～4.0||2.5-4.0",
+        "山梨酸",
+        "0～0.025g/kg||0-0.025g/kg",
+        "pH5.5以下||pH低于5.5"
+      ],
+      "expected_citation_keywords": ["第二章_防腐剂"],
+      "tags": ["hard", "multi_chunk", "strict_citation"],
+      "document_ids": [200],
+      "top_k": 10
+    },
+    {
+      "id": "office-medium-008",
+      "question": "什么是色淀？它相较水溶性色素有什么使用特点，适合哪些食品？",
+      "expected_found": true,
+      "expected_answer_keywords": [
+        "不溶于水||不溶于任何介质",
+        "稳定",
+        "固体",
+        "富油脂||油脂||巧克力"
+      ],
+      "expected_citation_keywords": ["第四章_食用色素"],
+      "tags": ["medium", "pptx", "strict_citation"],
+      "document_ids": [201],
+      "top_k": 8
+    },
+    {
+      "id": "office-hard-009",
+      "question": "课件表格中日落黄的颜色、最大吸收波长和限量分别是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": ["橙黄", "482nm", "0.6g/kg"],
+      "expected_citation_keywords": ["第四章_食用色素"],
+      "tags": ["hard", "pptx_table", "strict_citation"],
+      "document_ids": [201],
+      "top_k": 10
+    },
+    {
+      "id": "office-easy-010",
+      "question": "古法老酱油抽检不合格的项目、检验值和标准值是什么？",
+      "expected_found": true,
+      "expected_answer_keywords": ["全氮", "0.59g/100mL", "0.70g/100mL"],
+      "expected_citation_keywords": ["调味品不合格信息"],
+      "tags": ["easy", "xlsx", "strict_citation"],
+      "document_ids": [204],
+      "top_k": 6
+    },
+    {
+      "id": "office-easy-011",
+      "question": "多味姜的不合格项目是什么，检验值和标准限量分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": ["二氧化硫残留量", "1.11g/kg", "0.35g/kg"],
+      "expected_citation_keywords": ["水果制品不合格信息"],
+      "tags": ["easy", "xlsx", "strict_citation"],
+      "document_ids": [202],
+      "top_k": 6
+    },
+    {
+      "id": "office-hard-012",
+      "question": "钙铁锌液体饮（蓝莓味）的钙、铁、锌检验值分别是多少？",
+      "expected_found": true,
+      "expected_answer_keywords": ["20.1mg/每日", "1.26mg/每日", "1.36mg/每日"],
+      "expected_citation_keywords": ["特殊膳食食品不合格信息"],
+      "tags": ["hard", "xlsx_multi_row", "strict_citation"],
+      "document_ids": [203],
+      "top_k": 10
+    },
+    {
+      "id": "office-hard-013",
+      "question": "石榴味果糕检出了哪些与标签明示不一致的项目？请同时说明标签分别声称了什么。",
+      "expected_found": true,
+      "expected_answer_keywords": ["胭脂红", "山梨酸", "甜蜜素", "零色素", "零防腐剂", "零甜味剂"],
+      "expected_citation_keywords": ["水果制品不合格信息"],
+      "tags": ["hard", "xlsx_multi_row", "strict_citation"],
+      "document_ids": [202],
+      "top_k": 10
+    },
+    {
+      "id": "office-hard-014",
+      "question": "石榴味果糕和古法老酱油分别因哪些项目被列为不合格产品？",
+      "expected_found": true,
+      "expected_answer_keywords": ["石榴味果糕", "胭脂红", "山梨酸", "甜蜜素", "古法老酱油", "全氮"],
+      "expected_citation_keywords": ["水果制品不合格信息", "调味品不合格信息"],
+      "tags": ["hard", "cross_document", "strict_citation"],
+      "document_ids": [202, 204],
+      "top_k": 12
+    },
+    {
+      "id": "office-negative-015",
+      "question": "这些资料是否规定了阿司匹林在婴幼儿配方食品中的最大允许用量？",
+      "expected_found": false,
+      "expected_answer_keywords": [],
+      "expected_citation_keywords": [],
+      "tags": ["negative", "refusal"],
+      "document_ids": [197, 198, 199, 200, 201, 202, 203, 204],
+      "top_k": 8
+    }
+  ]
+}

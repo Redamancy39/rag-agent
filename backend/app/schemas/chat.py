@@ -90,6 +90,13 @@ class EvidenceRow(BaseModel):
 class RetrievalTraceHit(BaseModel):
     rank: int
     score: float | None = None
+    vector_score: float | None = None
+    keyword_score: float | None = None
+    bm25_score: float | None = None
+    raw_bm25_score: float | None = None
+    pre_rerank_score: float | None = None
+    rerank_score: float | None = None
+    distance: float | None = None
     filename: str
     page: int | None = None
     slide: int | None = None
@@ -104,6 +111,10 @@ class RetrievalTraceHit(BaseModel):
     chunk_id: str | None = None
     retrieval_source: str | None = None
     matched_terms: list[str] = Field(default_factory=list)
+    preserved_from_pre_rerank: bool = False
+    selected_for_answer: bool = False
+    citation_id: int | None = None
+    text_preview: str = ""
 
     @model_validator(mode="after")
     def populate_location(self) -> "RetrievalTraceHit":
@@ -116,6 +127,7 @@ class RetrievalTraceStep(BaseModel):
     query: str
     source: str
     hit_count: int
+    duration_ms: int | None = None
     top_hits: list[RetrievalTraceHit] = Field(default_factory=list)
 
 
@@ -155,6 +167,12 @@ class CitationValidationRead(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class RetrievalScopeRead(BaseModel):
+    requested_document_ids: list[int] = Field(default_factory=list)
+    allowed_document_ids: list[int] = Field(default_factory=list)
+    top_k: int = 0
+
+
 class ChatResponse(BaseModel):
     answer: str
     sections: AnswerSections = Field(default_factory=AnswerSections)
@@ -166,6 +184,7 @@ class ChatResponse(BaseModel):
     citation_validation: CitationValidationRead = Field(
         default_factory=CitationValidationRead
     )
+    retrieval_scope: RetrievalScopeRead = Field(default_factory=RetrievalScopeRead)
     retrieval_only: bool = False
     log_id: int | None = None
 
@@ -248,13 +267,19 @@ class ChatJobRead(BaseModel):
 
 
 class ChatLogRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
     id: int
     user_id: int
     question: str
     answer: str
     citations_json: str | None
+    retrieval_trace: list[RetrievalTraceStep] = Field(default_factory=list)
+    query_plan: QueryPlanRead | None = None
+    evidence_decision: EvidenceDecisionRead | None = None
+    citation_validation: CitationValidationRead = Field(
+        default_factory=CitationValidationRead
+    )
+    retrieval_scope: RetrievalScopeRead = Field(default_factory=RetrievalScopeRead)
+    response: ChatResponse | None = None
     created_at: datetime
 
 

@@ -86,5 +86,6 @@ class AuditLogRead(BaseModel):
     document_id: int | None
     user_id: int | None
     group_id: int | None
+    collection_id: int | None
     detail_json: str | None
     created_at: datetime

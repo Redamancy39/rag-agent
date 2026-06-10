@@ -106,7 +106,9 @@ def read_document_quality_report(
 async def upload_document(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    enable_llm_chunk_normalization: bool | None = Form(default=True),
+    llm_chunk_normalization_mode: str | None = Form(default=None),
+    enable_llm_chunk_normalization: bool | None = Form(default=None),
+    collection_id: int | None = Form(default=None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> Document:
@@ -115,13 +117,23 @@ async def upload_document(
             db,
             current_user,
             file,
-            enable_llm_chunk_normalization=enable_llm_chunk_normalization,
+            llm_chunk_normalization_mode=(
+                llm_chunk_normalization_mode
+                if llm_chunk_normalization_mode is not None
+                else enable_llm_chunk_normalization
+            ),
+            collection_id=collection_id,
         )
         background_tasks.add_task(document_service.index_document_by_id, document.id)
         return document
     except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+    except PermissionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=str(exc),
         ) from exc
 
