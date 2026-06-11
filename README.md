@@ -18,21 +18,30 @@
 ## 系统流程
 
 ```mermaid
-flowchart LR
-    A["用户登录 / JWT"] --> B["上传文档"]
-    B --> C["文件探测与策略规划"]
-    C --> D["原生解析 / LiteParse / OCR"]
-    D --> E["结构化整理与质量评分"]
-    E --> F["分块与 BGE Embedding"]
-    F --> G["ChromaDB"]
-    H["用户问题"] --> I["权限范围计算"]
-    I --> J["查询归一化与按需分解"]
-    J --> K["向量 + BM25 + 关键词召回"]
-    G --> K
-    K --> L["BGE Reranker"]
-    L --> M["证据充分性判断"]
-    M --> N["LLM 生成"]
-    N --> O["引用校验与来源返回"]
+flowchart TB
+    subgraph INGEST["文档入库"]
+        direction LR
+        A["上传文档"] --> B["文件探测"]
+        B --> C["解析策略"]
+        C --> D["原生解析 / OCR / LiteParse"]
+    end
+
+    subgraph INDEX["处理与索引"]
+        direction LR
+        E["结构化整理"] --> F["质量评分与分块"]
+        F --> G["BGE Embedding"]
+        G --> H["ChromaDB"]
+    end
+
+    subgraph QA["权限问答"]
+        direction LR
+        I["权限过滤与查询处理"] --> J["混合召回与 Reranker"]
+        J --> K["证据判断与 LLM 生成"]
+        K --> L["引用校验与来源返回"]
+    end
+
+    D --> E
+    H --> J
 ```
 
 证据不足时，系统返回“未找到”，不会使用模型常识补全知识库中不存在的结论。

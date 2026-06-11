@@ -5,7 +5,7 @@
 ## 1. 创建环境
 
 ```powershell
-cd E:\rag_project\rag-agent-kb-system\backend
+cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -49,7 +49,7 @@ OPENAI_BASE_URL=https://api.deepseek.com
 OPENAI_MODEL_NAME=deepseek-v4-flash
 ```
 
-当前本地 `.env` 已配置好 `OPENAI_BASE_URL` 和 `OPENAI_MODEL_NAME`，只需要补 `OPENAI_API_KEY`。
+请根据实际使用的服务配置 `OPENAI_BASE_URL`、`OPENAI_MODEL_NAME` 和 `OPENAI_API_KEY`。
 
 上传入库阶段的大模型结构化预处理默认关闭。需要让 DeepSeek 参与表格行整理时，开启：
 
@@ -287,10 +287,10 @@ LiteParse/PaddleOCR 产物会写入 `parser_family`、`extraction_method`、页�
 
 ## 5. 数据与日志
 
-- SQLite 默认路径：`E:\rag_project\rag-agent-kb-system\data\app.db`
-- 上传目录：`E:\rag_project\rag-agent-kb-system\data\uploads`
-- ChromaDB 目录：`E:\rag_project\rag-agent-kb-system\data\chroma`
-- 日志目录：`E:\rag_project\rag-agent-kb-system\data\logs`
+- SQLite 默认路径：`data/app.db`
+- 上传目录：`data/uploads`
+- ChromaDB 目录：`data/chroma`
+- 日志目录：`data/logs`
 
 ## 6. 基础校验
 
