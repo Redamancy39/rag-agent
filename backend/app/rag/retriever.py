@@ -11,6 +11,7 @@ from app.rag.reranker import get_optional_reranker
 from app.rag.schemas import SourceLocator
 from app.rag.search_tokenizer import normalize_for_search
 from app.rag.vector_store import ChromaVectorStore
+from app.rag.retrieval_options import ResolvedRetrievalOptions
 
 logger = get_logger(__name__)
 
@@ -56,6 +57,7 @@ class PermissionAwareRetriever:
         allowed_document_ids: list[int],
         top_k: int | None = None,
         progress_callback: Callable[[dict], None] | None = None,
+        retrieval_options: ResolvedRetrievalOptions | None = None,
     ) -> tuple[list[dict], list[dict], QueryPlan]:
         query_plan = QueryAgent().plan(question)
         retrieval_queries = _retrieval_queries_from_plan(
@@ -82,6 +84,7 @@ class PermissionAwareRetriever:
             top_k=top_k,
             query_plan=query_plan,
             retrieval_queries=retrieval_queries,
+            retrieval_options=retrieval_options,
         )
         return hits, trace, query_plan
 
@@ -93,13 +96,14 @@ class PermissionAwareRetriever:
         top_k: int | None,
         query_plan: QueryPlan | None,
         retrieval_queries: list[tuple[str, str]] | None = None,
+        retrieval_options: ResolvedRetrievalOptions | None = None,
     ) -> tuple[list[dict], list[dict]]:
-        final_top_k = top_k or self.settings.RAG_TOP_K
-        candidate_top_k = (
-            max(final_top_k, self.settings.RERANKER_CANDIDATE_TOP_K)
-            if self._should_rerank()
-            else final_top_k
-        )
+        final_top_k = retrieval_options.top_k if retrieval_options else (top_k or self.settings.RAG_TOP_K)
+        if retrieval_options:
+            candidate_top_k = retrieval_options.candidate_top_k
+        else:
+            candidate_top_k = (max(final_top_k, self.settings.RERANKER_CANDIDATE_TOP_K)
+                               if self._should_rerank() else final_top_k)
         planned_queries = retrieval_queries or [
             (
                 query_plan.normalized_question
@@ -119,7 +123,8 @@ class PermissionAwareRetriever:
                 if query_index == 0
                 else max(
                     final_top_k,
-                    self.settings.QUERY_DECOMPOSITION_PER_QUERY_TOP_K,
+                    min(candidate_top_k, self.settings.QUERY_DECOMPOSITION_PER_QUERY_TOP_K)
+                    if retrieval_options else self.settings.QUERY_DECOMPOSITION_PER_QUERY_TOP_K,
                 )
             )
             query_hits = self._retrieve_single_query(
@@ -127,6 +132,7 @@ class PermissionAwareRetriever:
                 allowed_document_ids=allowed_document_ids,
                 top_k=query_top_k,
                 lexical_chunks=lexical_chunks,
+                candidate_top_k=retrieval_options.candidate_top_k if retrieval_options else None,
             )
             for hit in query_hits:
                 updated = dict(hit)
@@ -150,7 +156,7 @@ class PermissionAwareRetriever:
             )
 
         merge_started = perf_counter()
-        candidate_limit = (
+        candidate_limit = retrieval_options.candidate_top_k if retrieval_options else (
             max(
                 final_top_k,
                 self.settings.QUERY_DECOMPOSITION_MAX_CANDIDATES,
@@ -169,7 +175,7 @@ class PermissionAwareRetriever:
                     duration_ms=_elapsed_ms(merge_started),
                 )
             )
-        if not self._should_rerank() or not hits:
+        if not self._should_rerank(retrieval_options) or not hits:
             final_hits = hits[:final_top_k]
             trace.append(
                 _trace_step(
@@ -238,6 +244,7 @@ class PermissionAwareRetriever:
         allowed_document_ids: list[int],
         top_k: int,
         lexical_chunks: list[dict] | None = None,
+        candidate_top_k: int | None = None,
     ) -> list[dict]:
         hits: list[dict] = []
         try:
@@ -255,14 +262,14 @@ class PermissionAwareRetriever:
             keyword_hits = self.keyword_retriever.retrieve(
                 question,
                 allowed_document_ids=allowed_document_ids,
-                top_k=max(top_k, self.settings.HYBRID_KEYWORD_CANDIDATE_TOP_K),
+                top_k=max(top_k, candidate_top_k if candidate_top_k is not None else self.settings.HYBRID_KEYWORD_CANDIDATE_TOP_K),
                 chunks=lexical_chunks,
             )
             bm25_hits = (
                 self.bm25_retriever.retrieve(
                     question,
                     allowed_document_ids=allowed_document_ids,
-                    top_k=max(top_k, self.settings.HYBRID_BM25_CANDIDATE_TOP_K),
+                    top_k=max(top_k, candidate_top_k if candidate_top_k is not None else self.settings.HYBRID_BM25_CANDIDATE_TOP_K),
                     chunks=lexical_chunks,
                 )
                 if self.settings.HYBRID_BM25_ENABLED
@@ -286,8 +293,9 @@ class PermissionAwareRetriever:
             logger.warning("Lexical chunk loading failed: %s", exc)
             return []
 
-    def _should_rerank(self) -> bool:
-        return bool(self.settings.RERANKER_ENABLED and self.settings.RERANKER_MODEL_NAME)
+    def _should_rerank(self, options: ResolvedRetrievalOptions | None = None) -> bool:
+        return bool((options is None or options.rerank_enabled)
+                    and self.settings.RERANKER_ENABLED and self.settings.RERANKER_MODEL_NAME)
 
     def _merge_hybrid_hits(
         self,

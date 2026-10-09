@@ -11,6 +11,7 @@ from app.db.session import SessionLocal
 from app.models.chat_job import ChatJob
 from app.models.user import User
 from app.services.rag_service import RagService
+from app.rag.retrieval_options import ResolvedRetrievalOptions
 
 logger = get_logger(__name__)
 
@@ -26,6 +27,7 @@ def create_chat_job(
     question: str,
     document_ids: list[int] | None,
     top_k: int,
+    retrieval_options: ResolvedRetrievalOptions | None = None,
 ) -> ChatJob:
     job = ChatJob(
         user_id=user.id,
@@ -35,6 +37,7 @@ def create_chat_job(
         question=question,
         document_ids_json=json.dumps(document_ids or [], ensure_ascii=False),
         top_k=top_k,
+        retrieval_options_json=retrieval_options.model_dump_json() if retrieval_options else None,
         progress_percent=1,
         progress_detail="等待执行",
         trace_json=json.dumps(
@@ -103,6 +106,8 @@ def run_chat_job(job_id: int) -> None:
                 question=job.question,
                 requested_document_ids=document_ids or None,
                 top_k=job.top_k,
+                retrieval_options=(ResolvedRetrievalOptions.model_validate_json(job.retrieval_options_json)
+                                   if job.retrieval_options_json else None),
                 progress_callback=progress_callback,
             )
         except Exception as exc:

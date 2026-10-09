@@ -21,6 +21,16 @@ backend/.runtime_logs/
 backend/.codex_smoke/
 backend/.runtime_reports/
 
+# Machine-specific recovery evidence and private interview/debugging notes
+docs/local-notes/
+docs/RECOVERY_*
+docs/ENVIRONMENT_GAPS.md
+docs/INTERVIEW_CHEATSHEET.md
+docs/INTERVIEW_CODE_MAP.md
+docs/INTERVIEW_QA.md
+docs/RESUME_CODE_AUDIT.md
+scripts/retry-local-failed-documents.py
+
 data/app.db
 *.db
 *.db-shm

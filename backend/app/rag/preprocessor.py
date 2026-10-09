@@ -22,6 +22,10 @@ class DocumentPreprocessor:
         stage_callback: Callable[[str, str], None] | None = None,
         force_ocr: bool = False,
         use_llm_preprocessing: bool | None = None,
+        llm_stats: dict | None = None,
+        llm_budget=None,
+        progress_callback=None,
+        trace_callback=None,
     ) -> list[DocumentBlock]:
         settings = get_settings()
         processed_parts = list(parts)
@@ -90,6 +94,7 @@ class DocumentPreprocessor:
 
         should_run_llm = (
             settings.PREPROCESS_LLM_ENABLED
+            and getattr(settings, 'PREPROCESS_FACT_LLM_ENABLED', False)
             and processed_parts
             and (use_llm_preprocessing is not False)
         )
@@ -97,7 +102,8 @@ class DocumentPreprocessor:
             if stage_callback:
                 stage_callback("llm_preprocessing", "正在对表格事实进行 LLM 结构化整理")
             logger.info("Running LLM preprocessing for path=%s parts=%s", path, len(processed_parts))
-            llm_parts = normalize_with_llm(processed_parts)
+            llm_parts = normalize_with_llm(processed_parts, stats=llm_stats, budget=llm_budget,
+                progress_callback=progress_callback, trace_callback=trace_callback)
             processed_parts.extend(llm_parts)
 
         return processed_parts

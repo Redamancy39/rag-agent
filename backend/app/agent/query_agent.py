@@ -5,6 +5,7 @@ import unicodedata
 from dataclasses import dataclass, field
 from typing import Any
 
+from app.agent.query_hotwords import LITERAL_REFERENCE, analyze_hotwords, analyze_matches, apply_hotword_aliases
 from app.agent.query_synonyms import (
     apply_query_synonyms,
     detect_query_synonyms,
@@ -102,6 +103,11 @@ class QueryPlan:
     confidence: float = 0.0
     llm_used: bool = False
     warnings: list[str] = field(default_factory=list)
+    corrected_question: str = ""
+    lexicon_version: str = ""
+    hotword_matches: list[dict[str, Any]] = field(default_factory=list)
+    corrections: list[dict[str, Any]] = field(default_factory=list)
+    suggestions: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -121,6 +127,11 @@ class QueryPlan:
             "confidence": self.confidence,
             "llm_used": self.llm_used,
             "warnings": self.warnings,
+            "corrected_question": self.corrected_question,
+            "lexicon_version": self.lexicon_version,
+            "hotword_matches": self.hotword_matches,
+            "corrections": self.corrections,
+            "suggestions": self.suggestions,
         }
 
 
@@ -129,9 +140,10 @@ class QueryAgent:
         self.settings = get_settings()
 
     def plan(self, question: str) -> QueryPlan:
-        normalized_question = normalize_question(question)
+        preview = query_preview(question)
+        normalized_question = preview["normalized_question"]
         if not self.settings.QUERY_AGENT_ENABLED:
-            return QueryPlan(
+            plan = QueryPlan(
                 original_question=question,
                 normalized_question=normalized_question,
                 needs_rewrite=False,
@@ -144,8 +156,11 @@ class QueryAgent:
                 ),
                 confidence=1.0,
             )
+            return _attach_preview(plan, preview)
 
-        rule_plan = self._rule_plan(question, normalized_question)
+        rule_plan = self._rule_plan(preview["corrected_question"], normalized_question)
+        rule_plan.original_question = question
+        _attach_preview(rule_plan, preview)
         if not rule_plan.needs_rewrite or not self.settings.QUERY_AGENT_LLM_ENABLED:
             return rule_plan
 
@@ -167,6 +182,9 @@ class QueryAgent:
         search_question = f"{question}\n{normalized_question}\n{' '.join(synonym_terms)}"
         refs = extract_standard_refs(search_question)
         metrics = extract_metric_terms(search_question)
+        for item in analyze_matches(question):
+            if item["term"] not in metrics:
+                metrics.append(item["term"])
         for term in synonym_terms:
             if term and term not in metrics:
                 metrics.append(term)
@@ -251,17 +269,40 @@ class QueryAgent:
 
 
 def normalize_question(question: str) -> str:
+    parts: list[str] = []
+    start = 0
+    for match in LITERAL_REFERENCE.finditer(question or ""):
+        parts.extend([_normalize_query_text(question[start:match.start()]), match.group()])
+        start = match.end()
+    parts.append(_normalize_query_text((question or "")[start:]))
+    return "".join(parts).strip()
+
+
+def _normalize_query_text(question: str) -> str:
     text = unicodedata.normalize("NFKC", question or "")
     text = re.sub(r"[\u2010-\u2014\u2212]", "-", text)
     text = text.replace("（", "(").replace("）", ")")
-    text = re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\s+", " ", text)
     text = STANDARD_REF_PATTERN.sub(lambda match: _normalize_standard_ref(match.group(0)), text)
     text = re.sub(r"\s*/\s*", "/", text)
     text = re.sub(r"\bμ\s*g\b", "μg", text, flags=re.I)
     text = re.sub(r"\bu\s*g\b", "μg", text, flags=re.I)
     text = re.sub(r"\bm\s*g\b", "mg", text, flags=re.I)
+    text = apply_hotword_aliases(text)
     text, _ = apply_query_synonyms(text)
     return text
+
+
+def query_preview(question: str) -> dict[str, Any]:
+    preview = analyze_hotwords(question)
+    preview["normalized_question"] = normalize_question(preview["corrected_question"])
+    return preview
+
+
+def _attach_preview(plan: QueryPlan, preview: dict[str, Any]) -> QueryPlan:
+    for name in ("corrected_question", "lexicon_version", "hotword_matches", "corrections", "suggestions"):
+        setattr(plan, name, preview[name])
+    return plan
 
 
 def extract_standard_refs(question: str) -> list[str]:
@@ -409,6 +450,11 @@ def _build_evidence_requirements(
 
 
 def _repair_plan(plan: QueryPlan, fallback: QueryPlan) -> QueryPlan:
+    # Preserve local evidence even when an optional LLM planner is enabled.
+    for name in ("corrected_question", "lexicon_version", "hotword_matches", "corrections", "suggestions"):
+        setattr(plan, name, getattr(fallback, name))
+    if fallback.corrections:
+        plan.normalized_question = fallback.normalized_question
     if not plan.normalized_question:
         plan.normalized_question = fallback.normalized_question
     if not plan.rewritten_queries:

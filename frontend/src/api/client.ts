@@ -10,6 +10,7 @@ import type {
   DocumentProcessingJobRead,
   DocumentQualityReportRead,
   DocumentRead,
+  DocumentUploadRead,
   GroupPermissionRead,
   GroupRead,
   PermissionRead,
@@ -17,8 +18,20 @@ import type {
   UserGroupRead,
   UserRead
 } from '../types'
+import type { HotwordCatalogue, QueryPreviewRead } from '../types'
+import type { RetrievalPreferences } from '../utils/retrievalPreferences'
 
 export const AUTH_ERROR_EVENT = 'rag-agent-auth-error'
+
+export function previewQuestion(token: string, question: string, signal?: AbortSignal) {
+  return request<QueryPreviewRead>('/chat/query-preview', {
+    method: 'POST', token, signal, body: JSON.stringify({ question })
+  })
+}
+
+export function listHotwords(token: string, signal?: AbortSignal) {
+  return request<HotwordCatalogue>('/chat/hotwords', { token, signal })
+}
 
 export class ApiError extends Error {
   status: number
@@ -354,11 +367,7 @@ export async function listAuditLogs(token: string, limit = 100): Promise<AuditLo
 
 export async function askQuestion(
   token: string,
-  payload: {
-    question: string
-    document_ids?: number[]
-    top_k?: number
-  }
+  payload: { question: string; document_ids?: number[] } & Partial<RetrievalPreferences>
 ): Promise<ChatResponse> {
   return request<ChatResponse>('/chat/', {
     method: 'POST',
@@ -369,11 +378,7 @@ export async function askQuestion(
 
 export async function createChatJob(
   token: string,
-  payload: {
-    question: string
-    document_ids?: number[]
-    top_k?: number
-  }
+  payload: { question: string; document_ids?: number[] } & Partial<RetrievalPreferences>
 ): Promise<ChatJobRead> {
   return request<ChatJobRead>('/chat/jobs', {
     method: 'POST',
@@ -402,12 +407,14 @@ export function uploadDocument(
   file: File,
   llmChunkNormalizationMode: 'auto' | 'enabled' | 'disabled',
   collectionId: number | null,
-  onProgress: (percent: number) => void
-): Promise<DocumentRead> {
+  onProgress: (percent: number) => void,
+  sourceRelativePath?: string
+): Promise<DocumentUploadRead> {
   return new Promise((resolve, reject) => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('llm_chunk_normalization_mode', llmChunkNormalizationMode)
+    if (sourceRelativePath) formData.append('source_relative_path', sourceRelativePath)
     if (collectionId !== null) {
       formData.append('collection_id', String(collectionId))
     }
@@ -425,7 +432,7 @@ export function uploadDocument(
     xhr.onload = () => {
       const parsed = parseJson(xhr.responseText)
       if (xhr.status >= 200 && xhr.status < 300) {
-        resolve(parsed as DocumentRead)
+        resolve(parsed as DocumentUploadRead)
         return
       }
       const message = getErrorMessage(parsed, `上传失败，HTTP ${xhr.status}`)

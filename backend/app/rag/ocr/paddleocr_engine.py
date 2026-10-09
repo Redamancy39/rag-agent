@@ -1,3 +1,4 @@
+import importlib
 import json
 import os
 import site
@@ -481,8 +482,10 @@ def _add_windows_dll_dir(path: Path) -> None:
 
 
 def _preload_paddle() -> None:
+    from app.core.native_runtime import prepare_torch_runtime
+    prepare_torch_runtime()
     try:
-        import paddle  # noqa: F401
+        importlib.import_module('paddle')
     except ImportError:
         return
 

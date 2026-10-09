@@ -1,47 +1,46 @@
-# RAG 评测集说明
+# RAG 评测集与结果口径
 
-当前主评测集：`rag_testset_v1.json`
+当前主评测集为 `rag_testset_v2.json`，包含 500 条食品标准领域问题，答案键为 `rag_testset_v2_answer_key.json`。旧版题集和中间批次保留在 `archive/`，多格式样例为 `office_multiformat_eval_v1.json`。
 
-## 设计原则
+## 历史结果
 
-- 每个正例问题必须能在当前已入库文档中找到依据，避免用不存在的文档指标误罚系统。
-- `expected_answer_keywords` 用于判断答案核心信息，`expected_citation_keywords` 用于判断引用来源。
-- 关键词不要求逐字完全一致，评测系统会归一化标准号、表号、空格、上标和常见单位写法。
-- 单位不做错误放宽：例如 `g/kg` 不会被判定为匹配 `μg/kg`。
-- 如果一个关键词有多个可接受写法，可以使用 `||` 分隔，例如 `表29||表4.29`。
-- 新增样本时建议填写 `tags` 和 `notes`，方便后续按文档、题型、失败原因做分组分析。
+| 记录 | 口径 | 结果 |
+| --- | --- | --- |
+| `results/rag_eval_v2_final.json` | 历史原始调用结果 | 398/500，79.60% |
+| `results/rag_eval_v2_after_gb2760_fix.json` | 后续历史调用结果 | 441/500，88.20% |
+| 用当前 v2 判分规则重判上述后续结果 | 不重新检索、不调用 LLM | 452/500，90.40% |
 
-## 运行完整评测
+2026-10-09 发布准备再次离线核验得到 452/500。重判保留原历史回答，仅使用当前题集/关键词规则判分；这是历史回答在该判分口径下的成绩，不是本版新模型或新入库文档的端到端准确率。原结果文件不覆盖，本机重判输出不上传。
 
-完整评测会调用当前 RAG 链路和 LLM：
+## 完整评测
+
+先准备题目引用的文档、入库索引、评测账号权限和模型配置，再显式运行：
 
 ```powershell
-cd E:\rag_project\rag-agent-kb-system\backend
-
-python scripts\run_rag_eval.py `
+# 仓库根目录
+.\.venv\Scripts\python.exe backend/scripts/run_rag_eval.py `
   --username admin `
-  --testset ..\data\eval\rag_testset_v1.json `
-  --output ..\data\eval\results\rag_eval_latest.json
+  --testset data/eval/rag_testset_v2.json `
+  --output data/eval/results/rag_eval_v2_new_run.json
 ```
+
+此脚本直接使用本地数据库权限和 RAG 服务，不是 HTTP 客户端；它可能调用生成 API，产生费用并写入评测/问答记录。手动执行读取后端 `.env`，不会自动加载 Windows 启动器的独立 profile；先确认所选模型、目录、开关和权限。不要将 API Key 或密码写入提交的结果文件。
 
 ## 只重判历史结果
 
-如果只是修改了评测规则或测试集关键词，不想重新调用 LLM，可以重判已有结果：
-
 ```powershell
-cd E:\rag_project\rag-agent-kb-system\backend
-
-python scripts\rejudge_rag_eval.py `
-  --testset ..\data\eval\rag_testset_v1.json `
-  --result ..\data\eval\results\rag_eval_bm25_tuned.json `
-  --output ..\data\eval\results\rag_eval_bm25_tuned_rejudged.json
+.\.venv\Scripts\python.exe backend/scripts/rejudge_rag_eval.py `
+  --testset data/eval/rag_testset_v2.json `
+  --result data/eval/results/rag_eval_v2_after_gb2760_fix.json `
+  --output backend/.runtime_reports/rag_eval_v2_rejudged.json
 ```
 
-注意：如果修改了题干本身，历史结果只适合验证判分脚本能否运行，不应作为新的最终分数。
+输出父目录需存在，可先创建 `backend/.runtime_reports/`。不传 `--output` 时只打印摘要，不覆盖题集或历史结果。此流程不运行检索和 LLM。
 
-## 当前 v1.1 修正点
+## 样本和判分边界
 
-- 将与当前知识库不一致的蜂蜜题改为 `GB 2730-2015 腌腊肉制品` 中的可验证问题。
-- 修正 `GB 2721-2015 食用盐` 中把低钠盐氯化钾指标误写成水分指标的问题。
-- 修正 `GB 2733-2015 鲜、冻动物性水产品` 中题干只问海水鱼/淡水鱼但关键词包含虾/贝类指标的问题。
-- 放宽合理等价表达：`100` 可匹配 `10²`，`表4.29` 可匹配 `表29`，`无焦斑和霉斑` 可匹配 `无霉斑`。
+- 正例应能在已入库且账号可访问的文档中找到证据；负例与跨文档题分组观察。
+- `expected_answer_keywords` 检查回答，`expected_citation_keywords` 检查引用；合理等价写法可用 `||` 分隔。
+- 单位必须保留语义，例如 g/kg 不能放宽成 μg/kg；标准号、表号与数值需核对。
+- 修改题干后，原回答只适合检查判分脚本，不能算作新题目的真实运行结果。
+- 关键词通过率不等同于人工语义正确率；应同时复查来源、权限、拒答、表格/OCR 和引用。

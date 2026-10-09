@@ -1,0 +1,22 @@
+# Original BGE-M3/Reranker profile, compatible with existing base/OCR pins.
+# Install the official Windows PyTorch CUDA 12.8 wheel before this file.
+torch==2.7.1+cu128
+sentence-transformers==3.3.1
+transformers==4.44.2
+# 0.5.23 depends on hnswlib without an official CPython 3.12 Windows wheel.
+# 1.0.20 provides an official Windows abi3 wheel and retains our client APIs.
+chromadb==1.0.20
+FlagEmbedding==1.3.3
+peft==0.13.2
+accelerate==1.2.1
+datasets==2.19.0
+pyarrow==16.1.0
+onnxruntime==1.20.1
+posthog==3.7.0
+numpy==1.26.4
+PyMuPDF==1.24.14
+PyYAML==6.0.2
+kubernetes==31.0.0
+# Existing repository pin for the DeepSeek OpenAI-compatible API client.
+openai==1.58.1
+httpx[socks]==0.28.1

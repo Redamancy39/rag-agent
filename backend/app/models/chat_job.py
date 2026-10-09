@@ -22,6 +22,7 @@ class ChatJob(Base):
     question: Mapped[str] = mapped_column(Text)
     document_ids_json: Mapped[str | None] = mapped_column(Text)
     top_k: Mapped[int] = mapped_column(Integer, default=6)
+    retrieval_options_json: Mapped[str | None] = mapped_column(Text)
     progress_percent: Mapped[int] = mapped_column(Integer, default=0)
     progress_detail: Mapped[str | None] = mapped_column(String(512))
     trace_json: Mapped[str | None] = mapped_column(Text)

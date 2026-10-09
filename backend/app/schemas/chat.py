@@ -5,12 +5,26 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.rag.schemas import SourceLocator
+from app.rag.retrieval_options import RetrievalOptions, ResolvedRetrievalOptions
 
 
-class ChatRequest(BaseModel):
+class ChatRequest(RetrievalOptions):
     question: str = Field(min_length=1, max_length=4000)
     document_ids: list[int] | None = None
-    top_k: int = Field(default=5, ge=1, le=20)
+
+
+class QueryPreviewRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=4000)
+
+
+class QueryPreviewRead(BaseModel):
+    original_question: str
+    corrected_question: str
+    normalized_question: str
+    lexicon_version: str
+    hotword_matches: list[dict[str, Any]] = Field(default_factory=list)
+    corrections: list[dict[str, Any]] = Field(default_factory=list)
+    suggestions: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class SourceLocationRead(BaseModel):
@@ -148,6 +162,11 @@ class QueryPlanRead(BaseModel):
     confidence: float = 0.0
     llm_used: bool = False
     warnings: list[str] = Field(default_factory=list)
+    corrected_question: str = ""
+    lexicon_version: str = ""
+    hotword_matches: list[dict[str, Any]] = Field(default_factory=list)
+    corrections: list[dict[str, Any]] = Field(default_factory=list)
+    suggestions: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class EvidenceDecisionRead(BaseModel):
@@ -167,10 +186,30 @@ class CitationValidationRead(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class RetrievalUsageRead(BaseModel):
+    retrieved_count: int = 0
+    usable_count: int = 0
+    context_evidence_count: int = 0
+    context_chars: int = 0
+    omitted_count: int = 0
+    rerank_applied: bool = False
+    generation_requested: bool = False
+    input_token_upper_bound: int | None = None
+    token_estimate_method: str = 'utf8_byte_upper_bound'
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    output_limit_reached: bool = False
+    effective_max_output_tokens: int | None = None
+    budget_message: str | None = None
+
+
 class RetrievalScopeRead(BaseModel):
     requested_document_ids: list[int] = Field(default_factory=list)
     allowed_document_ids: list[int] = Field(default_factory=list)
     top_k: int = 0
+    options: ResolvedRetrievalOptions | None = None
+    usage: RetrievalUsageRead | None = None
 
 
 class ChatResponse(BaseModel):

@@ -62,6 +62,11 @@ class Settings(BaseSettings):
     OPENAI_MODEL_NAME: str | None = "deepseek-v4-flash"
 
     PREPROCESS_LLM_ENABLED: bool = False
+    PREPROCESS_FACT_LLM_ENABLED: bool = False
+    INGESTION_LLM_MAX_CALLS: int = Field(default=120, ge=0)
+    INGESTION_LLM_MAX_SECONDS: float = Field(default=600.0, ge=0, allow_inf_nan=False)
+    INGESTION_LLM_MAX_RETRIES: int = Field(default=1, ge=0, le=3)
+    INGESTION_LLM_MAX_OUTPUT_TOKENS: int = Field(default=2048, ge=1, le=16384)
     PREPROCESS_LLM_TARGET_CHUNK_TYPES: list[str] = ["table_row_fact"]
     PREPROCESS_LLM_MAX_INPUT_CHARS: int = 4000
     PREPROCESS_LLM_TIMEOUT_SECONDS: float = 60.0
@@ -101,6 +106,10 @@ class Settings(BaseSettings):
 
     RAG_TOP_K: int = 6
     RAG_CONTEXT_MAX_CHARS: int = 8000
+    QA_MODEL_CONTEXT_TOKENS: int = Field(default=1048576, ge=1024)
+    QA_MODEL_MAX_OUTPUT_TOKENS: int = Field(default=393216, ge=1)
+    QA_MAX_OUTPUT_TOKENS: int = Field(default=65536, ge=1)
+    QA_OUTPUT_RESERVE_RATIO: float = Field(default=0.30, ge=0.30, lt=1, allow_inf_nan=False)
     RAG_MIN_SCORE: float = 0.35
     RAG_MIN_READABLE_CHARS: int = 30
     RAG_MAX_GARBLED_TOKEN_RATIO: float = 0.08

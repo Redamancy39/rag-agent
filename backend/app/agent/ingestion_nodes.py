@@ -25,8 +25,10 @@ from app.models.document import Document
 from app.rag.chunkers.rule_chunker import RuleChunker
 from app.rag.chunk_quality import annotate_chunk_quality
 from app.rag.embeddings import BgeEmbeddingModel
+from app.rag.llm_budget import IngestionLlmBudget, LIMIT_MESSAGES
 from app.rag.loaders.factory import get_loader
 from app.rag.normalizers.llm_normalizer import (
+    count_llm_normalized_chunks,
     merge_llm_normalized_chunks,
     normalize_chunks_with_llm,
     select_llm_normalization_candidates,
@@ -85,6 +87,17 @@ class IngestionContext:
     embeddings: list[list[float]] = field(default_factory=list)
     report: dict[str, Any] = field(default_factory=dict)
     node_results: dict[str, dict[str, Any]] = field(default_factory=dict)
+    llm_budget: IngestionLlmBudget | None = None
+
+
+def _llm_budget(context):
+    if context.llm_budget is None:
+        context.llm_budget = IngestionLlmBudget(context.settings)
+    return context.llm_budget
+
+
+def _llm_trace(context, summary, state='running'):
+    context.callbacks.update_trace({'node': 'LlmNormalize', 'state': state, 'summary': summary})
 
 
 class IngestionNode(Protocol):
@@ -263,6 +276,9 @@ class ParseOcrNode:
             context.plan
         )
         context.report["effective_llm_preprocessing"] = use_llm_preprocessing
+        llm_stats = context.report.setdefault('llm_preprocessing', {
+            'attempted_count': 0, 'succeeded_count': 0, 'failed_count': 0,
+        })
         try:
             context.parts = DocumentPreprocessor().preprocess(
                 file_type=context.document.file_type,
@@ -271,6 +287,10 @@ class ParseOcrNode:
                 stage_callback=context.callbacks.set_status,
                 force_ocr=bool(plan and plan.use_ocr) or force_ocr_after_parse_failure,
                 use_llm_preprocessing=use_llm_preprocessing,
+                llm_stats=llm_stats,
+                llm_budget=_llm_budget(context),
+                progress_callback=context.callbacks.update_progress,
+                trace_callback=lambda summary: _llm_trace(context, summary),
             )
         except Exception as exc:
             if (
@@ -295,6 +315,10 @@ class ParseOcrNode:
                     stage_callback=context.callbacks.set_status,
                     force_ocr=True,
                     use_llm_preprocessing=use_llm_preprocessing,
+                    llm_stats=llm_stats,
+                    llm_budget=_llm_budget(context),
+                    progress_callback=context.callbacks.update_progress,
+                    trace_callback=lambda summary: _llm_trace(context, summary),
                 )
             else:
                 raise
@@ -362,6 +386,9 @@ class NormalizeNode:
             "skipped_existing_count": selection.skipped_existing_count,
             "limit": selection.limit,
             "generated_count": 0,
+            "attempted_count": 0,
+            "succeeded_count": 0,
+            "failed_count": 0,
             "merge_mode": context.settings.CHUNK_LLM_MERGE_MODE,
         }
         if should_normalize and selection.candidates:
@@ -372,6 +399,9 @@ class NormalizeNode:
             normalized_chunks = normalize_chunks_with_llm(
                 chunks,
                 progress_callback=context.callbacks.update_progress,
+                stats=normalization_report,
+                budget=_llm_budget(context),
+                trace_callback=lambda summary: _llm_trace(context, summary),
             )
             normalization_report["generated_count"] = len(normalized_chunks)
             if normalized_chunks:
@@ -382,8 +412,12 @@ class NormalizeNode:
             normalization_report["skip_reason"] = "当前文档或系统配置未启用 LLM 切块整理"
 
         context.chunks = chunks
+        normalization_report['stored_count'] = count_llm_normalized_chunks(chunks)
+        for key in ('attempted_count', 'succeeded_count', 'failed_count'):
+            normalization_report[key] += context.report.get('llm_preprocessing', {}).get(key, 0)
         context.report["normalized_chunk_count"] = len(context.chunks)
         context.report["normalization"] = normalization_report
+        _llm_trace(context, dict(normalization_report), 'done')
         return NodeOutcome(
             details={
                 "normalized_chunk_count": len(context.chunks),
@@ -485,7 +519,9 @@ class ReportNode:
         logger.info("Ingestion report: %s", context.report)
         context.callbacks.set_status(
             "indexed",
-            "入库完成，可以进行检索问答",
+            '入库完成；' + LIMIT_MESSAGES[context.llm_budget.stop_reason]
+            if context.llm_budget and context.llm_budget.stop_reason
+            else "入库完成，可以进行检索问答",
         )
         return NodeOutcome(
             details={

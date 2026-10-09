@@ -13,6 +13,7 @@ from app.api import (
 )
 from app.core.config import get_settings
 from app.core.logger import configure_logging, get_logger
+from app.core.native_runtime import prepare_torch_runtime
 from app.db.init_db import init_db
 
 settings = get_settings()
@@ -45,6 +46,8 @@ app.include_router(evaluations.router, prefix=settings.API_V1_PREFIX)
 
 @app.on_event("startup")
 def on_startup() -> None:
+    if prepare_torch_runtime():
+        logger.info('PyTorch native runtime loaded before OCR')
     init_db()
     logger.info("Backend started")
 

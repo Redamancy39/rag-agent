@@ -6,6 +6,7 @@ from collections.abc import Callable
 from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.rag.llm_client import LLMConfigError, OpenAICompatibleLLM
+from app.rag.llm_budget import IngestionLlmBudget, LLMLimitReached
 from app.rag.schemas import DocumentBlock, DocumentChunk
 
 logger = get_logger(__name__)
@@ -84,9 +85,11 @@ CHUNK_NORMALIZATION_PROMPT += """
 
 
 class StructuredFactNormalizer:
-    def __init__(self) -> None:
+    def __init__(self, stats: dict[str, Any] | None = None, *, budget=None) -> None:
         self.settings = get_settings()
         self._llm: OpenAICompatibleLLM | None = None
+        self.stats = stats
+        self.budget = budget or IngestionLlmBudget(self.settings)
 
     def normalize(self, part: DocumentBlock) -> list[DocumentBlock]:
         chunk_type = str(part.metadata.get("chunk_type") or "")
@@ -96,7 +99,11 @@ class StructuredFactNormalizer:
             return []
 
         llm = self._get_llm()
+        if self.stats is not None:
+            self.stats['attempted_count'] += 1
         payload = llm.complete_json(SYSTEM_PROMPT, self._build_user_prompt(part))
+        if self.stats is not None:
+            self.stats['succeeded_count'] += 1
         facts = payload.get("facts")
         if not isinstance(facts, list):
             return []
@@ -123,7 +130,7 @@ class StructuredFactNormalizer:
 
     def _get_llm(self) -> OpenAICompatibleLLM:
         if self._llm is None:
-            self._llm = OpenAICompatibleLLM()
+            self._llm = OpenAICompatibleLLM(budget=self.budget)
         return self._llm
 
     def _build_user_prompt(self, part: DocumentBlock) -> str:
@@ -142,41 +149,43 @@ class StructuredFactNormalizer:
         )
 
 
-def normalize_with_llm(parts: list[DocumentBlock]) -> list[DocumentBlock]:
+def normalize_with_llm(parts: list[DocumentBlock], stats: dict[str, Any] | None = None,
+                       *, budget=None, progress_callback=None, trace_callback=None) -> list[DocumentBlock]:
     settings = get_settings()
-    if not settings.PREPROCESS_LLM_ENABLED:
+    counts = stats if stats is not None else {}
+    for key in ('attempted_count', 'succeeded_count', 'failed_count'):
+        counts.setdefault(key, 0)
+    if not (settings.PREPROCESS_LLM_ENABLED and getattr(settings, 'PREPROCESS_FACT_LLM_ENABLED', False)):
+        counts['fact_preprocessing_enabled'] = False
         return []
-
-    normalizer = StructuredFactNormalizer()
-    normalized_parts: list[DocumentBlock] = []
-    for part in parts:
-        try:
-            normalized_parts.extend(normalizer.normalize(part))
-        except LLMConfigError:
-            raise
-        except Exception as exc:
-            logger.warning(
-                "LLM preprocessing failed chunk_type=%s page=%s error=%s",
-                part.metadata.get("chunk_type"),
-                part.metadata.get("page"),
-                exc,
-            )
-    return normalized_parts
+    budget = budget or IngestionLlmBudget(settings)
+    candidates = [part for part in parts if str(part.metadata.get('chunk_type') or '')
+                  in settings.PREPROCESS_LLM_TARGET_CHUNK_TYPES and part.text.strip()]
+    counts.update(fact_preprocessing_enabled=True, candidate_count=len(candidates), eligible_count=len(candidates))
+    return _run_normalization(candidates, StructuredFactNormalizer(stats=counts, budget=budget),
+                              counts, budget, progress_callback, trace_callback, '表格事实整理')
 
 
 class ChunkTextNormalizer:
-    def __init__(self) -> None:
+    def __init__(self, stats: dict[str, Any] | None = None, *, budget=None) -> None:
         self.settings = get_settings()
         self._llm: OpenAICompatibleLLM | None = None
+        self.stats = stats
+        self.budget = budget or IngestionLlmBudget(self.settings)
 
     def normalize(self, chunk: DocumentChunk) -> DocumentChunk | None:
         text = chunk.text.strip()
         if len(text) < self.settings.CHUNK_LLM_MIN_INPUT_CHARS:
             return None
-        payload = self._get_llm().complete_json(
+        llm = self._get_llm()
+        if self.stats is not None:
+            self.stats['attempted_count'] += 1
+        payload = llm.complete_json(
             CHUNK_NORMALIZATION_PROMPT,
             self._build_user_prompt(chunk),
         )
+        if self.stats is not None:
+            self.stats['succeeded_count'] += 1
         if payload.get("should_use") is False:
             return None
         normalized_text = _clean_value(payload.get("normalized_text"))
@@ -206,7 +215,7 @@ class ChunkTextNormalizer:
 
     def _get_llm(self) -> OpenAICompatibleLLM:
         if self._llm is None:
-            self._llm = OpenAICompatibleLLM()
+            self._llm = OpenAICompatibleLLM(budget=self.budget)
         return self._llm
 
     def _build_user_prompt(self, chunk: DocumentChunk) -> str:
@@ -234,60 +243,89 @@ def normalize_chunks_with_llm(
     progress_callback: Callable[[int, int, str], None] | None = None,
     *,
     force: bool = False,
+    stats: dict[str, Any] | None = None,
+    budget: IngestionLlmBudget | None = None,
+    trace_callback=None,
 ) -> list[DocumentChunk]:
     settings = get_settings()
+    counts = stats if stats is not None else {}
+    counts.update(attempted_count=0, succeeded_count=0, failed_count=0)
     if not (
         (settings.PREPROCESS_LLM_ENABLED or force)
         and settings.CHUNK_LLM_NORMALIZATION_ENABLED
     ):
         return []
 
-    normalizer = ChunkTextNormalizer()
-    normalized_chunks: list[DocumentChunk] = []
+    budget = budget or IngestionLlmBudget(settings)
     selection = select_llm_normalization_candidates(chunks)
     candidates = selection.candidates
+    counts.update(candidate_count=len(candidates), eligible_count=selection.eligible_count)
+    return _run_normalization(candidates, ChunkTextNormalizer(stats=counts, budget=budget),
+                              counts, budget, progress_callback, trace_callback, '候选切块整理')
+
+
+def _run_normalization(candidates, normalizer, counts, budget, progress_callback, trace_callback, phase):
+    results = []
+    current = consecutive_failures = 0
     total = len(candidates)
-    if progress_callback:
-        progress_callback(
-            0,
-            total,
-            (
-                f"待整理切块 {total} 个"
-                f"（候选 {selection.eligible_count} 个，"
-                f"已跳过已整理 {selection.skipped_existing_count} 个）"
-            ),
-        )
-    for index, chunk in enumerate(candidates, start=1):
+    old_observer = budget.on_event
+    def publish(message):
+        counts.update(budget.snapshot(), processed_count=current,
+                      skipped_count=max(0, counts.get('eligible_count', total) - current),
+                      generated_count=len(results))
         if progress_callback:
-            progress_callback(
-                index - 1,
-                total,
-                f"正在整理 OCR/表格切块：第 {index} / {total} 个（已完成 {index - 1} 个）",
-            )
-        try:
-            normalized = normalizer.normalize(chunk)
-        except LLMConfigError as exc:
-            logger.warning("Chunk LLM normalization skipped: %s", exc)
-            return normalized_chunks
-        except Exception as exc:
-            logger.warning(
-                "Chunk LLM normalization failed page=%s local_chunk=%s error=%s",
-                chunk.metadata.get("page"),
-                chunk.metadata.get("local_chunk_index"),
-                exc,
-            )
-            continue
-        if normalized:
-            normalized_chunks.append(normalized)
-        if progress_callback:
-            progress_callback(
-                index,
-                total,
-                f"已处理 OCR/表格切块：{index} / {total}",
-            )
-    if progress_callback:
-        progress_callback(total, total, f"LLM 切块整理完成：{total} / {total}")
-    return normalized_chunks
+            progress_callback(current, total,
+                f'{phase}：已处理 {current}/{total}；{message}；'
+                f'API 请求 {budget.attempts}/{budget.max_calls}，重试 {budget.retries}，耗时 {budget.elapsed:.0f}s')
+        if trace_callback:
+            trace_callback(dict(counts))
+    budget.on_event = publish
+    try:
+        publish('准备处理')
+        for candidate in candidates:
+            previous_attempts = counts.get('attempted_count', 0)
+            previous_requests = budget.attempts
+            try:
+                normalized = normalizer.normalize(candidate)
+            except LLMLimitReached:
+                if budget.attempts == previous_requests:
+                    counts['attempted_count'] = previous_attempts
+                else:
+                    counts['failed_count'] += 1
+                    current += 1
+                break
+            except LLMConfigError:
+                counts['failed_count'] += 1
+                budget.stop_reason = 'configuration'
+                break
+            except Exception as exc:
+                counts['failed_count'] += 1
+                consecutive_failures += 1
+                current += 1
+                logger.warning('LLM normalization failed: error_type=%s', type(exc).__name__)
+                if getattr(exc, 'status_code', None) in (400, 401, 403, 404) or consecutive_failures >= 3:
+                    budget.stop_reason = 'api_failures'
+                    break
+                publish('该候选失败，继续下一项')
+                continue
+            consecutive_failures = 0
+            if isinstance(normalized, list):
+                results.extend(normalized)
+            elif normalized:
+                results.append(normalized)
+            current += 1
+            publish('候选处理结束')
+        from app.rag.llm_budget import LIMIT_MESSAGES
+        publish(LIMIT_MESSAGES[budget.stop_reason] if budget.stop_reason else '整理阶段结束')
+        return results
+    finally:
+        budget.on_event = old_observer
+
+
+def count_llm_normalized_chunks(chunks: list[DocumentChunk]) -> int:
+    return sum(1 for chunk in chunks if _is_llm_normalized_chunk(chunk)
+               or str(chunk.metadata.get('chunk_type') or '').startswith('llm_')
+               or str(chunk.metadata.get('extraction_method') or '').startswith('llm_'))
 
 
 def select_llm_normalization_candidates(
@@ -381,7 +419,7 @@ def _dynamic_candidate_limit(total: int, settings: Any) -> int:
     max_limit = max(min_limit, int(settings.CHUNK_LLM_MAX_CHUNKS_PER_DOCUMENT))
     ratio = max(0.0, float(settings.CHUNK_LLM_CANDIDATE_RATIO))
     ratio_limit = ceil(total * ratio)
-    return min(total, max_limit, max(min_limit, ratio_limit))
+    return min(total, 120, max_limit, max(min_limit, ratio_limit))
 
 
 def _existing_normalized_source_keys(chunks: list[DocumentChunk]) -> set[str]:

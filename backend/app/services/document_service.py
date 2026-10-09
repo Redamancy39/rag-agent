@@ -33,8 +33,13 @@ from app.models.permission import Permission
 from app.models.user import User
 from app.rag.chunk_quality import annotate_chunk_quality
 from app.rag.embeddings import BgeEmbeddingModel
-from app.rag.file_types import detect_file_type, sanitize_filename
+from app.rag.llm_budget import IngestionLlmBudget, LIMIT_MESSAGES
+from app.rag.file_types import detect_file_type, sanitize_filename, validate_upload_source
+from app.services.document_dedup import DuplicateUpload, file_sha256, find_duplicate
+
+_upload_record_lock = threading.RLock()
 from app.rag.normalizers.llm_normalizer import (
+    count_llm_normalized_chunks,
     dedupe_llm_normalized_chunks,
     merge_llm_normalized_chunks,
     normalize_chunks_with_llm,
@@ -369,11 +374,13 @@ async def create_document_record(
     *,
     llm_chunk_normalization_mode: str | bool | None = "auto",
     collection_id: int | None = None,
+    source_relative_path: str | None = None,
 ) -> Document:
     settings = get_settings()
     normalization_mode = _parse_llm_chunk_normalization_mode(
         llm_chunk_normalization_mode
     )
+    source_relative_path = validate_upload_source(upload_file.filename or 'uploaded_file', source_relative_path)
     original_filename = sanitize_filename(upload_file.filename or "uploaded_file")
     file_type = detect_file_type(original_filename)
     suffix = Path(original_filename).suffix.lower()
@@ -387,35 +394,57 @@ async def create_document_record(
         if not _can_write_collection(db, collection, user):
             raise PermissionError("No write permission for this document collection")
 
-    user_upload_dir = settings.UPLOAD_DIR / str(user.id)
+    owner_id = user.id
+    target_collection_id = collection.id if collection else None
+    user_upload_dir = settings.UPLOAD_DIR / str(owner_id)
     user_upload_dir.mkdir(parents=True, exist_ok=True)
     storage_filename = f"{uuid4().hex}{suffix}"
     storage_path = user_upload_dir / storage_filename
 
-    file_size = await _save_upload_file(upload_file, storage_path)
-
-    document = Document(
-        filename=original_filename,
-        file_type=file_type,
-        content_type=upload_file.content_type,
-        storage_path=str(storage_path),
-        file_size=file_size,
-        status="queued",
-        status_message="文件已保存，等待后台入库",
-        owner_id=user.id,
-        collection_id=collection.id if collection else None,
-    )
-    db.add(document)
-    db.commit()
-    db.refresh(document)
-    _create_processing_job(
-        db,
-        document,
-        options={
-            "llm_chunk_normalization_mode": normalization_mode,
-        },
-    )
-    return document
+    committed = False
+    try:
+        file_size = await _save_upload_file(upload_file, storage_path)
+        digest = file_sha256(storage_path)
+        with _upload_record_lock:
+            # SQLite's write reservation serializes check + creation across processes too.
+            # End the read-only permission-check transaction before reserving the writer.
+            db.rollback()
+            if db.get_bind().dialect.name == 'sqlite':
+                db.connection().exec_driver_sql('BEGIN IMMEDIATE')
+            if target_collection_id is not None:
+                collection = db.get(DocumentCollection, target_collection_id)
+                if collection is None or not _can_write_collection(db, collection, user):
+                    raise PermissionError('No write permission for this document collection')
+            duplicate = find_duplicate(db, owner_id=owner_id, collection_id=target_collection_id,
+                                       size=file_size, digest=digest)
+            if duplicate:
+                db.commit()  # Persist any legacy fingerprints; never create a new job.
+                raise DuplicateUpload(duplicate)
+            document = Document(
+                filename=original_filename, file_type=file_type,
+                content_type=upload_file.content_type, storage_path=str(storage_path),
+                file_size=file_size, content_sha256=digest, status='queued',
+                status_message='文件已保存，等待后台入库', owner_id=owner_id,
+                collection_id=target_collection_id,
+            )
+            db.add(document)
+            db.flush()
+            # This commits the new document and its job together while holding the reservation.
+            _create_processing_job(db, document, options={
+                'llm_chunk_normalization_mode': normalization_mode,
+                **({'source_relative_path': source_relative_path} if source_relative_path else {}),
+            })
+            committed = True
+            db.refresh(document)
+            return document
+    except DuplicateUpload:
+        storage_path.unlink(missing_ok=True)
+        raise
+    except Exception:
+        db.rollback()
+        if not committed:
+            storage_path.unlink(missing_ok=True)
+        raise
 
 
 def _can_write_collection(
@@ -597,7 +626,8 @@ def _index_document(db: Session, document: Document) -> None:
                 plan.use_llm_preprocessing if plan is not None else None
             ),
         ),
-        attach_metadata=lambda chunks: _attach_document_metadata(document, chunks),
+        attach_metadata=lambda chunks: _attach_document_metadata(document, chunks,
+            source_relative_path=_get_processing_options(db, document).get('source_relative_path')),
         parser_status_message=_parser_status_message,
     )
     context = IngestionContext(db=db, document=document, callbacks=callbacks)
@@ -657,6 +687,19 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
     chunks = dedupe_llm_normalized_chunks(chunks)
     deduped_count = original_chunk_count - len(chunks)
     selection = select_llm_normalization_candidates(chunks)
+    normalization_report = {
+        'enabled': True, 'candidate_count': len(selection.candidates),
+        'eligible_count': selection.eligible_count, 'attempted_count': 0,
+        'succeeded_count': 0, 'failed_count': 0, 'generated_count': 0,
+        'stored_count': count_llm_normalized_chunks(chunks),
+    }
+    def record_normalization(state):
+        _upsert_processing_trace(db, document, {
+            'node': 'LlmNormalize', 'state': state,
+            'summary': dict(normalization_report),
+        })
+
+    record_normalization('running')
     if selection.eligible_count == 0:
         if deduped_count > 0:
             _rewrite_document_vectors(
@@ -665,6 +708,7 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
                 chunks,
                 status_message=f"LLM 整理完成，已清理 {deduped_count} 个重复归一化切块",
             )
+            record_normalization('done')
             return
         document.status = "indexed"
         if selection.skipped_existing_count:
@@ -685,6 +729,7 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
         )
         db.commit()
         db.refresh(document)
+        record_normalization('done')
         return
 
     _set_document_status(
@@ -707,10 +752,16 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
             detail=message,
         ),
         force=True,
+        stats=normalization_report,
+        budget=IngestionLlmBudget(settings),
+        trace_callback=lambda summary: record_normalization('running'),
     )
+    normalization_report['generated_count'] = len(normalized_chunks)
+    record_normalization('running')
     if not normalized_chunks:
         document.status = "indexed"
-        document.status_message = "LLM 整理完成，但未生成新的归一化切块"
+        reason = normalization_report.get('limit_reason')
+        document.status_message = LIMIT_MESSAGES[reason] if reason else "LLM 整理完成，但未生成新的归一化切块"
         document.error_message = None
         db.add(document)
         _update_processing_job(
@@ -723,6 +774,7 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
         )
         db.commit()
         db.refresh(document)
+        record_normalization('done')
         return
 
     merged_chunks = annotate_chunk_quality(
@@ -735,10 +787,13 @@ def _normalize_indexed_document_chunks(db: Session, document: Document) -> None:
         merged_chunks,
         status_message=(
             f"LLM 整理完成，生成 {len(normalized_chunks)} 个归一化切块"
+            + ('；' + LIMIT_MESSAGES[normalization_report['limit_reason']] if normalization_report.get('limit_reason') else '')
             + (f"，替换 {replaced_count} 个原始切块" if replaced_count else "")
             + (f"，清理 {deduped_count} 个重复归一化切块" if deduped_count else "")
         ),
     )
+    normalization_report['stored_count'] = count_llm_normalized_chunks(merged_chunks)
+    record_normalization('done')
 
 
 def _rewrite_document_vectors(
@@ -926,6 +981,9 @@ def _update_processing_job(
     job.status = status
     job.stage = stage
     job.message = message
+    if stage != 'llm_preprocessing':
+        job.progress_current = job.progress_total = job.progress_percent = 0
+        job.progress_detail = None
     job.updated_at = now
     if job.started_at is None and status != "queued":
         job.started_at = now
@@ -945,6 +1003,7 @@ def _update_job_progress(
     detail: str,
 ) -> None:
     job = _get_latest_processing_job(db, document)
+    job.status = job.stage = 'llm_preprocessing'
     job.progress_current = max(0, current)
     job.progress_total = max(0, total)
     job.progress_percent = (
@@ -1108,10 +1167,13 @@ def _parser_status_message(file_type: str) -> str:
 def _attach_document_metadata(
     document: Document,
     chunks: list[DocumentChunk],
+    *, source_relative_path: str | None = None,
 ) -> list[DocumentChunk]:
     indexed_chunks: list[DocumentChunk] = []
     for chunk_index, chunk in enumerate(chunks):
         metadata = dict(chunk.metadata)
+        if source_relative_path:
+            metadata['source_relative_path'] = source_relative_path
         metadata.update(
             {
                 "document_id": document.id,

@@ -12,6 +12,30 @@ export interface TokenResponse {
   token_type: string
 }
 
+export interface DocumentLlmStatus {
+  screening_status: string
+  check_status: string
+  normalization_status: string
+  candidate_count: number | null
+  attempted_count: number | null
+  succeeded_count: number | null
+  failed_count: number | null
+  generated_count: number | null
+  stored_count: number | null
+  processed_count?: number | null
+  skipped_count?: number | null
+  request_attempted_count?: number | null
+  request_succeeded_count?: number | null
+  request_failed_count?: number | null
+  retry_count?: number | null
+  request_max_calls?: number | null
+  elapsed_seconds?: number | null
+  limit_reason?: string | null
+  job_id: number | null
+  checked_at: string | null
+  detail: string
+}
+
 export interface DocumentRead {
   id: number
   filename: string
@@ -29,6 +53,12 @@ export interface DocumentRead {
   collection_name: string | null
   created_at: string
   updated_at: string | null
+  llm_processing?: DocumentLlmStatus
+}
+
+export interface DocumentUploadRead extends DocumentRead {
+  duplicate: boolean
+  duplicate_reason: string | null
 }
 
 export interface DocumentChunkRead {
@@ -293,6 +323,47 @@ export interface RetrievalTraceStep {
   top_hits: RetrievalTraceHit[]
 }
 
+export interface HotwordMatch {
+  original: string
+  term: string
+  category: string
+  start: number
+  end: number
+  kind: 'term' | 'alias'
+}
+
+export interface QueryCorrection {
+  original: string
+  replacement: string
+  start: number
+  end: number
+  reason: string
+}
+
+export interface QuerySuggestion {
+  original: string
+  candidates: string[]
+  start: number
+  end: number
+  reason: string
+}
+
+export interface QueryPreviewRead {
+  original_question: string
+  corrected_question: string
+  normalized_question: string
+  lexicon_version: string
+  hotword_matches: HotwordMatch[]
+  corrections: QueryCorrection[]
+  suggestions: QuerySuggestion[]
+}
+
+export interface HotwordCatalogue {
+  version: string
+  categories: Record<string, string>
+  entries: Array<{term: string; category: string; aliases: string[]; typos: string[]; source: {title: string; url: string}}>
+}
+
 export interface QueryPlanRead {
   original_question: string
   normalized_question: string
@@ -310,6 +381,11 @@ export interface QueryPlanRead {
   confidence: number
   llm_used: boolean
   warnings: string[]
+  corrected_question?: string
+  lexicon_version?: string
+  hotword_matches?: HotwordMatch[]
+  corrections?: QueryCorrection[]
+  suggestions?: QuerySuggestion[]
 }
 
 export interface EvidenceDecisionRead {
@@ -333,6 +409,17 @@ export interface RetrievalScopeRead {
   requested_document_ids: number[]
   allowed_document_ids: number[]
   top_k: number
+  options?: {
+    top_k: number; rerank_enabled: boolean; candidate_top_k: number; context_auto: boolean
+    context_max_chars: number; model_context_tokens: number; output_reserve_ratio: number; max_output_tokens: number
+  } | null
+  usage?: {
+    retrieved_count: number; usable_count: number; context_evidence_count: number; context_chars: number
+    omitted_count: number; rerank_applied: boolean; generation_requested: boolean
+    input_token_upper_bound: number | null; token_estimate_method: string
+    input_tokens: number | null; output_tokens: number | null; reasoning_tokens: number | null
+    output_limit_reached: boolean; effective_max_output_tokens: number | null; budget_message: string | null
+  } | null
 }
 
 export interface ChatResponse {
@@ -388,11 +475,14 @@ export interface ChatLogRead {
 export interface UploadProgressItem {
   id: string
   document_id?: number
+  duplicate?: boolean
   filename: string
+  relativePath?: string
   progress: number
   status: 'ready' | 'uploading' | 'indexing' | 'success' | 'error'
   message: string
   stageLabel?: string
   progressCurrent?: number
   progressTotal?: number
+  jobUpdatedAt?: string | null
 }

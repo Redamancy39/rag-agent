@@ -11,6 +11,7 @@ from app.core.logger import get_logger
 from app.models.user import User
 from app.rag.llm_client import LLMConfigError, OpenAICompatibleLLM
 from app.rag.retriever import PermissionAwareRetriever
+from app.rag.retrieval_options import RetrievalOptions, ResolvedRetrievalOptions, resolve_retrieval_options
 from app.rag.schemas import SourceLocator
 from app.rag.table_utils import infer_table_reference
 from app.rag.text_quality import is_text_usable
@@ -23,6 +24,7 @@ from app.schemas.chat import (
     EvidenceRow,
     QueryPlanRead,
     RetrievalScopeRead,
+    RetrievalUsageRead,
     RetrievalTraceStep,
     SourceLocationRead,
 )
@@ -84,8 +86,11 @@ class RagService:
         requested_document_ids: list[int] | None = None,
         top_k: int | None = None,
         progress_callback: Callable[[dict], None] | None = None,
+        retrieval_options: ResolvedRetrievalOptions | None = None,
     ) -> ChatResponse:
-        resolved_top_k = top_k or self.settings.RAG_TOP_K
+        options = retrieval_options or resolve_retrieval_options(
+            RetrievalOptions(top_k=top_k or 5), self.settings)
+        resolved_top_k = options.top_k
         allowed_document_ids = self._allowed_document_ids(
             db,
             user=user,
@@ -95,6 +100,8 @@ class RagService:
             requested_document_ids=sorted(set(requested_document_ids or [])),
             allowed_document_ids=allowed_document_ids,
             top_k=resolved_top_k,
+            options=options,
+            usage=RetrievalUsageRead(),
         )
         if not allowed_document_ids:
             response = _not_found_response("当前账号没有可检索的已入库文档。")
@@ -109,7 +116,7 @@ class RagService:
         _emit_progress(
             progress_callback,
             stage="query_normalize",
-            message="规范化问题并应用本地同义词",
+            message="本地热词检测、确定纠错与问题规范化",
             progress=10,
             allowed_document_count=len(allowed_document_ids),
         )
@@ -118,8 +125,15 @@ class RagService:
             allowed_document_ids=allowed_document_ids,
             top_k=resolved_top_k,
             progress_callback=progress_callback,
+            retrieval_options=options,
         )
+        # Answer the locally corrected intent; retain the raw question in jobs/history.
+        answer_question = (query_plan.corrected_question or question) if query_plan else question
         citations = self._filter_usable_citations([_hit_to_citation(hit) for hit in hits])
+        usage = retrieval_scope.usage
+        usage.retrieved_count = len(hits)
+        usage.usable_count = len(citations)
+        usage.rerank_applied = any(step.get('source') in ('reranked', 'reranked_with_preserved_recall') for step in retrieval_trace)
         _emit_progress(
             progress_callback,
             stage="retrieve",
@@ -147,6 +161,27 @@ class RagService:
                 retrieval_scope=retrieval_scope,
             )
 
+        context, generation_prompt, selected, token_bound = _prepare_context(
+            answer_question, citations, max_chars=options.context_max_chars,
+            input_token_limit=int(options.model_context_tokens * (1 - options.output_reserve_ratio)),
+        )
+        usage.context_chars = len(context)
+        usage.context_evidence_count = len(selected)
+        usage.omitted_count = len(citations) - len(selected)
+        usage.input_token_upper_bound = token_bound
+        usage.effective_max_output_tokens = max(0, min(options.max_output_tokens,
+            options.model_context_tokens - token_bound - 128))
+        if usage.omitted_count:
+            usage.budget_message = f'预算省略 {usage.omitted_count} 条完整证据，保留 {len(selected)} 条；未截断原文'
+        if not selected:
+            usage.budget_message = '当前输入或上下文预算无法容纳完整证据，请调整参数或缩短问题'
+            response = _not_found_response(usage.budget_message)
+            response.retrieval_trace = _parse_retrieval_trace(retrieval_trace)
+            response.query_plan = _parse_query_plan(query_plan)
+            return self._finalize_response(db, user=user, question=question, response=response,
+                                          retrieval_scope=retrieval_scope)
+        citations = selected
+
         _emit_progress(
             progress_callback,
             stage="evidence_judge",
@@ -155,7 +190,7 @@ class RagService:
             citation_count=len(citations),
         )
         evidence_decision = EvidenceJudge().judge(
-            question=question,
+            question=answer_question,
             citations=citations,
             query_plan=query_plan,
         )
@@ -188,7 +223,8 @@ class RagService:
             progress=78,
             citation_count=len(citations),
         )
-        response = self._generate_answer(question, citations)
+        response = self._generate_answer(answer_question, citations, generation_prompt=generation_prompt,
+                                         usage=usage, max_output_tokens=usage.effective_max_output_tokens)
         response.retrieval_trace = _parse_retrieval_trace(retrieval_trace)
         response.query_plan = _parse_query_plan(query_plan)
         response.evidence_decision = _parse_evidence_decision(evidence_decision)
@@ -232,9 +268,11 @@ class RagService:
             return sorted(indexed_ids.intersection(requested_document_ids))
         return sorted(indexed_ids)
 
-    def _generate_answer(self, question: str, citations: list[Citation]) -> ChatResponse:
-        context = _build_context(citations, max_chars=self.settings.RAG_CONTEXT_MAX_CHARS)
-        strategy_hint = _build_strategy_hint(question, citations)
+    def _generate_answer(self, question: str, citations: list[Citation], *, generation_prompt: str | None = None,
+                         usage: RetrievalUsageRead | None = None, max_output_tokens: int | None = None) -> ChatResponse:
+        if generation_prompt is None:
+            context, citations = _select_context(citations, max_chars=self.settings.RAG_CONTEXT_MAX_CHARS)
+            generation_prompt = f"用户问题：{question}\n\n{_build_strategy_hint(question, citations)}\n\n检索证据：\n{context}"
         if not self.settings.OPENAI_API_KEY:
             numbered_citations = _number_citations(_compact_citations(citations))
             sections = AnswerSections(
@@ -256,10 +294,21 @@ class RagService:
             )
 
         try:
-            payload = OpenAICompatibleLLM().complete_json(
+            client = OpenAICompatibleLLM(max_output_tokens=max_output_tokens)
+            if usage is not None:
+                usage.generation_requested = True
+            payload = client.complete_json(
                 SYSTEM_PROMPT,
-                f"用户问题：{question}\n\n{strategy_hint}\n\n检索证据：\n{context}",
+                generation_prompt,
             )
+            if usage is not None:
+                raw_usage = client.last_usage
+                usage.input_tokens = _usage_value(raw_usage, 'prompt_tokens')
+                usage.output_tokens = _usage_value(raw_usage, 'completion_tokens')
+                details = (raw_usage.get('completion_tokens_details') if isinstance(raw_usage, dict)
+                           else getattr(raw_usage, 'completion_tokens_details', None))
+                usage.reasoning_tokens = _usage_value(details, 'reasoning_tokens')
+                usage.output_limit_reached = client.last_finish_reason == 'length'
             return _parse_answer_payload(payload, citations)
         except LLMConfigError as exc:
             logger.warning("LLM config error: %s", exc)
@@ -425,23 +474,57 @@ def _parse_evidence_decision(
         return None
 
 
-def _build_context(citations: list[Citation], max_chars: int) -> str:
+def _context_block(citation: Citation, index: int) -> str:
+    location = _format_citation_location(citation)
+    table = f"；表：{citation.table}" if citation.table else ""
+    score = f"{citation.score:.3f}" if citation.score is not None else "-"
+    return (f"[{index}] 文件：{citation.filename}；来源：{location}；"
+            f"类型：{citation.chunk_type or '-'}{table}；分数：{score}\n{citation.text}")
+
+
+def _select_context(citations: list[Citation], max_chars: int) -> tuple[str, list[Citation]]:
     blocks: list[str] = []
+    selected: list[Citation] = []
     total = 0
-    for index, citation in enumerate(citations, start=1):
-        location = _format_citation_location(citation)
-        table = f"；表：{citation.table}" if citation.table else ""
-        score = f"{citation.score:.3f}" if citation.score is not None else "-"
-        block = (
-            f"[{index}] 文件：{citation.filename}；来源：{location}；"
-            f"类型：{citation.chunk_type or '-'}{table}；分数：{score}\n"
-            f"{citation.text}"
-        )
-        if total + len(block) > max_chars:
-            break
+    for citation in citations:
+        block = _context_block(citation, len(selected) + 1)
+        separator = 2 if blocks else 0
+        if total + separator + len(block) > max_chars:
+            continue
         blocks.append(block)
-        total += len(block)
-    return "\n\n".join(blocks)
+        selected.append(citation)
+        total += separator + len(block)
+    return "\n\n".join(blocks), selected
+
+
+def _build_context(citations: list[Citation], max_chars: int) -> str:
+    return _select_context(citations, max_chars)[0]
+
+
+def _prepare_context(question: str, citations: list[Citation], *, max_chars: int, input_token_limit: int):
+    def pack(items):
+        text = '\n\n'.join(_context_block(citation, index)
+                             for index, citation in enumerate(items, start=1))
+        hint = _build_strategy_hint(question, items)
+        prompt = f"用户问题：{question}\n\n{hint}\n\n检索证据：\n{text}"
+        # Conservative bound for byte-based text tokenization, not an exact token count.
+        bound = len(SYSTEM_PROMPT.encode('utf-8')) + len(prompt.encode('utf-8')) + 256
+        return text, prompt, bound
+    selected = []
+    context, prompt, bound = pack(selected)
+    for citation in citations:
+        proposed = [*selected, citation]
+        next_context, next_prompt, next_bound = pack(proposed)
+        if len(next_context) > max_chars or next_bound > input_token_limit:
+            continue
+        selected = proposed
+        context, prompt, bound = next_context, next_prompt, next_bound
+    return context, prompt, selected, bound
+
+
+def _usage_value(value, name):
+    result = value.get(name) if isinstance(value, dict) else getattr(value, name, None)
+    return result if isinstance(result, int) and result >= 0 else None
 
 
 def _build_strategy_hint(question: str, citations: list[Citation]) -> str:

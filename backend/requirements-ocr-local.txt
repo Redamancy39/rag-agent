@@ -1,0 +1,6 @@
+# Validated local CPU OCR profile; no GPU, Torch, BGE or LLM dependencies.
+paddlepaddle==3.2.0
+paddleocr==3.2.0
+paddlex==3.2.1
+PyMuPDF==1.24.14
+numpy==1.26.4

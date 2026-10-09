@@ -27,6 +27,7 @@ class Document(Base):
     content_type: Mapped[str | None] = mapped_column(String(128))
     storage_path: Mapped[str] = mapped_column(String(512))
     file_size: Mapped[int] = mapped_column(Integer, default=0)
+    content_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
     status: Mapped[str] = mapped_column(String(32), default="uploaded", index=True)
     status_message: Mapped[str | None] = mapped_column(String(512))
     chunk_count: Mapped[int] = mapped_column(Integer, default=0)

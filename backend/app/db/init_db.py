@@ -43,6 +43,7 @@ def _ensure_sqlite_schema() -> None:
     document_columns = {
         "content_type": "VARCHAR(128)",
         "file_size": "INTEGER DEFAULT 0",
+        "content_sha256": "VARCHAR(64)",
         "status_message": "VARCHAR(512)",
         "chunk_count": "INTEGER DEFAULT 0",
         "error_message": "TEXT",
@@ -69,6 +70,10 @@ def _ensure_sqlite_schema() -> None:
                 )
                 logger.info("Added missing documents.%s column", column_name)
 
+        connection.exec_driver_sql(
+            'CREATE INDEX IF NOT EXISTS ix_documents_content_sha256 ON documents (content_sha256)'
+        )
+
         rows = connection.exec_driver_sql(
             "PRAGMA table_info(document_processing_jobs)"
         ).fetchall()
@@ -85,6 +90,7 @@ def _ensure_sqlite_schema() -> None:
                 )
 
         chat_job_columns = {
+            "retrieval_options_json": "TEXT",
             "message": "VARCHAR(512)",
             "error_message": "TEXT",
             "document_ids_json": "TEXT",

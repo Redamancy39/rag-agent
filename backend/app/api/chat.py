@@ -4,11 +4,26 @@ from sqlalchemy.orm import Session
 from app.api.auth import get_current_user
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.chat import ChatJobRead, ChatLogRead, ChatRequest, ChatResponse
+from app.schemas.chat import ChatJobRead, ChatLogRead, ChatRequest, ChatResponse, QueryPreviewRequest, QueryPreviewRead
+from app.agent.query_agent import query_preview
+from app.agent.query_hotwords import hotword_catalogue
 from app.services import chat_job_service, log_service
 from app.services.rag_service import RagService
+from app.core.config import get_settings
+from app.rag.retrieval_options import resolve_retrieval_options
 
 router = APIRouter(prefix="/chat", tags=["chat"])
+
+
+@router.get("/hotwords")
+def read_hotwords(current_user: User = Depends(get_current_user)) -> dict:
+    return hotword_catalogue()
+
+
+@router.post("/query-preview", response_model=QueryPreviewRead)
+def preview_question(payload: QueryPreviewRequest, current_user: User = Depends(get_current_user)) -> dict:
+    # Local-only preview: no corpus reads, chat jobs, logs, retrieval or LLM requests.
+    return query_preview(payload.question)
 
 
 @router.post("/", response_model=ChatResponse)
@@ -23,6 +38,7 @@ def chat(
         question=payload.question,
         requested_document_ids=payload.document_ids,
         top_k=payload.top_k,
+        retrieval_options=resolve_retrieval_options(payload, get_settings()),
     )
 
 
@@ -38,6 +54,7 @@ def create_chat_job(
         question=payload.question,
         document_ids=payload.document_ids,
         top_k=payload.top_k,
+        retrieval_options=resolve_retrieval_options(payload, get_settings()),
     )
     chat_job_service.start_chat_job(job.id)
     return ChatJobRead.model_validate(job)

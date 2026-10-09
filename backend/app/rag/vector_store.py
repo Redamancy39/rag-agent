@@ -3,7 +3,11 @@ from functools import lru_cache
 from typing import Any
 
 from app.core.config import get_settings
+from app.core.logger import get_logger
 from app.rag.schemas import DocumentChunk
+from app.rag.vector_batches import VectorWriteResult, write_vector_batches
+
+logger = get_logger(__name__)
 
 
 class VectorStore:
@@ -22,6 +26,8 @@ class VectorStore:
 class ChromaVectorStore(VectorStore):
     def __init__(self, collection_name: str | None = None) -> None:
         settings = get_settings()
+        self.max_batch_size = _get_client(str(settings.CHROMA_DIR)).get_max_batch_size()
+        self.last_write_result: VectorWriteResult | None = None
         self.collection = _get_collection(
             path=str(settings.CHROMA_DIR),
             name=collection_name or settings.CHROMA_COLLECTION_NAME,
@@ -33,13 +39,15 @@ class ChromaVectorStore(VectorStore):
         chunks: list[DocumentChunk],
         embeddings: list[list[float]],
     ) -> None:
-        if not ids:
-            return
-        self.collection.add(
-            ids=ids,
-            documents=[chunk.text for chunk in chunks],
-            embeddings=embeddings,
-            metadatas=[_normalize_metadata(chunk.metadata) for chunk in chunks],
+        self.last_write_result = None
+        self.last_write_result = write_vector_batches(
+            self.collection, ids, chunks, embeddings,
+            max_batch_size=self.max_batch_size, normalize_metadata=_normalize_metadata,
+        )
+        logger.info(
+            'Vector write completed: rows=%s batches=%s max_batch_size=%s',
+            self.last_write_result.row_count, self.last_write_result.batch_count,
+            self.last_write_result.max_batch_size,
         )
 
     def delete_document(self, document_id: int) -> None:
@@ -161,7 +169,7 @@ def _document_where(document_ids: list[int]) -> dict[str, Any]:
 
 
 @lru_cache(maxsize=4)
-def _get_collection(path: str, name: str):
+def _get_client(path: str):
     os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
     try:
         import chromadb
@@ -180,7 +188,12 @@ def _get_collection(path: str, name: str):
         )
     except TypeError:
         client = chromadb.PersistentClient(path=path)
-    return client.get_or_create_collection(
+    return client
+
+
+@lru_cache(maxsize=4)
+def _get_collection(path: str, name: str):
+    return _get_client(path).get_or_create_collection(
         name=name,
         metadata={"hnsw:space": "cosine"},
     )

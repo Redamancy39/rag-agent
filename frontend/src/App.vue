@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import {
+  ArrowRight,
   CircleCheck,
   Cloudy,
   Delete,
@@ -8,12 +9,14 @@ import {
   Files,
   Key,
   Lock,
+  Loading,
   Refresh,
+  Setting,
   UploadFilled,
   User,
   View
 } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox, type UploadRequestOptions } from 'element-plus'
+import { ElMessage, ElMessageBox, type TableInstance, type UploadRequestOptions } from 'element-plus'
 import {
   AUTH_ERROR_EVENT,
   addGroupMember,
@@ -83,8 +86,20 @@ import type {
   UserGroupRead,
   UserRead
 } from './types'
+import ResourcePermissionsPanel from './components/ResourcePermissionsPanel.vue'
+import FolderUploadPanel from './components/FolderUploadPanel.vue'
+import { FolderUploadPausedError, type FolderUploader } from './utils/folderFiles'
+import { filterDocuments, paginateItems } from './utils/documentList'
+import ChatRetrievalSettings from './components/ChatRetrievalSettings.vue'
+import QueryAssistance from './components/QueryAssistance.vue'
+import RetrievalRunSummary from './components/RetrievalRunSummary.vue'
+import { DEFAULT_RETRIEVAL, loadRetrievalPreferences, saveRetrievalPreferences,
+  sanitizeRetrieval, type RetrievalPreferences } from './utils/retrievalPreferences'
 
-type ActiveView = 'upload' | 'documents' | 'chat' | 'settings'
+type ActiveView = 'upload' | 'documents' | 'permissions' | 'chat' | 'settings'
+type DocumentSection = 'files' | 'collections' | 'upload'
+type NavigationGroup = 'documents' | 'permissions'
+type PermissionSection = 'resources' | 'groups' | 'audit'
 type LlmChunkNormalizationMode = 'auto' | 'enabled' | 'disabled'
 
 interface ChatTurn {
@@ -103,12 +118,34 @@ interface ChatTurn {
 }
 
 const token = ref(localStorage.getItem('rag_agent_token') || '')
+let authSessionVersion = 0
+let uploadSequence = 0
 const currentUser = ref<UserRead | null>(null)
 const documents = ref<DocumentRead[]>([])
 const documentCollections = ref<DocumentCollectionRead[]>([])
 const uploadItems = ref<UploadProgressItem[]>([])
 const authMode = ref<'login' | 'register'>('login')
 const activeView = ref<ActiveView>('upload')
+const documentSection = ref<DocumentSection>('upload')
+const expandedNavigationGroup = ref<NavigationGroup | null>('documents')
+const documentNavigationItems: Array<{ label: string; section: DocumentSection }> = [
+  { label: '上传文档', section: 'upload' },
+  { label: '文档列表', section: 'files' },
+  { label: '文档集', section: 'collections' }
+]
+const permissionNavigationItems: Array<{ label: string; section: PermissionSection }> = [
+  { label: '资源授权', section: 'resources' },
+  { label: '部门与成员', section: 'groups' },
+  { label: '变更日志', section: 'audit' }
+]
+const documentCollectionFilter = ref<number | 'all' | 'unassigned'>('all')
+const documentLlmFilter = ref('all')
+const documentQuery = ref('')
+const documentStatusFilter = ref('all')
+const documentTypeFilter = ref('all')
+const documentPage = ref(1)
+const documentPageSize = ref(20)
+const permissionSection = ref<PermissionSection>('resources')
 const loadingUser = ref(false)
 const loadingDocuments = ref(false)
 const loadingDocumentCollections = ref(false)
@@ -140,6 +177,7 @@ const selectedCollection = ref<DocumentCollectionRead | null>(null)
 const selectedCollectionUserPermissions = ref<CollectionUserPermissionRead[]>([])
 const selectedCollectionGroupPermissions = ref<CollectionGroupPermissionRead[]>([])
 const selectedDocumentRows = ref<DocumentRead[]>([])
+const documentTable = ref<TableInstance>()
 const selectedPermissions = ref<PermissionRead[]>([])
 const selectedGroupPermissions = ref<GroupPermissionRead[]>([])
 const users = ref<UserRead[]>([])
@@ -149,6 +187,10 @@ const selectedGroupMembers = ref<UserGroupRead[]>([])
 const auditLogs = ref<AuditLogRead[]>([])
 const selectedChatCollectionIds = ref<number[]>([])
 const selectedChatDocumentIds = ref<number[]>([])
+const retrievalPreferences = ref<RetrievalPreferences>({ ...DEFAULT_RETRIEVAL })
+watch(retrievalPreferences, value => {
+  if (currentUser.value) saveRetrievalPreferences(localStorage, currentUser.value.id, value)
+}, { deep: true, flush: 'sync' })
 const chatQuestion = ref('')
 const chatTurns = ref<ChatTurn[]>([])
 const chatHistoryItems = ref<ChatTurn[]>([])
@@ -161,6 +203,7 @@ const llmChunkNormalizationOptions = [
   { label: '关闭', value: 'disabled' }
 ]
 const selectedUploadCollectionId = ref<number | null>(null)
+const folderUploadPanel = ref<InstanceType<typeof FolderUploadPanel> | null>(null)
 const moveTargetCollectionId = ref<number | 'unassigned' | null>(null)
 
 const authForm = reactive({
@@ -208,6 +251,19 @@ const collectionGroupPermissionForm = reactive({
 })
 
 const isLoggedIn = computed(() => Boolean(token.value && currentUser.value))
+const filteredDocuments = computed(() => filterDocuments(documents.value, {
+  query: documentQuery.value, collection: documentCollectionFilter.value,
+  llm: documentLlmFilter.value, status: documentStatusFilter.value, fileType: documentTypeFilter.value,
+}))
+const documentPagination = computed(() => paginateItems(filteredDocuments.value, documentPage.value, documentPageSize.value))
+watch([documentPage, documentPageSize], () => {
+  selectedDocumentRows.value = []
+  documentTable.value?.clearSelection()
+})
+watch(documentPageSize, () => { documentPage.value = 1 })
+watch(filteredDocuments, () => {
+  if (documentPage.value !== documentPagination.value.page) documentPage.value = documentPagination.value.page
+})
 const indexedCount = computed(() => documents.value.filter((item) => item.status === 'indexed').length)
 const failedCount = computed(() => documents.value.filter((item) => item.status === 'failed').length)
 const indexedDocuments = computed(() => documents.value.filter((item) => item.status === 'indexed'))
@@ -278,20 +334,25 @@ const capabilityCards = [
 ]
 const chatHistory = computed(() => [...chatHistoryItems.value].reverse())
 const pageTitle = computed(() => {
-  if (activeView.value === 'documents') return '文档列表'
-  if (activeView.value === 'chat') return '问答测试'
+  if (activeView.value === 'upload') return '上传文档'
+  if (activeView.value === 'documents') return documentSection.value === 'collections' ? '文档集' : '文档列表'
+  if (activeView.value === 'permissions') return permissionNavigationItems.find((item) => item.section === permissionSection.value)?.label || '权限管理'
+  if (activeView.value === 'chat') return '知识问答'
   if (activeView.value === 'settings') return '系统配置'
   return '文档上传'
 })
 const pageSubtitle = computed(() => {
   if (activeView.value === 'documents') {
-    return '查看已入库文档、上传者、入库状态、分块数，并支持管理员删除。'
+    return '管理可访问文档与文档集，查看入库进度、分块和质量报告。'
+  }
+  if (activeView.value === 'permissions') {
+    return '管理文档与文档集授权、部门成员，并查看权限变更日志。'
   }
   if (activeView.value === 'chat') {
-    return '对话式 RAG 问答，可选择任意数量文档，回答按分类判断、结论、依据、引用输出。'
+    return '先看结论，再查看依据与原文来源；可选择文档集或指定文档提问。'
   }
   if (activeView.value === 'settings') {
-    return '当前先做只读展示，后续再接入管理员可编辑配置、权限策略和运行监控。'
+    return '查看模型、解析与运行配置；文档和授权分别在文档管理、权限管理中处理。'
   }
   return '登录后上传 PDF、Office、Markdown 或 TXT，后端自动选择原生解析、LiteParse、OCR，完成分块并写入 ChromaDB。'
 })
@@ -344,6 +405,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  authSessionVersion += 1
   window.removeEventListener(AUTH_ERROR_EVENT, handleAuthExpired)
 })
 
@@ -353,16 +415,53 @@ function selectView(view: ActiveView) {
     ElMessage.warning('请先登录后再使用该功能')
     return
   }
+  if (view === 'permissions' && !currentUser.value?.is_admin) {
+    ElMessage.warning('权限管理仅供管理员使用')
+    return
+  }
+  selectedDocumentRows.value = []
+  documentTable.value?.clearSelection()
+  if (view === 'documents' && documentSection.value === 'upload') documentSection.value = 'files'
   activeView.value = view
+  expandedNavigationGroup.value = view === 'upload' || view === 'documents'
+    ? 'documents'
+    : view === 'permissions' ? 'permissions' : null
   if (view === 'documents' || view === 'chat') {
     void refreshDocuments()
   }
-  if (view === 'upload' || view === 'documents' || view === 'settings') {
+  if (view === 'upload' || view === 'documents') {
     void refreshDocumentCollections()
   }
-  if (view === 'settings' && currentUser.value?.is_admin) {
+  if (view === 'permissions') {
     void loadPermissionAdminData()
   }
+}
+
+function toggleNavigationGroup(group: NavigationGroup) {
+  expandedNavigationGroup.value = expandedNavigationGroup.value === group ? null : group
+}
+
+function selectDocumentSection(section: string | number) {
+  if (!['files', 'collections', 'upload'].includes(String(section))) return
+  documentSection.value = section as DocumentSection
+  selectView(section === 'upload' ? 'upload' : 'documents')
+}
+
+function showCollectionDocuments(collection: DocumentCollectionRead) {
+  documentCollectionFilter.value = collection.id
+  selectDocumentSection('files')
+}
+
+function changeDocumentFilter() {
+  documentPage.value = 1
+  selectedDocumentRows.value = []
+  documentTable.value?.clearSelection()
+}
+
+function selectPermissionSection(section: string | number) {
+  if (!currentUser.value?.is_admin || !['resources', 'groups', 'audit'].includes(String(section))) return
+  permissionSection.value = section as PermissionSection
+  selectView('permissions')
 }
 
 async function refreshBackendStatus() {
@@ -407,6 +506,7 @@ async function loadCurrentUser() {
   loadingUser.value = true
   try {
     currentUser.value = await getCurrentUser(token.value)
+    retrievalPreferences.value = loadRetrievalPreferences(localStorage, currentUser.value.id)
   } catch {
     logout(false)
   } finally {
@@ -446,6 +546,9 @@ async function refreshDocumentCollections() {
     const accessibleCollectionIds = new Set(
       documentCollections.value.map((item) => item.id)
     )
+    if (typeof documentCollectionFilter.value === 'number' && !accessibleCollectionIds.has(documentCollectionFilter.value)) {
+      documentCollectionFilter.value = 'all'
+    }
     selectedChatCollectionIds.value = selectedChatCollectionIds.value.filter(
       (id) => accessibleCollectionIds.has(id)
     )
@@ -487,7 +590,9 @@ async function loadChatHistory(options: { hydrateConversation?: boolean } = {}) 
 }
 
 function logout(showMessage = true) {
+  authSessionVersion += 1
   token.value = ''
+  uploadItems.value = []
   currentUser.value = null
   documents.value = []
   documentCollections.value = []
@@ -517,6 +622,16 @@ function logout(showMessage = true) {
   evidenceCollapseNames.value = []
   activeView.value = 'upload'
   localStorage.removeItem('rag_agent_token')
+  retrievalPreferences.value = { ...DEFAULT_RETRIEVAL }
+  documentSection.value = 'upload'
+  expandedNavigationGroup.value = 'documents'
+  documentCollectionFilter.value = 'all'
+  documentLlmFilter.value = 'all'
+  documentQuery.value = ''
+  documentStatusFilter.value = 'all'
+  documentTypeFilter.value = 'all'
+  documentPage.value = 1
+  permissionSection.value = 'resources'
   if (showMessage) {
     ElMessage.success('已退出登录')
   }
@@ -530,6 +645,7 @@ function syncUploadItemsWithDocuments() {
   const byId = new Map(documents.value.map((document) => [document.id, document]))
   for (const item of uploadItems.value) {
     if (!item.document_id) continue
+    if (item.duplicate) continue
     const document = byId.get(item.document_id)
     if (!document) continue
     applyDocumentStatusToUploadItem(item, document)
@@ -540,8 +656,12 @@ function applyDocumentStatusToUploadItem(item: UploadProgressItem, document: Doc
   item.progress = statusProgress(document.status)
   item.message = statusMessage(document)
   item.stageLabel = statusLabel(document.status)
-  item.progressCurrent = undefined
-  item.progressTotal = undefined
+  if (document.status !== 'llm_preprocessing') {
+    item.progressCurrent = undefined
+    item.progressTotal = undefined
+  } else if (item.progressTotal) {
+    item.progress = Math.min(100, Math.round((item.progressCurrent || 0) / item.progressTotal * 100))
+  }
   if (document.status === 'indexed') {
     item.status = 'success'
     item.progress = 100
@@ -560,10 +680,22 @@ async function handleUpload(options: UploadRequestOptions) {
     ElMessage.warning('请先登录后再上传文档')
     return
   }
-  const file = options.file
+  try {
+    const { document } = await submitUpload(options.file, uploadContext())
+    options.onSuccess?.(document)
+  } catch { /* The upload row already contains the failure. */ }
+}
+
+function uploadContext() {
+  return { token: token.value, version: authSessionVersion,
+    mode: llmChunkNormalizationMode.value, collectionId: selectedUploadCollectionId.value }
+}
+
+async function submitUpload(file: File, context: ReturnType<typeof uploadContext>, relativePath?: string, poll = true) {
   const uploadItem: UploadProgressItem = {
-    id: `${file.name}-${Date.now()}`,
+    id: `${Date.now()}-${++uploadSequence}`,
     filename: file.name,
+    relativePath,
     progress: 0,
     status: 'uploading',
     message: '正在上传原始文件'
@@ -572,28 +704,71 @@ async function handleUpload(options: UploadRequestOptions) {
 
   try {
     const document = await uploadDocument(
-      token.value,
+      context.token,
       file,
-      llmChunkNormalizationMode.value,
-      selectedUploadCollectionId.value,
+      context.mode,
+      context.collectionId,
       (progress) => {
-        uploadItem.progress = Math.min(progress, 12)
+        uploadItem.progress = progress
         if (progress >= 100) {
           uploadItem.status = 'indexing'
           uploadItem.message = '上传完成，等待后台解析入库'
         }
-      }
+      },
+      relativePath
     )
     uploadItem.document_id = document.id
+    if (document.duplicate) {
+      uploadItem.duplicate = true
+      uploadItem.status = 'success'
+      uploadItem.progress = 100
+      uploadItem.stageLabel = '重复跳过'
+      uploadItem.message = `${document.duplicate_reason || '已跳过重复内容'}；已有文档状态：${statusLabel(document.status)}`
+      if (context.version === authSessionVersion) await refreshDocuments()
+      return { document, uploadItem }
+    }
     uploadItem.progress = statusProgress(document.status)
     uploadItem.status = document.status === 'failed' ? 'error' : 'indexing'
     uploadItem.message = statusMessage(document)
-    await refreshDocuments()
-    void pollUploadStatus(uploadItem, document.id)
-    options.onSuccess?.(document)
+    if (context.version === authSessionVersion) {
+      await refreshDocuments()
+      if (poll) void pollUploadStatus(uploadItem, document.id)
+    }
+    return { document, uploadItem }
   } catch (error) {
     uploadItem.status = 'error'
     uploadItem.message = error instanceof Error ? error.message : '上传失败'
+    throw error
+  }
+}
+
+function createFolderUploader(): FolderUploader {
+  const context = uploadContext()
+  return async (file, relativePath, shouldStop) => {
+    const stopped = () => shouldStop() || context.version !== authSessionVersion || token.value !== context.token
+    if (stopped()) throw new Error('登录状态已变化，未提交该文件')
+    const { document, uploadItem } = await submitUpload(file, context, relativePath, false)
+    if (document.duplicate) return 'duplicate'
+    let current: DocumentRead = document
+    applyDocumentStatusToUploadItem(uploadItem, current)
+    while (!stopped()) {
+      if (current.status === 'indexed') { await refreshDocuments(); return 'indexed' }
+      if (current.status === 'failed') throw new Error(statusMessage(current))
+      await new Promise(resolve => window.setTimeout(resolve, 2000))
+      if (stopped()) break
+      try {
+        current = await getDocument(context.token, document.id)
+        const jobs = await listDocumentJobs(context.token, document.id)
+        applyProcessingJob(uploadItem, current, jobs[0] || null)
+      }
+      catch {
+        // Preserve an accepted task on a status-query failure and pause new submissions.
+        uploadItem.message = '文件已提交，暂时无法查询结果；恢复连接后可在文档列表查看'
+        throw new FolderUploadPausedError('文件已提交，但状态查询失败；请先恢复连接再继续上传')
+      }
+    }
+    if (context.version === authSessionVersion) void pollUploadStatus(uploadItem, document.id)
+    return 'submitted'
   }
 }
 
@@ -671,14 +846,15 @@ function statusLabel(status: string) {
 }
 
 function statusMessage(document: DocumentRead) {
+  if (document.status === 'failed') return document.error_message || document.status_message || '入库失败'
   if (document.status_message) return document.status_message
   if (document.status === 'indexed') return `入库完成，共 ${document.chunk_count} 个分块`
-  if (document.status === 'failed') return document.error_message || '入库失败'
   return statusLabel(document.status)
 }
 
 function jobStatusMessage(job: DocumentProcessingJobRead | null) {
   if (!job) return ''
+  if (job.status === 'failed') return job.error_message || job.message || '入库失败'
   if (job.stage === 'llm_preprocessing' && job.progress_detail) {
     return job.progress_detail
   }
@@ -706,10 +882,14 @@ function uploadProgressMeta(item: UploadProgressItem) {
     parts.push(`阶段：${item.stageLabel}`)
   }
   if (item.progressTotal) {
-    parts.push(`已完成：${item.progressCurrent || 0} / ${item.progressTotal} 个切块`)
+    parts.push(`已处理：${item.progressCurrent || 0} / ${item.progressTotal} 项`)
   }
-  if (item.status === 'indexing' || item.status === 'uploading') {
+  if (item.status === 'uploading') {
     parts.push(`进度：${item.progress}%`)
+  }
+  if (item.jobUpdatedAt) {
+    const time = /(?:Z|[+-]\d{2}:\d{2})$/i.test(item.jobUpdatedAt) ? item.jobUpdatedAt : item.jobUpdatedAt + 'Z'
+    parts.push(`最近更新：${formatTime(time)}`)
   }
   return parts.join(' · ')
 }
@@ -724,53 +904,32 @@ function llmChunkNormalizationModeLabel(mode = llmChunkNormalizationMode.value) 
 }
 
 function statusProgress(status: string) {
-  const values: Record<string, number> = {
-    queued: 8,
-    agent_planning: 16,
-    file_probe: 14,
-    strategy_planner: 20,
-    uploaded: 12,
-    parsing: 24,
-    parse_ocr: 30,
-    preprocessing: 34,
-    ocr: 42,
-    llm_preprocessing_queued: 50,
-    llm_preprocessing: 56,
-    chunking: 68,
-    normalize: 62,
-    chunk_quality: 72,
-    index: 78,
-    embedding: 82,
-    indexing: 92,
-    report: 96,
-    indexed: 100,
-    failed: 100
-  }
-  return values[status] ?? 15
+  return ['indexed', 'failed'].includes(status) ? 100 : 0
+}
+
+function applyProcessingJob(item: UploadProgressItem, document: DocumentRead, job: DocumentProcessingJobRead | null) {
+  applyDocumentStatusToUploadItem(item, document)
+  const meta = jobProgressMeta(job)
+  item.stageLabel = meta?.stageLabel || statusLabel(document.status)
+  item.progressCurrent = meta?.current
+  item.progressTotal = meta?.total
+  item.jobUpdatedAt = job?.updated_at
+  if (meta && document.status !== 'indexed' && document.status !== 'failed') item.progress = jobProgress(job)
+  const detail = jobStatusMessage(job)
+  if (detail) item.message = detail
 }
 
 async function pollUploadStatus(item: UploadProgressItem, documentId: number) {
   if (!token.value) return
-  for (let attempt = 0; attempt < 360; attempt += 1) {
+  const sessionVersion = authSessionVersion
+  for (let attempt = 0; ; attempt += 1) {
     await new Promise((resolve) => window.setTimeout(resolve, 1500))
-    if (!token.value) return
+    if (!token.value || sessionVersion !== authSessionVersion || !uploadItems.value.some(row => row.id === item.id)) return
     try {
       const document = await getDocument(token.value, documentId)
       const jobs = await listDocumentJobs(token.value, documentId)
       const latestJob = jobs[0] || null
-      applyDocumentStatusToUploadItem(item, document)
-      const progress = jobProgress(latestJob)
-      if (progress > 0 && document.status !== 'indexed' && document.status !== 'failed') {
-        item.progress = Math.max(item.progress, progress)
-      }
-      const meta = jobProgressMeta(latestJob)
-      item.stageLabel = meta?.stageLabel || statusLabel(document.status)
-      item.progressCurrent = meta?.current
-      item.progressTotal = meta?.total
-      const detail = jobStatusMessage(latestJob)
-      if (detail) {
-        item.message = detail
-      }
+      applyProcessingJob(item, document, latestJob)
       if (document.status === 'indexed') {
         item.status = 'success'
         item.progress = 100
@@ -793,7 +952,6 @@ async function pollUploadStatus(item: UploadProgressItem, documentId: number) {
       return
     }
   }
-  item.message = '后台入库仍在进行，可以稍后刷新文档列表查看结果'
 }
 
 function ownerName(document: DocumentRead) {
@@ -1221,18 +1379,21 @@ async function loadPermissionAdminData() {
   if (!token.value || !currentUser.value?.is_admin) return
   loadingGroups.value = true
   loadingAuditLogs.value = true
+  loadingDocuments.value = true
   const selectedGroupId = selectedGroup.value?.id
   try {
-    const [userList, groupList, collectionList, logs] = await Promise.all([
+    const [userList, groupList, collectionList, logs, documentList] = await Promise.all([
       listUsers(token.value),
       listGroups(token.value),
       listDocumentCollections(token.value),
-      listAuditLogs(token.value, 100)
+      listAuditLogs(token.value, 100),
+      listDocuments(token.value)
     ])
     users.value = userList
     groups.value = groupList
     documentCollections.value = collectionList
     auditLogs.value = logs
+    documents.value = documentList
     if (selectedGroupId) {
       selectedGroup.value = groupList.find((group) => group.id === selectedGroupId) || null
       selectedGroupMembers.value = selectedGroup.value
@@ -1244,6 +1405,7 @@ async function loadPermissionAdminData() {
   } finally {
     loadingGroups.value = false
     loadingAuditLogs.value = false
+    loadingDocuments.value = false
   }
 }
 
@@ -1462,8 +1624,17 @@ function traceDuration(item: IngestionTraceItem) {
 
 function traceSummaryRows(item: IngestionTraceItem) {
   const summary = item.summary || {}
+  const labels: Record<string, string> = {
+    enabled: '允许整理', candidate_count: '候选分块', attempted_count: '调用尝试',
+    succeeded_count: '成功响应', failed_count: '处理失败', generated_count: '新生成分块',
+    stored_count: '整理结果分块', eligible_count: '可处理分块', skip_reason: '跳过原因',
+    processed_count: '已处理候选', skipped_count: '未整理候选', request_attempted_count: '实际 API 请求',
+    request_succeeded_count: 'API 成功', request_failed_count: 'API 失败', retry_count: '实际重试',
+    request_max_calls: '单文档请求上限', max_seconds: '整理时间预算（秒）', elapsed_seconds: '整理耗时（秒）',
+    limit_reason: '停止原因', fact_preprocessing_enabled: '前置事实整理'
+  }
   return Object.entries(summary).map(([key, value]) => ({
-    key,
+    key: labels[key] || key,
     value: String(value ?? '-')
   }))
 }
@@ -1561,6 +1732,7 @@ async function submitChat() {
   }
 
   const documentIds = [...effectiveChatDocumentIds.value]
+  const questionPreferences = sanitizeRetrieval(retrievalPreferences.value)
   if (selectedChatCollectionIds.value.length && !documentIds.length) {
     ElMessage.warning('所选文档集中暂无已入库文档')
     return
@@ -1588,7 +1760,7 @@ async function submitChat() {
     const job = await createChatJob(token.value, {
       question,
       document_ids: documentIds.length ? documentIds : undefined,
-      top_k: 5
+      ...questionPreferences
     })
     updateTurnFromChatJob(turn, job)
     const response = await pollChatJob(turn, job.id)
@@ -1802,6 +1974,16 @@ function chatLogToTurn(log: ChatLogRead): ChatTurn {
         retrieval_only: false,
         log_id: log.id
       }
+  // Older logs can arrive with a synthetic default response from the API.
+  // Recover their stored sections instead of displaying the default "not found".
+  if (
+    response.sections?.conclusion === '未找到相关答案。' &&
+    response.sections?.basis === '未找到可支撑结论的依据。' &&
+    /(?:^|\n)结论：/.test(log.answer) &&
+    /(?:^|\n)依据：/.test(log.answer)
+  ) {
+    response.sections = parseAnswerSections(log.answer)
+  }
   const citations = response.citations || []
   const requestedDocumentIds = response.retrieval_scope?.requested_document_ids || []
   const documentIds = requestedDocumentIds.length
@@ -1990,6 +2172,64 @@ function getAnswerSections(response: ChatResponse): AnswerSections {
       citation: '-'
     }
   )
+}
+
+function llmCheckLabel(document: DocumentRead) {
+  const labels: Record<string, string> = {
+    not_run: '未调用', completed: '已检测', partial: '部分成功',
+    failed: '检测失败', running: '检测中', unknown: '记录不足'
+  }
+  return labels[document.llm_processing?.check_status || 'unknown'] || '记录不足'
+}
+
+function llmCheckType(document: DocumentRead) {
+  const state = document.llm_processing?.check_status
+  if (state === 'completed') return 'success'
+  if (state === 'partial') return 'warning'
+  if (state === 'failed') return 'danger'
+  return 'info'
+}
+
+function llmNormalizationLabel(document: DocumentRead) {
+  const record = document.llm_processing
+  if (record?.normalization_status === 'indexed') {
+    const count = record.stored_count ?? record.generated_count
+    return count ? `已整理 · ${count} 块` : '已整理'
+  }
+  const labels: Record<string, string> = {
+    not_run: '未整理', not_needed: '无需整理', not_generated: '未生成整理块',
+    pending: '已生成 · 待入库', index_failed: '已生成 · 入库失败', failed: '整理失败', running: '整理中',
+    recorded: '有整理记录', unknown: '待核查'
+  }
+  return labels[record?.normalization_status || 'unknown'] || '待核查'
+}
+
+function llmNormalizationType(document: DocumentRead) {
+  const state = document.llm_processing?.normalization_status
+  if (state === 'indexed' || state === 'recorded') return 'success'
+  if (state === 'failed' || state === 'index_failed') return 'danger'
+  if (state === 'pending') return 'warning'
+  return 'info'
+}
+
+function llmExecutionNote(document: DocumentRead) {
+  const record = document.llm_processing
+  if (!record) return '暂无执行记录'
+  if (record.succeeded_count || record.failed_count) return `成功 ${record.succeeded_count ?? 0} · 失败 ${record.failed_count ?? 0}`
+  if (record.screening_status === 'completed') return '规则已筛查'
+  return '等待处理记录'
+}
+
+function answerBasisText(response: ChatResponse) {
+  const basis = getAnswerSections(response).basis.trim()
+  if (basis && basis !== '-') return basis
+  return response.citations.length ? '可点击下方来源查看原文片段。' : '暂无可核验依据。'
+}
+
+function legacyCitationNote(response: ChatResponse) {
+  if (response.citations.length) return ''
+  const note = getAnswerSections(response).citation.trim()
+  return ['', '-', '无'].includes(note) ? '' : note
 }
 
 function getEvidenceRows(response: ChatResponse): EvidenceRow[] {
@@ -2208,26 +2448,38 @@ async function scrollChatToBottom() {
         </div>
       </div>
 
-      <nav class="nav-list">
-        <button
-          class="nav-item"
-          :class="{ active: activeView === 'upload' }"
-          type="button"
-          @click="selectView('upload')"
-        >
-          <el-icon><UploadFilled /></el-icon>
-          <span>文档上传</span>
-        </button>
-        <button
-          class="nav-item"
-          :class="{ active: activeView === 'documents', disabled: !isLoggedIn }"
-          type="button"
-          :disabled="!isLoggedIn"
-          @click="selectView('documents')"
-        >
-          <el-icon><Files /></el-icon>
-          <span>文档列表</span>
-        </button>
+      <nav class="nav-list" aria-label="主导航">
+        <div class="nav-group">
+          <button
+            class="nav-item nav-group-toggle"
+            :class="{ 'group-active': activeView === 'upload' || activeView === 'documents' }"
+            type="button"
+            :aria-expanded="expandedNavigationGroup === 'documents'"
+            aria-controls="document-submenu"
+            @click="toggleNavigationGroup('documents')"
+          >
+            <el-icon><Files /></el-icon>
+            <span>文档管理</span>
+            <el-icon class="nav-chevron" :class="{ expanded: expandedNavigationGroup === 'documents' }"><ArrowRight /></el-icon>
+          </button>
+          <Transition name="nav-submenu" appear :duration="{ enter: 380, leave: 0 }">
+            <div v-if="expandedNavigationGroup === 'documents'" id="document-submenu" class="nav-submenu" role="region" aria-label="文档管理子菜单">
+              <div class="nav-submenu-inner">
+                <button
+                  v-for="(item, index) in documentNavigationItems"
+                  :key="item.section"
+                  class="nav-subitem"
+                  :class="{ active: item.section === 'upload' ? activeView === 'upload' : activeView === 'documents' && documentSection === item.section }"
+                  :style="{ '--item-index': index }"
+                  :aria-current="(item.section === 'upload' ? activeView === 'upload' : activeView === 'documents' && documentSection === item.section) ? 'page' : undefined"
+                  :disabled="!isLoggedIn && item.section !== 'upload'"
+                  type="button"
+                  @click="selectDocumentSection(item.section)"
+                >{{ item.label }}</button>
+              </div>
+            </div>
+          </Transition>
+        </div>
         <button
           class="nav-item"
           :class="{ active: activeView === 'chat', disabled: !isLoggedIn }"
@@ -2236,8 +2488,38 @@ async function scrollChatToBottom() {
           @click="selectView('chat')"
         >
           <el-icon><Document /></el-icon>
-          <span>问答测试</span>
+          <span>知识问答</span>
         </button>
+        <div v-if="currentUser?.is_admin" class="nav-group">
+          <button
+            class="nav-item nav-group-toggle"
+            :class="{ 'group-active': activeView === 'permissions' }"
+            type="button"
+            :aria-expanded="expandedNavigationGroup === 'permissions'"
+            aria-controls="permission-submenu"
+            @click="toggleNavigationGroup('permissions')"
+          >
+            <el-icon><Key /></el-icon>
+            <span>权限管理</span>
+            <el-icon class="nav-chevron" :class="{ expanded: expandedNavigationGroup === 'permissions' }"><ArrowRight /></el-icon>
+          </button>
+          <Transition name="nav-submenu" :duration="{ enter: 380, leave: 0 }">
+            <div v-if="expandedNavigationGroup === 'permissions'" id="permission-submenu" class="nav-submenu" role="region" aria-label="权限管理子菜单">
+              <div class="nav-submenu-inner">
+                <button
+                  v-for="(item, index) in permissionNavigationItems"
+                  :key="item.section"
+                  class="nav-subitem"
+                  :class="{ active: activeView === 'permissions' && permissionSection === item.section }"
+                  :style="{ '--item-index': index }"
+                  :aria-current="activeView === 'permissions' && permissionSection === item.section ? 'page' : undefined"
+                  type="button"
+                  @click="selectPermissionSection(item.section)"
+                >{{ item.label }}</button>
+              </div>
+            </div>
+          </Transition>
+        </div>
         <button
           class="nav-item"
           :class="{ active: activeView === 'settings', disabled: !isLoggedIn }"
@@ -2245,7 +2527,7 @@ async function scrollChatToBottom() {
           :disabled="!isLoggedIn"
           @click="selectView('settings')"
         >
-          <el-icon><Key /></el-icon>
+          <el-icon><Setting /></el-icon>
           <span>系统配置</span>
         </button>
       </nav>
@@ -2263,6 +2545,9 @@ async function scrollChatToBottom() {
           <p>{{ pageSubtitle }}</p>
         </div>
         <div class="topbar-actions">
+          <el-button v-if="folderUploadPanel?.running" :icon="Files" plain @click="selectDocumentSection('upload')">
+            {{ folderUploadPanel.stopping ? '正在停止后续上传' : `文件夹处理中 · 待提交 ${folderUploadPanel.pending}` }}
+          </el-button>
           <el-button :icon="Refresh" @click="refreshBackendStatus">刷新状态</el-button>
           <el-button v-if="isLoggedIn" plain @click="logout()">
             {{ currentUser?.username }}，退出
@@ -2270,7 +2555,8 @@ async function scrollChatToBottom() {
         </div>
       </header>
 
-      <section v-if="activeView === 'upload'" class="view-grid">
+      <!-- Keep the browser-owned File queue alive during in-app navigation. -->
+      <section v-show="activeView === 'upload'" class="view-grid">
         <div class="primary-column">
           <section class="auth-panel">
             <div class="panel-heading">
@@ -2334,7 +2620,7 @@ async function scrollChatToBottom() {
               <div>
                 <strong>大模型整理 OCR / 表格切块</strong>
                 <span>
-                  自动模式由文件探测与质量策略决定；强制开启仍只处理筛选出的低质量候选。
+                  默认仅整理候选切块，前置逐行 LLM 整理关闭。单文档默认最多 120 次请求（含重试）、整理时间预算 10 分钟；达到约束后保留原文。
                 </span>
               </div>
               <div class="upload-option-action">
@@ -2367,6 +2653,8 @@ async function scrollChatToBottom() {
               </el-select>
             </div>
 
+            <FolderUploadPanel ref="folderUploadPanel" :create-uploader="createFolderUploader" />
+
             <el-upload
               drag
               multiple
@@ -2383,7 +2671,7 @@ async function scrollChatToBottom() {
             <div v-if="uploadItems.length" class="upload-list">
               <div v-for="item in uploadItems" :key="item.id" class="upload-row">
                 <div class="upload-row-main">
-                  <strong>{{ item.filename }}</strong>
+                  <strong :title="item.relativePath || item.filename">{{ item.relativePath || item.filename }}</strong>
                   <div class="upload-row-status">
                     <span>{{ item.message }}</span>
                     <small v-if="uploadProgressMeta(item)">{{ uploadProgressMeta(item) }}</small>
@@ -2392,7 +2680,11 @@ async function scrollChatToBottom() {
                     清除
                   </el-button>
                 </div>
-                <el-progress
+                <div v-if="item.status === 'indexing' && !item.progressTotal" class="upload-stage-waiting" role="status">
+                  <el-icon class="is-loading"><Loading /></el-icon>
+                  <span>{{ item.stageLabel || '后台处理中' }}</span>
+                </div>
+                <el-progress v-else
                   :percentage="item.progress"
                   :status="uploadStatusType(item.status)"
                   :stroke-width="8"
@@ -2403,7 +2695,7 @@ async function scrollChatToBottom() {
 
           <section v-else class="locked-panel">
             <h2>请先登录</h2>
-            <p>未登录时不会显示文档列表、问答测试，也不能触发上传接口。</p>
+          <p>登录后可浏览有权限的文档、使用知识问答和上传文件。</p>
           </section>
         </div>
 
@@ -2461,25 +2753,67 @@ async function scrollChatToBottom() {
         </aside>
       </section>
 
-      <section v-else-if="activeView === 'documents'" class="view-stack">
+      <section v-if="activeView === 'documents'" class="view-stack">
         <section v-if="!isLoggedIn" class="locked-panel">
           <h2>请先登录</h2>
-          <p>文档列表只展示当前账号有权限访问的文件，未登录时不加载数据。</p>
+          <p>文档管理只展示当前账号可访问的文档与文档集。</p>
         </section>
 
-        <section v-else class="document-panel">
+        <section v-else-if="documentSection === 'files'" class="document-panel">
           <div class="panel-heading">
             <div>
-              <h2>已入库文档</h2>
+              <h2>文档列表</h2>
               <p>状态为 indexed 才代表已经写入向量库。管理员可以删除文档和对应向量。</p>
             </div>
-            <el-button :icon="Refresh" :loading="loadingDocuments" @click="refreshDocuments">
-              刷新列表
-            </el-button>
+            <div class="panel-actions">
+              <el-button :icon="UploadFilled" @click="selectDocumentSection('upload')">上传文档</el-button>
+              <el-button :icon="Refresh" :loading="loadingDocuments" @click="refreshDocuments">刷新列表</el-button>
+            </div>
+          </div>
+
+          <div class="document-filter-toolbar">
+            <el-input v-model="documentQuery" aria-label="搜索文档文件名" class="document-name-search" placeholder="搜索文件名" clearable @input="changeDocumentFilter" />
+            <div class="document-filter-field">
+            <label for="document-collection-filter">文档集</label>
+            <el-select id="document-collection-filter" v-model="documentCollectionFilter" filterable @change="changeDocumentFilter">
+              <el-option label="全部可访问文档" value="all" />
+              <el-option label="未分组" value="unassigned" />
+              <el-option v-for="collection in documentCollections" :key="collection.id" :label="collection.name" :value="collection.id" />
+            </el-select>
+            </div>
+            <div class="document-filter-field">
+            <label for="document-llm-filter">LLM 状态</label>
+            <el-select id="document-llm-filter" v-model="documentLlmFilter" class="llm-status-filter" @change="changeDocumentFilter">
+              <el-option label="全部状态" value="all" />
+              <el-option label="已有 LLM 检测结果" value="checked" />
+              <el-option label="已有大模型整理结果" value="normalized" />
+              <el-option label="未调用 LLM" value="not_run" />
+              <el-option label="检测或入库异常" value="failed" />
+              <el-option label="历史记录不足" value="unknown" />
+              <el-option label="检测中" value="running" />
+            </el-select>
+            </div>
+            <div class="document-filter-field">
+            <label for="document-status-filter">入库状态</label>
+            <el-select id="document-status-filter" v-model="documentStatusFilter" class="document-state-filter" @change="changeDocumentFilter">
+              <el-option label="全部" value="all" />
+              <el-option label="已入库" value="indexed" />
+              <el-option label="排队或处理中" value="processing" />
+              <el-option label="失败" value="failed" />
+            </el-select>
+            </div>
+            <div class="document-filter-field">
+            <label for="document-type-filter">格式</label>
+            <el-select id="document-type-filter" v-model="documentTypeFilter" class="document-state-filter" @change="changeDocumentFilter">
+              <el-option label="全部格式" value="all" />
+              <el-option v-for="type in ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'md', 'markdown', 'txt']" :key="type" :label="type.toUpperCase()" :value="type" />
+            </el-select>
+            </div>
+            <span>共 {{ documents.length }} 个可访问文档 · 筛选结果 {{ filteredDocuments.length }} 个</span>
           </div>
 
           <div v-if="currentUser?.is_admin" class="document-batch-toolbar">
-            <span>已选择 {{ selectedDocumentRows.length }} 个文档</span>
+            <span>本页已选择 {{ selectedDocumentRows.length }} 个文档</span>
             <el-select
               v-model="moveTargetCollectionId"
               filterable
@@ -2505,12 +2839,14 @@ async function scrollChatToBottom() {
 
           <div class="table-wrap">
             <el-table
-              :data="documents"
+              ref="documentTable"
+              :data="documentPagination.items"
+              row-key="id"
               v-loading="loadingDocuments"
               class="document-table"
               height="max(420px, calc(100vh - 320px))"
               scrollbar-always-on
-              empty-text="暂无文档"
+              empty-text="没有符合筛选条件的文档"
               @selection-change="handleDocumentSelectionChange"
             >
               <el-table-column
@@ -2526,6 +2862,29 @@ async function scrollChatToBottom() {
                 width="50"
                 fixed="left"
               />
+              <el-table-column label="状态" width="110">
+                <template #default="{ row }">
+                  <el-tag :type="statusType(row.status)" effect="plain">{{ statusLabel(row.status) }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="LLM 检测" width="150">
+                <template #default="{ row }">
+                  <div class="document-llm-status">
+                    <el-tooltip :content="row.llm_processing?.detail || '暂无可核验的 LLM 执行记录。'" placement="top">
+                      <el-tag :type="llmCheckType(row)" size="small" effect="plain">{{ llmCheckLabel(row) }}</el-tag>
+                    </el-tooltip>
+                    <span>{{ llmExecutionNote(row) }}</span>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="大模型整理" width="175">
+                <template #default="{ row }">
+                  <div class="document-llm-status">
+                    <el-tag :type="llmNormalizationType(row)" size="small" effect="plain">{{ llmNormalizationLabel(row) }}</el-tag>
+                    <button class="document-llm-details" type="button" @click="openJobs(row)">查看记录</button>
+                  </div>
+                </template>
+              </el-table-column>
               <el-table-column label="上传者" width="130">
                 <template #default="{ row }">{{ ownerName(row) }}</template>
               </el-table-column>
@@ -2533,11 +2892,6 @@ async function scrollChatToBottom() {
                 <template #default="{ row }">{{ row.collection_name || '未分组' }}</template>
               </el-table-column>
               <el-table-column prop="file_type" label="类型" width="90" />
-              <el-table-column label="状态" width="110">
-                <template #default="{ row }">
-                  <el-tag :type="statusType(row.status)" effect="plain">{{ statusLabel(row.status) }}</el-tag>
-                </template>
-              </el-table-column>
               <el-table-column label="当前步骤" min-width="240" show-overflow-tooltip>
                 <template #default="{ row }">{{ statusMessage(row) }}</template>
               </el-table-column>
@@ -2613,7 +2967,227 @@ async function scrollChatToBottom() {
               </el-table-column>
             </el-table>
           </div>
+          <el-pagination v-model:current-page="documentPage" v-model:page-size="documentPageSize" :total="filteredDocuments.length" :page-sizes="[20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" class="document-pagination" />
         </section>
+        <section v-else class="settings-card">
+          <div class="settings-card-head">
+            <div>
+              <h2>文档集管理</h2>
+              <p>文档只能归属一个文档集。文档集授权对其中所有文档生效，并与单份文档授权共同决定访问范围。</p>
+            </div>
+            <el-button
+              size="small"
+              :icon="Refresh"
+              :loading="loadingDocumentCollections"
+              @click="refreshDocumentCollections"
+            >
+              刷新
+            </el-button>
+          </div>
+
+          <section v-if="currentUser?.is_admin" class="group-admin-form">
+            <el-input aria-label="文档集名称" v-model="documentCollectionForm.name" placeholder="文档集名称，例如：食品安全国标" />
+            <el-input aria-label="文档集说明" v-model="documentCollectionForm.description" placeholder="文档集说明，可选" />
+            <el-button
+              type="primary"
+              :loading="loadingDocumentCollections"
+              @click="submitDocumentCollection"
+            >
+              创建
+            </el-button>
+          </section>
+
+          <el-table
+            :data="documentCollections"
+            v-loading="loadingDocumentCollections"
+            size="small"
+            class="admin-table"
+            empty-text="暂无文档集"
+          >
+            <el-table-column prop="name" label="文档集" min-width="180" show-overflow-tooltip />
+            <el-table-column prop="description" label="说明" min-width="240" show-overflow-tooltip />
+            <el-table-column prop="document_count" label="文档数" width="90" />
+            <el-table-column label="创建者" width="130">
+              <template #default="{ row }">{{ row.owner_username || `用户 ${row.owner_id}` }}</template>
+            </el-table-column>
+            <el-table-column label="创建时间" width="170">
+              <template #default="{ row }">{{ formatTime(row.created_at) }}</template>
+            </el-table-column>
+            <el-table-column label="操作" :width="currentUser?.is_admin ? 280 : 120" fixed="right">
+              <template #default="{ row }">
+                <el-button size="small" @click="showCollectionDocuments(row)">查看文档</el-button>
+                <el-button v-if="currentUser?.is_admin" size="small" :icon="Key" @click="openCollectionPermissions(row)">
+                  授权
+                </el-button>
+                <el-button v-if="currentUser?.is_admin" size="small" type="danger" plain @click="removeDocumentCollection(row)">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </section>
+      </section>
+
+      <section v-else-if="activeView === 'permissions'" class="view-stack">
+        <section v-if="!isLoggedIn || !currentUser?.is_admin" class="locked-panel">
+          <h2>需要管理员权限</h2>
+          <p>普通用户可在文档管理中浏览可访问资源；授权与部门成员由管理员管理。</p>
+        </section>
+        <template v-else>
+          <section v-if="permissionSection === 'resources'">
+            <ResourcePermissionsPanel
+              :documents="documents"
+              :collections="documentCollections"
+              :loading="loadingDocuments || loadingGroups"
+              @refresh="loadPermissionAdminData"
+              @authorize-document="openPermissions"
+              @authorize-collection="openCollectionPermissions"
+            />
+          </section>
+          <template v-else-if="permissionSection === 'groups'">
+            <section v-if="currentUser?.is_admin" class="settings-card settings-card-wide">
+              <div class="settings-card-head">
+                <div>
+                  <h2>用户组 / 部门权限</h2>
+                  <p>管理员可以创建部门，将用户加入部门，并在文档权限弹窗中按部门批量授权。</p>
+                </div>
+                <el-button size="small" :icon="Refresh" :loading="loadingGroups" @click="loadPermissionAdminData">
+                  刷新
+                </el-button>
+              </div>
+
+              <section class="group-admin-form">
+                <el-input aria-label="部门名称" v-model="groupForm.name" placeholder="部门名称，例如：法规部" />
+                <el-input aria-label="部门说明" v-model="groupForm.description" placeholder="部门说明，可选" />
+                <el-button type="primary" :loading="loadingGroups" @click="submitGroup">
+                  创建
+                </el-button>
+              </section>
+
+              <section class="group-admin-grid">
+                <el-table
+                  :data="groups"
+                  v-loading="loadingGroups"
+                  size="small"
+                  class="admin-table"
+                  empty-text="暂无用户组 / 部门"
+                >
+                  <el-table-column prop="name" label="部门" min-width="160" show-overflow-tooltip />
+                  <el-table-column prop="description" label="说明" min-width="220" show-overflow-tooltip />
+                  <el-table-column label="创建时间" width="170">
+                    <template #default="{ row }">{{ formatTime(row.created_at) }}</template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="160" fixed="right">
+                    <template #default="{ row }">
+                      <el-button size="small" @click="selectGroup(row)">成员</el-button>
+                      <el-button size="small" type="danger" plain @click="removeGroup(row)">
+                        删除
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+
+                <section class="group-member-panel">
+                  <header>
+                    <div>
+                      <h3>{{ selectedGroup ? selectedGroup.name : '请选择部门' }}</h3>
+                      <p>成员会继承该部门被授予的文档读取权限。</p>
+                    </div>
+                  </header>
+
+                  <section class="group-member-form">
+                    <el-select
+                      v-model="groupMemberForm.user_id"
+                      filterable
+                      placeholder="选择用户"
+                      :disabled="!selectedGroup"
+                    >
+                      <el-option
+                        v-for="user in groupMemberOptions"
+                        :key="user.id"
+                        :label="`${user.username}${user.is_admin ? '（管理员）' : ''}`"
+                        :value="user.id"
+                      />
+                    </el-select>
+                    <el-button
+                      type="primary"
+                      plain
+                      :disabled="!selectedGroup"
+                      :loading="loadingGroups"
+                      @click="submitGroupMember"
+                    >
+                      加入
+                    </el-button>
+                  </section>
+
+                  <el-table
+                    :data="selectedGroupMembers"
+                    size="small"
+                    empty-text="暂无成员"
+                  >
+                    <el-table-column label="用户名" min-width="140">
+                      <template #default="{ row }">{{ row.user_username || `用户 ${row.user_id}` }}</template>
+                    </el-table-column>
+                    <el-table-column label="加入时间" width="150">
+                      <template #default="{ row }">{{ formatTime(row.created_at) }}</template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="80">
+                      <template #default="{ row }">
+                        <el-button size="small" type="danger" plain @click="removeSelectedGroupMember(row)">
+                          移除
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </section>
+              </section>
+            </section>
+          </template>
+          <template v-else-if="permissionSection === 'audit'">
+            <section v-if="currentUser?.is_admin" class="settings-card settings-card-wide">
+              <div class="settings-card-head">
+                <div>
+                  <h2>审计与权限变更日志</h2>
+                  <p>记录部门、成员、文档集与资源授权的变更。</p>
+                </div>
+                <el-button size="small" :icon="Refresh" :loading="loadingAuditLogs" @click="refreshAuditLogs">
+                  刷新日志
+                </el-button>
+              </div>
+
+              <el-table
+                :data="auditLogs"
+                v-loading="loadingAuditLogs"
+                size="small"
+                class="audit-table"
+                empty-text="暂无权限审计日志"
+              >
+                <el-table-column label="时间" width="170">
+                  <template #default="{ row }">{{ formatTime(row.created_at) }}</template>
+                </el-table-column>
+                <el-table-column prop="action" label="动作" width="190" show-overflow-tooltip />
+                <el-table-column label="操作者" width="90">
+                  <template #default="{ row }">{{ row.actor_user_id || '-' }}</template>
+                </el-table-column>
+                <el-table-column label="文档" width="90">
+                  <template #default="{ row }">{{ row.document_id || '-' }}</template>
+                </el-table-column>
+                <el-table-column label="用户" width="90">
+                  <template #default="{ row }">{{ row.user_id || '-' }}</template>
+                </el-table-column>
+                <el-table-column label="部门" width="90">
+                  <template #default="{ row }">{{ row.group_id || '-' }}</template>
+                </el-table-column>
+                <el-table-column label="文档集" width="90">
+                  <template #default="{ row }">{{ row.collection_id || '-' }}</template>
+                </el-table-column>
+                <el-table-column label="详情" min-width="280" show-overflow-tooltip>
+                  <template #default="{ row }">{{ auditDetail(row) }}</template>
+                </el-table-column>
+              </el-table>
+            </section>
+          </template>
+        </template>
       </section>
 
       <section v-else-if="activeView === 'settings'" class="settings-page">
@@ -2775,208 +3349,11 @@ async function scrollChatToBottom() {
               </div>
               <div>
                 <strong>后续可编辑项</strong>
-                <span>用户权限、模型路径、OCR 设备、RAG 阈值、任务并发、日志保留周期。</span>
+                <span>模型路径、OCR 设备、RAG 阈值、任务并发和日志保留周期；当前为只读展示。</span>
               </div>
             </div>
           </section>
 
-          <section v-if="currentUser?.is_admin" class="settings-card settings-card-wide">
-            <div class="settings-card-head">
-              <div>
-                <h2>文档集管理</h2>
-                <p>文档只能归属一个文档集。集合授权会一次覆盖其中所有文档，移动后权限立即重新计算。</p>
-              </div>
-              <el-button
-                size="small"
-                :icon="Refresh"
-                :loading="loadingDocumentCollections"
-                @click="refreshDocumentCollections"
-              >
-                刷新
-              </el-button>
-            </div>
-
-            <section class="group-admin-form">
-              <el-input v-model="documentCollectionForm.name" placeholder="文档集名称，例如：食品安全国标" />
-              <el-input v-model="documentCollectionForm.description" placeholder="文档集说明，可选" />
-              <el-button
-                type="primary"
-                :loading="loadingDocumentCollections"
-                @click="submitDocumentCollection"
-              >
-                创建
-              </el-button>
-            </section>
-
-            <el-table
-              :data="documentCollections"
-              v-loading="loadingDocumentCollections"
-              size="small"
-              class="admin-table"
-              empty-text="暂无文档集"
-            >
-              <el-table-column prop="name" label="文档集" min-width="180" show-overflow-tooltip />
-              <el-table-column prop="description" label="说明" min-width="240" show-overflow-tooltip />
-              <el-table-column prop="document_count" label="文档数" width="90" />
-              <el-table-column label="创建者" width="130">
-                <template #default="{ row }">{{ row.owner_username || `用户 ${row.owner_id}` }}</template>
-              </el-table-column>
-              <el-table-column label="创建时间" width="170">
-                <template #default="{ row }">{{ formatTime(row.created_at) }}</template>
-              </el-table-column>
-              <el-table-column label="操作" width="180" fixed="right">
-                <template #default="{ row }">
-                  <el-button size="small" :icon="Key" @click="openCollectionPermissions(row)">
-                    授权
-                  </el-button>
-                  <el-button size="small" type="danger" plain @click="removeDocumentCollection(row)">
-                    删除
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </section>
-
-          <section v-if="currentUser?.is_admin" class="settings-card settings-card-wide">
-            <div class="settings-card-head">
-              <div>
-                <h2>用户组 / 部门权限</h2>
-                <p>管理员可以创建部门，将用户加入部门，并在文档权限弹窗中按部门批量授权。</p>
-              </div>
-              <el-button size="small" :icon="Refresh" :loading="loadingGroups" @click="loadPermissionAdminData">
-                刷新
-              </el-button>
-            </div>
-
-            <section class="group-admin-form">
-              <el-input v-model="groupForm.name" placeholder="部门名称，例如：法规部" />
-              <el-input v-model="groupForm.description" placeholder="部门说明，可选" />
-              <el-button type="primary" :loading="loadingGroups" @click="submitGroup">
-                创建
-              </el-button>
-            </section>
-
-            <section class="group-admin-grid">
-              <el-table
-                :data="groups"
-                v-loading="loadingGroups"
-                size="small"
-                class="admin-table"
-                empty-text="暂无用户组 / 部门"
-              >
-                <el-table-column prop="name" label="部门" min-width="160" show-overflow-tooltip />
-                <el-table-column prop="description" label="说明" min-width="220" show-overflow-tooltip />
-                <el-table-column label="创建时间" width="170">
-                  <template #default="{ row }">{{ formatTime(row.created_at) }}</template>
-                </el-table-column>
-                <el-table-column label="操作" width="160" fixed="right">
-                  <template #default="{ row }">
-                    <el-button size="small" @click="selectGroup(row)">成员</el-button>
-                    <el-button size="small" type="danger" plain @click="removeGroup(row)">
-                      删除
-                    </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-
-              <section class="group-member-panel">
-                <header>
-                  <div>
-                    <h3>{{ selectedGroup ? selectedGroup.name : '请选择部门' }}</h3>
-                    <p>成员会继承该部门被授予的文档读取权限。</p>
-                  </div>
-                </header>
-
-                <section class="group-member-form">
-                  <el-select
-                    v-model="groupMemberForm.user_id"
-                    filterable
-                    placeholder="选择用户"
-                    :disabled="!selectedGroup"
-                  >
-                    <el-option
-                      v-for="user in groupMemberOptions"
-                      :key="user.id"
-                      :label="`${user.username}${user.is_admin ? '（管理员）' : ''}`"
-                      :value="user.id"
-                    />
-                  </el-select>
-                  <el-button
-                    type="primary"
-                    plain
-                    :disabled="!selectedGroup"
-                    :loading="loadingGroups"
-                    @click="submitGroupMember"
-                  >
-                    加入
-                  </el-button>
-                </section>
-
-                <el-table
-                  :data="selectedGroupMembers"
-                  size="small"
-                  empty-text="暂无成员"
-                >
-                  <el-table-column label="用户名" min-width="140">
-                    <template #default="{ row }">{{ row.user_username || `用户 ${row.user_id}` }}</template>
-                  </el-table-column>
-                  <el-table-column label="加入时间" width="150">
-                    <template #default="{ row }">{{ formatTime(row.created_at) }}</template>
-                  </el-table-column>
-                  <el-table-column label="操作" width="80">
-                    <template #default="{ row }">
-                      <el-button size="small" type="danger" plain @click="removeSelectedGroupMember(row)">
-                        移除
-                      </el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </section>
-            </section>
-          </section>
-
-          <section v-if="currentUser?.is_admin" class="settings-card settings-card-wide">
-            <div class="settings-card-head">
-              <div>
-                <h2>审计与权限变更日志</h2>
-                <p>记录部门创建、成员变更、用户授权和部门授权，后续可扩展到文档删除与配置变更。</p>
-              </div>
-              <el-button size="small" :icon="Refresh" :loading="loadingAuditLogs" @click="refreshAuditLogs">
-                刷新日志
-              </el-button>
-            </div>
-
-            <el-table
-              :data="auditLogs"
-              v-loading="loadingAuditLogs"
-              size="small"
-              class="audit-table"
-              empty-text="暂无权限审计日志"
-            >
-              <el-table-column label="时间" width="170">
-                <template #default="{ row }">{{ formatTime(row.created_at) }}</template>
-              </el-table-column>
-              <el-table-column prop="action" label="动作" width="190" show-overflow-tooltip />
-              <el-table-column label="操作者" width="90">
-                <template #default="{ row }">{{ row.actor_user_id || '-' }}</template>
-              </el-table-column>
-              <el-table-column label="文档" width="90">
-                <template #default="{ row }">{{ row.document_id || '-' }}</template>
-              </el-table-column>
-              <el-table-column label="用户" width="90">
-                <template #default="{ row }">{{ row.user_id || '-' }}</template>
-              </el-table-column>
-              <el-table-column label="部门" width="90">
-                <template #default="{ row }">{{ row.group_id || '-' }}</template>
-              </el-table-column>
-              <el-table-column label="文档集" width="90">
-                <template #default="{ row }">{{ row.collection_id || '-' }}</template>
-              </el-table-column>
-              <el-table-column label="详情" min-width="280" show-overflow-tooltip>
-                <template #default="{ row }">{{ auditDetail(row) }}</template>
-              </el-table-column>
-            </el-table>
-          </section>
         </template>
       </section>
 
@@ -2988,8 +3365,9 @@ async function scrollChatToBottom() {
             <el-button type="primary" plain @click="clearConversation">新建对话</el-button>
           </section>
 
-          <section class="qa-side-section qa-settings">
-            <h3>设置</h3>
+          <ChatRetrievalSettings :key="currentUser?.id" v-model="retrievalPreferences"
+            :scope-summary="selectedChatCollectionIds.length || selectedChatDocumentIds.length ? `${effectiveChatDocumentIds.length} 个已入库文档` : '全部可访问文档'">
+            <template #scope>
             <label>检索文档集</label>
             <el-select
               v-model="selectedChatCollectionIds"
@@ -2999,7 +3377,7 @@ async function scrollChatToBottom() {
               clearable
               filterable
               :loading="loadingDocumentCollections"
-              placeholder="默认检索全部可访问文档"
+              placeholder="全部可访问文档"
             >
               <el-option
                 v-for="collection in documentCollections"
@@ -3011,7 +3389,7 @@ async function scrollChatToBottom() {
             <p v-if="selectedChatCollectionIds.length" class="retrieval-scope-hint">
               已从文档集选中 {{ selectedCollectionDocumentIds.length }} 个已入库文档
             </p>
-            <label>补充指定文档</label>
+            <label>指定文档（可选）</label>
             <el-select
               v-model="selectedChatDocumentIds"
               multiple
@@ -3019,7 +3397,7 @@ async function scrollChatToBottom() {
               collapse-tags-tooltip
               clearable
               filterable
-              placeholder="可额外选择集合外文档"
+              placeholder="选择额外文档"
             >
               <el-option
                 v-for="document in indexedDocuments"
@@ -3029,7 +3407,7 @@ async function scrollChatToBottom() {
               />
             </el-select>
             <div class="setting-row">
-              <span>实际检索范围</span>
+              <span>检索范围</span>
               <strong>
                 {{
                   selectedChatCollectionIds.length || selectedChatDocumentIds.length
@@ -3038,15 +3416,13 @@ async function scrollChatToBottom() {
                 }}
               </strong>
             </div>
-            <div class="setting-row">
-              <span>召回片段数</span>
-              <strong>5</strong>
-            </div>
+            <p>与所选文档集共同参与检索；只选择文档时，仅检索这些文档。</p>
             <div class="setting-row">
               <span>输出格式</span>
-              <strong>四行结构化</strong>
+              <strong>结论 · 依据</strong>
             </div>
-          </section>
+            </template>
+          </ChatRetrievalSettings>
 
           <section class="qa-side-section qa-history">
             <h3>历史记录</h3>
@@ -3085,7 +3461,7 @@ async function scrollChatToBottom() {
             <div>
               <h2>食品安全监管问答系统</h2>
               <div class="qa-tags">
-                <el-tag size="small" effect="plain" type="success">API 已配置</el-tag>
+                <el-tag size="small" effect="plain" type="success">按权限检索</el-tag>
                 <el-tag size="small" effect="plain">文档输入版</el-tag>
                 <el-tag size="small" effect="plain">证据约束回答</el-tag>
               </div>
@@ -3135,6 +3511,9 @@ async function scrollChatToBottom() {
 
                   <template v-else-if="turn.response">
                     <div class="answer-validation">
+                      <el-tag v-if="turn.response.retrieval_only" size="small" effect="plain" type="info">
+                        检索证据模式
+                      </el-tag>
                       <el-tag
                         size="small"
                         effect="plain"
@@ -3142,17 +3521,13 @@ async function scrollChatToBottom() {
                       >
                         {{ citationValidationLabel(turn.response) }}
                       </el-tag>
-                      <span v-if="turn.response.citation_validation?.valid">
-                        关键结论均已绑定知识库来源
+                      <span v-if="turn.response.query_plan?.corrections?.length" class="query-correction-summary">
+                        本次纠错：{{ turn.response.query_plan.corrections.map(item => `${item.original} → ${item.replacement}`).join('；') }}
                       </span>
                     </div>
-                    <div class="answer-lines">
-                      <div class="answer-line">
-                        <span>分类判断：</span>
-                        <p>{{ getAnswerSections(turn.response).classification }}</p>
-                      </div>
-                      <div class="answer-line">
-                        <span>结论：</span>
+                    <div class="answer-sections">
+                      <section class="answer-section answer-conclusion">
+                        <h3>结论</h3>
                         <p class="answer-rich-text">
                           <template
                             v-for="(segment, segmentIndex) in answerTextSegments(
@@ -3182,13 +3557,13 @@ async function scrollChatToBottom() {
                             </el-popover>
                           </template>
                         </p>
-                      </div>
-                      <div class="answer-line">
-                        <span>依据：</span>
+                      </section>
+                      <section class="answer-section answer-basis">
+                        <h3>依据</h3>
                         <p class="answer-rich-text">
                           <template
                             v-for="(segment, segmentIndex) in answerTextSegments(
-                              getAnswerSections(turn.response).basis
+                              answerBasisText(turn.response)
                             )"
                             :key="`${turn.id}-basis-${segmentIndex}`"
                           >
@@ -3214,9 +3589,6 @@ async function scrollChatToBottom() {
                             </el-popover>
                           </template>
                         </p>
-                      </div>
-                      <div class="answer-line">
-                        <span>引用：</span>
                         <div v-if="turn.response.citations.length" class="citation-chip-list">
                           <el-popover
                             v-for="(citation, citationIndex) in turn.response.citations"
@@ -3246,14 +3618,14 @@ async function scrollChatToBottom() {
                             </div>
                           </el-popover>
                         </div>
-                        <p v-else>{{ getAnswerSections(turn.response).citation }}</p>
-                      </div>
+                        <p v-else-if="legacyCitationNote(turn.response)" class="source-note">{{ legacyCitationNote(turn.response) }}</p>
+                      </section>
                     </div>
 
                     <el-collapse v-model="evidenceCollapseNames" class="evidence-collapse">
                       <el-collapse-item :name="turn.id">
                         <template #title>
-                          <span class="evidence-title">检索依据</span>
+                          <span class="evidence-title">检索片段</span>
                         </template>
                         <el-table
                           :data="getEvidenceRows(turn.response)"
@@ -3316,10 +3688,11 @@ async function scrollChatToBottom() {
                               <p>
                                 {{ getRetrievalScope(turn.response).allowed_document_ids.length }} 个已入库文档
                               </p>
-                              <span>返回上限</span>
+                              <span>目标证据数</span>
                               <p>Top {{ getRetrievalScope(turn.response).top_k || '-' }}</p>
                             </div>
                           </div>
+                          <RetrievalRunSummary :scope="getRetrievalScope(turn.response)" />
                           <div v-if="getQueryPlan(turn.response)" class="query-agent-card">
                             <div class="query-agent-card-title">
                               <strong>查询规范化</strong>
@@ -3330,6 +3703,14 @@ async function scrollChatToBottom() {
                             <div class="query-agent-grid">
                               <span>归一化问题</span>
                               <p>{{ getQueryPlan(turn.response)?.normalized_question || '-' }}</p>
+                              <template v-if="getQueryPlan(turn.response)?.corrections?.length">
+                                <span>本地纠错</span>
+                                <p>{{ getQueryPlan(turn.response)?.corrections?.map(item => `${item.original} → ${item.replacement}`).join('；') }}</p>
+                              </template>
+                              <template v-if="getQueryPlan(turn.response)?.lexicon_version">
+                                <span>热词表版本</span>
+                                <p>{{ getQueryPlan(turn.response)?.lexicon_version }}</p>
+                              </template>
                               <span>同义词转换</span>
                               <p>{{ formatSynonymExpansions(getQueryPlan(turn.response)?.synonym_expansions) }}</p>
                               <span>问题类型</span>
@@ -3449,10 +3830,12 @@ async function scrollChatToBottom() {
           </div>
 
           <footer class="chat-composer">
+            <QueryAssistance :key="currentUser?.id" v-model:question="chatQuestion" :token="token" />
             <el-input
               v-model="chatQuestion"
+              :maxlength="4000"
               placeholder="输入食品安全国家标准相关问题"
-              @keyup.enter="submitChat"
+              @keyup.enter="(event: KeyboardEvent) => { if (!event.isComposing) submitChat() }"
             />
             <el-button type="primary" :loading="loadingChat" @click="submitChat">
               发送
@@ -3463,6 +3846,16 @@ async function scrollChatToBottom() {
 
       <el-dialog v-model="jobDialogVisible" :title="jobDialogTitle" width="82%" class="job-dialog">
         <div v-loading="loadingJobs" class="job-dialog-body">
+          <section v-if="selectedJobDocument" class="document-llm-overview">
+            <div class="panel-actions">
+              <span>LLM 检测</span>
+              <el-tag :type="llmCheckType(selectedJobDocument)" size="small" effect="plain">{{ llmCheckLabel(selectedJobDocument) }}</el-tag>
+              <span>大模型整理</span>
+              <el-tag :type="llmNormalizationType(selectedJobDocument)" size="small" effect="plain">{{ llmNormalizationLabel(selectedJobDocument) }}</el-tag>
+              <span>{{ llmExecutionNote(selectedJobDocument) }}</span>
+            </div>
+            <p>{{ selectedJobDocument.llm_processing?.detail || '暂无可核验的 LLM 执行记录。' }}</p>
+          </section>
           <el-table
             :data="selectedJobs"
             size="small"

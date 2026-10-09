@@ -2,10 +2,34 @@ import json
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.rag.schemas import SourceLocator
 from app.schemas.chat import SourceLocationRead
+
+
+class DocumentLlmStatusRead(BaseModel):
+    screening_status: str = 'unknown'
+    check_status: str = 'unknown'
+    normalization_status: str = 'unknown'
+    candidate_count: int | None = None
+    attempted_count: int | None = None
+    succeeded_count: int | None = None
+    failed_count: int | None = None
+    generated_count: int | None = None
+    stored_count: int | None = None
+    processed_count: int | None = None
+    skipped_count: int | None = None
+    request_attempted_count: int | None = None
+    request_succeeded_count: int | None = None
+    request_failed_count: int | None = None
+    retry_count: int | None = None
+    request_max_calls: int | None = None
+    elapsed_seconds: float | None = None
+    limit_reason: str | None = None
+    job_id: int | None = None
+    checked_at: datetime | None = None
+    detail: str = '暂无可核验的 LLM 执行记录。'
 
 
 class DocumentRead(BaseModel):
@@ -27,6 +51,12 @@ class DocumentRead(BaseModel):
     collection_name: str | None = None
     created_at: datetime
     updated_at: datetime | None
+    llm_processing: DocumentLlmStatusRead = Field(default_factory=DocumentLlmStatusRead)
+
+
+class DocumentUploadRead(DocumentRead):
+    duplicate: bool = False
+    duplicate_reason: str | None = None
 
 
 class DocumentChunkRead(BaseModel):
