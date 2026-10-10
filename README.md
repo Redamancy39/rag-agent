@@ -127,6 +127,11 @@ docs/                   使用与设计说明
 - [混合检索](docs/BM25_HYBRID_RETRIEVAL.md)
 - [权限与审计](docs/PERMISSION_AUDIT.md)
 - [从 Agent Py 借鉴的后续计划](docs/FOLLOW_UP_FROM_AGENT_PY.md)
+- [2026-05-19 面试核查（历史）](PROJECT_STATUS_CHECK.md)
+
+## 许可证
+
+本仓库代码采用 [MIT License](LICENSE)。
 
 ## 当前边界
 
