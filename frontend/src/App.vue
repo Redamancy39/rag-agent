@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import {
   ArrowRight,
   CircleCheck,
@@ -8,12 +9,10 @@ import {
   Document,
   Files,
   Key,
-  Lock,
   Loading,
   Refresh,
   Setting,
   UploadFilled,
-  User,
   View
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox, type TableInstance, type UploadRequestOptions } from 'element-plus'
@@ -33,7 +32,6 @@ import {
   deletePermission,
   getApiBaseUrl,
   getChatJob,
-  getCurrentUser,
   getDocument,
   getDocumentQualityReport,
   healthCheck,
@@ -50,11 +48,9 @@ import {
   listGroupMembers,
   listGroups,
   listUsers,
-  loginUser,
   moveDocumentsToCollection,
   normalizeDocumentChunks,
   removeGroupMember,
-  registerUser,
   upsertDocumentGroupPermission,
   upsertDocumentPermission,
   upsertCollectionGroupPermission,
@@ -95,6 +91,7 @@ import QueryAssistance from './components/QueryAssistance.vue'
 import RetrievalRunSummary from './components/RetrievalRunSummary.vue'
 import { DEFAULT_RETRIEVAL, loadRetrievalPreferences, saveRetrievalPreferences,
   sanitizeRetrieval, type RetrievalPreferences } from './utils/retrievalPreferences'
+import { clearSession, currentUser, ensureCurrentUser, isLoggedIn, token } from './auth/session'
 
 type ActiveView = 'upload' | 'documents' | 'permissions' | 'chat' | 'settings'
 type DocumentSection = 'files' | 'collections' | 'upload'
@@ -117,17 +114,46 @@ interface ChatTurn {
   jobTrace: Array<Record<string, unknown>>
 }
 
-const token = ref(localStorage.getItem('rag_agent_token') || '')
+const route = useRoute()
+const router = useRouter()
 let authSessionVersion = 0
 let uploadSequence = 0
-const currentUser = ref<UserRead | null>(null)
 const documents = ref<DocumentRead[]>([])
 const documentCollections = ref<DocumentCollectionRead[]>([])
 const uploadItems = ref<UploadProgressItem[]>([])
-const authMode = ref<'login' | 'register'>('login')
-const activeView = ref<ActiveView>('upload')
-const documentSection = ref<DocumentSection>('upload')
-const expandedNavigationGroup = ref<NavigationGroup | null>('documents')
+const activeView = ref<ActiveView>(readRouteView())
+const documentSection = ref<DocumentSection>(readDocumentSection())
+const expandedNavigationGroup = ref<NavigationGroup | null>(readNavigationGroup())
+
+function readRouteView(): ActiveView {
+  const view = route.meta.view
+  if (view === 'upload' || view === 'documents' || view === 'permissions' || view === 'chat' || view === 'settings') {
+    return view
+  }
+  return 'upload'
+}
+
+function readDocumentSection(): DocumentSection {
+  if (route.meta.view === 'upload') return 'upload'
+  if (route.meta.view === 'documents' && (route.meta.section === 'files' || route.meta.section === 'collections')) {
+    return route.meta.section
+  }
+  return 'upload'
+}
+
+function readPermissionSection(): PermissionSection {
+  if (route.meta.section === 'groups' || route.meta.section === 'audit' || route.meta.section === 'resources') {
+    return route.meta.section
+  }
+  return 'resources'
+}
+
+function readNavigationGroup(): NavigationGroup | null {
+  const view = readRouteView()
+  if (view === 'upload' || view === 'documents') return 'documents'
+  if (view === 'permissions') return 'permissions'
+  return null
+}
 const documentNavigationItems: Array<{ label: string; section: DocumentSection }> = [
   { label: '上传文档', section: 'upload' },
   { label: '文档列表', section: 'files' },
@@ -145,7 +171,7 @@ const documentStatusFilter = ref('all')
 const documentTypeFilter = ref('all')
 const documentPage = ref(1)
 const documentPageSize = ref(20)
-const permissionSection = ref<PermissionSection>('resources')
+const permissionSection = ref<PermissionSection>(readPermissionSection())
 const loadingUser = ref(false)
 const loadingDocuments = ref(false)
 const loadingDocumentCollections = ref(false)
@@ -206,12 +232,6 @@ const selectedUploadCollectionId = ref<number | null>(null)
 const folderUploadPanel = ref<InstanceType<typeof FolderUploadPanel> | null>(null)
 const moveTargetCollectionId = ref<number | 'unassigned' | null>(null)
 
-const authForm = reactive({
-  username: '',
-  email: '',
-  password: ''
-})
-
 const permissionForm = reactive({
   user_id: null as number | null,
   can_read: true,
@@ -250,7 +270,6 @@ const collectionGroupPermissionForm = reactive({
   can_write: false
 })
 
-const isLoggedIn = computed(() => Boolean(token.value && currentUser.value))
 const filteredDocuments = computed(() => filterDocuments(documents.value, {
   query: documentQuery.value, collection: documentCollectionFilter.value,
   llm: documentLlmFilter.value, status: documentStatusFilter.value, fileType: documentTypeFilter.value,
@@ -354,7 +373,7 @@ const pageSubtitle = computed(() => {
   if (activeView.value === 'settings') {
     return '查看模型、解析与运行配置；文档和授权分别在文档管理、权限管理中处理。'
   }
-  return '登录后上传 PDF、Office、Markdown 或 TXT，后端自动选择原生解析、LiteParse、OCR，完成分块并写入 ChromaDB。'
+  return '上传 PDF、Office、Markdown 或 TXT，后端自动选择原生解析、LiteParse、OCR，完成分块并写入 ChromaDB。'
 })
 const chunkDialogTitle = computed(() =>
   selectedDocument.value ? `分块预览：${selectedDocument.value.filename}` : '分块预览'
@@ -396,12 +415,13 @@ function handleAuthExpired() {
 onMounted(async () => {
   window.addEventListener(AUTH_ERROR_EVENT, handleAuthExpired)
   await refreshBackendStatus()
-  if (token.value) {
-    await loadCurrentUser()
-    await refreshDocuments()
-    await refreshDocumentCollections()
-    await loadChatHistory()
-  }
+  if (!token.value) return
+  const ready = await loadCurrentUser()
+  if (!ready) return
+  await refreshDocuments()
+  await refreshDocumentCollections()
+  await loadChatHistory()
+  if (activeView.value === 'permissions') await loadPermissionAdminData()
 })
 
 onBeforeUnmount(() => {
@@ -409,32 +429,60 @@ onBeforeUnmount(() => {
   window.removeEventListener(AUTH_ERROR_EVENT, handleAuthExpired)
 })
 
-function selectView(view: ActiveView) {
-  if (!isLoggedIn.value && view !== 'upload') {
-    activeView.value = 'upload'
-    ElMessage.warning('请先登录后再使用该功能')
+function applyRouteState() {
+  const nextView = readRouteView()
+  selectedDocumentRows.value = []
+  documentTable.value?.clearSelection()
+  activeView.value = nextView
+  if (nextView === 'upload') documentSection.value = 'upload'
+  if (nextView === 'documents' && (route.meta.section === 'files' || route.meta.section === 'collections')) {
+    documentSection.value = route.meta.section
+  }
+  if (
+    nextView === 'permissions' &&
+    (route.meta.section === 'resources' || route.meta.section === 'groups' || route.meta.section === 'audit')
+  ) {
+    permissionSection.value = route.meta.section
+  }
+  expandedNavigationGroup.value = nextView === 'upload' || nextView === 'documents'
+    ? 'documents'
+    : nextView === 'permissions' ? 'permissions' : null
+}
+
+function refreshViewData(view: ActiveView) {
+  if (view === 'documents' || view === 'chat') void refreshDocuments()
+  if (view === 'upload' || view === 'documents') void refreshDocumentCollections()
+  if (view === 'permissions') void loadPermissionAdminData()
+}
+
+watch(() => route.fullPath, () => {
+  applyRouteState()
+  refreshViewData(activeView.value)
+})
+
+function openWorkbench(name: 'upload' | 'documents' | 'collections' | 'chat' | 'permissions' | 'permission-groups' | 'permission-audit' | 'settings') {
+  if (router.currentRoute.value.name === name) {
+    applyRouteState()
+    refreshViewData(activeView.value)
     return
   }
+  void router.push({ name })
+}
+
+function selectView(view: ActiveView) {
   if (view === 'permissions' && !currentUser.value?.is_admin) {
     ElMessage.warning('权限管理仅供管理员使用')
     return
   }
-  selectedDocumentRows.value = []
-  documentTable.value?.clearSelection()
-  if (view === 'documents' && documentSection.value === 'upload') documentSection.value = 'files'
-  activeView.value = view
-  expandedNavigationGroup.value = view === 'upload' || view === 'documents'
-    ? 'documents'
-    : view === 'permissions' ? 'permissions' : null
-  if (view === 'documents' || view === 'chat') {
-    void refreshDocuments()
-  }
-  if (view === 'upload' || view === 'documents') {
-    void refreshDocumentCollections()
-  }
-  if (view === 'permissions') {
-    void loadPermissionAdminData()
-  }
+  if (view === 'upload') openWorkbench('upload')
+  else if (view === 'chat') openWorkbench('chat')
+  else if (view === 'settings') openWorkbench('settings')
+  else if (view === 'documents') openWorkbench(documentSection.value === 'collections' ? 'collections' : 'documents')
+  else openWorkbench(
+    permissionSection.value === 'groups'
+      ? 'permission-groups'
+      : permissionSection.value === 'audit' ? 'permission-audit' : 'permissions'
+  )
 }
 
 function toggleNavigationGroup(group: NavigationGroup) {
@@ -442,9 +490,9 @@ function toggleNavigationGroup(group: NavigationGroup) {
 }
 
 function selectDocumentSection(section: string | number) {
-  if (!['files', 'collections', 'upload'].includes(String(section))) return
-  documentSection.value = section as DocumentSection
-  selectView(section === 'upload' ? 'upload' : 'documents')
+  if (section === 'upload') openWorkbench('upload')
+  else if (section === 'files') openWorkbench('documents')
+  else if (section === 'collections') openWorkbench('collections')
 }
 
 function showCollectionDocuments(collection: DocumentCollectionRead) {
@@ -459,56 +507,30 @@ function changeDocumentFilter() {
 }
 
 function selectPermissionSection(section: string | number) {
-  if (!currentUser.value?.is_admin || !['resources', 'groups', 'audit'].includes(String(section))) return
-  permissionSection.value = section as PermissionSection
-  selectView('permissions')
+  if (!currentUser.value?.is_admin) return
+  if (section === 'resources') openWorkbench('permissions')
+  else if (section === 'groups') openWorkbench('permission-groups')
+  else if (section === 'audit') openWorkbench('permission-audit')
 }
 
 async function refreshBackendStatus() {
   backendOnline.value = await healthCheck()
 }
 
-async function submitAuth() {
-  if (!authForm.username || !authForm.password) {
-    ElMessage.warning('请填写用户名和密码')
-    return
-  }
-  loadingUser.value = true
-  try {
-    if (authMode.value === 'register') {
-      await registerUser({
-        username: authForm.username,
-        email: authForm.email || undefined,
-        password: authForm.password
-      })
-      ElMessage.success('注册成功，已自动登录')
-    }
-    const result = await loginUser({
-      username: authForm.username,
-      password: authForm.password
-    })
-    token.value = result.access_token
-    localStorage.setItem('rag_agent_token', result.access_token)
-    await loadCurrentUser()
-    await refreshDocuments()
-    await refreshDocumentCollections()
-    await loadChatHistory()
-    ElMessage.success('登录成功')
-  } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : '登录失败')
-  } finally {
-    loadingUser.value = false
-  }
-}
-
 async function loadCurrentUser() {
-  if (!token.value) return
+  if (!token.value) return false
   loadingUser.value = true
   try {
-    currentUser.value = await getCurrentUser(token.value)
-    retrievalPreferences.value = loadRetrievalPreferences(localStorage, currentUser.value.id)
+    const user = await ensureCurrentUser()
+    if (!user) {
+      logout(false)
+      return false
+    }
+    retrievalPreferences.value = loadRetrievalPreferences(localStorage, user.id)
+    return true
   } catch {
     logout(false)
+    return false
   } finally {
     loadingUser.value = false
   }
@@ -591,9 +613,8 @@ async function loadChatHistory(options: { hydrateConversation?: boolean } = {}) 
 
 function logout(showMessage = true) {
   authSessionVersion += 1
-  token.value = ''
+  clearSession()
   uploadItems.value = []
-  currentUser.value = null
   documents.value = []
   documentCollections.value = []
   selectedDocument.value = null
@@ -621,7 +642,6 @@ function logout(showMessage = true) {
   chatHistoryItems.value = []
   evidenceCollapseNames.value = []
   activeView.value = 'upload'
-  localStorage.removeItem('rag_agent_token')
   retrievalPreferences.value = { ...DEFAULT_RETRIEVAL }
   documentSection.value = 'upload'
   expandedNavigationGroup.value = 'documents'
@@ -634,6 +654,9 @@ function logout(showMessage = true) {
   permissionSection.value = 'resources'
   if (showMessage) {
     ElMessage.success('已退出登录')
+  }
+  if (router.currentRoute.value.name !== 'login') {
+    void router.push({ name: 'login' })
   }
 }
 
@@ -2438,6 +2461,7 @@ async function scrollChatToBottom() {
 </script>
 
 <template>
+  <router-view />
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
@@ -2472,7 +2496,6 @@ async function scrollChatToBottom() {
                   :class="{ active: item.section === 'upload' ? activeView === 'upload' : activeView === 'documents' && documentSection === item.section }"
                   :style="{ '--item-index': index }"
                   :aria-current="(item.section === 'upload' ? activeView === 'upload' : activeView === 'documents' && documentSection === item.section) ? 'page' : undefined"
-                  :disabled="!isLoggedIn && item.section !== 'upload'"
                   type="button"
                   @click="selectDocumentSection(item.section)"
                 >{{ item.label }}</button>
@@ -2482,9 +2505,8 @@ async function scrollChatToBottom() {
         </div>
         <button
           class="nav-item"
-          :class="{ active: activeView === 'chat', disabled: !isLoggedIn }"
+          :class="{ active: activeView === 'chat' }"
           type="button"
-          :disabled="!isLoggedIn"
           @click="selectView('chat')"
         >
           <el-icon><Document /></el-icon>
@@ -2522,9 +2544,8 @@ async function scrollChatToBottom() {
         </div>
         <button
           class="nav-item"
-          :class="{ active: activeView === 'settings', disabled: !isLoggedIn }"
+          :class="{ active: activeView === 'settings' }"
           type="button"
-          :disabled="!isLoggedIn"
           @click="selectView('settings')"
         >
           <el-icon><Setting /></el-icon>
@@ -2558,56 +2579,7 @@ async function scrollChatToBottom() {
       <!-- Keep the browser-owned File queue alive during in-app navigation. -->
       <section v-show="activeView === 'upload'" class="view-grid">
         <div class="primary-column">
-          <section class="auth-panel">
-            <div class="panel-heading">
-              <div>
-                <h2>账号访问</h2>
-                <p>后端接口会校验 JWT。登录后上传的文档会记录当前用户名，并按权限范围检索。</p>
-              </div>
-              <el-segmented
-                v-if="!isLoggedIn"
-                v-model="authMode"
-                :options="[
-                  { label: '登录', value: 'login' },
-                  { label: '注册', value: 'register' }
-                ]"
-              />
-            </div>
-
-            <div v-if="isLoggedIn" class="user-summary">
-              <div>
-                <strong>{{ currentUser?.username }}</strong>
-                <span>{{ currentUser?.is_admin ? '管理员账号' : '普通账号' }}</span>
-              </div>
-              <el-tag :type="currentUser?.is_admin ? 'success' : 'info'" effect="plain">
-                {{ currentUser?.is_admin ? 'Admin' : 'User' }}
-              </el-tag>
-            </div>
-
-            <el-form v-else class="auth-form" :model="authForm" label-position="top">
-              <el-form-item label="用户名">
-                <el-input v-model="authForm.username" :prefix-icon="User" placeholder="demo_user" />
-              </el-form-item>
-              <el-form-item v-if="authMode === 'register'" label="邮箱">
-                <el-input v-model="authForm.email" placeholder="demo@example.com" />
-              </el-form-item>
-              <el-form-item label="密码">
-                <el-input
-                  v-model="authForm.password"
-                  :prefix-icon="Lock"
-                  type="password"
-                  show-password
-                  placeholder="至少 8 位"
-                  @keyup.enter="submitAuth"
-                />
-              </el-form-item>
-              <el-button type="primary" :loading="loadingUser" @click="submitAuth">
-                {{ authMode === 'login' ? '登录并加载文档' : '注册并登录' }}
-              </el-button>
-            </el-form>
-          </section>
-
-          <section v-if="isLoggedIn" class="upload-panel">
+          <section class="upload-panel">
             <div class="panel-heading">
               <div>
                 <h2>上传 PDF / Office / Markdown / TXT</h2>
@@ -2692,11 +2664,6 @@ async function scrollChatToBottom() {
               </div>
             </div>
           </section>
-
-          <section v-else class="locked-panel">
-            <h2>请先登录</h2>
-          <p>登录后可浏览有权限的文档、使用知识问答和上传文件。</p>
-          </section>
         </div>
 
         <aside class="inspector">
@@ -2754,12 +2721,7 @@ async function scrollChatToBottom() {
       </section>
 
       <section v-if="activeView === 'documents'" class="view-stack">
-        <section v-if="!isLoggedIn" class="locked-panel">
-          <h2>请先登录</h2>
-          <p>文档管理只展示当前账号可访问的文档与文档集。</p>
-        </section>
-
-        <section v-else-if="documentSection === 'files'" class="document-panel">
+        <section v-if="documentSection === 'files'" class="document-panel">
           <div class="panel-heading">
             <div>
               <h2>文档列表</h2>
@@ -3029,7 +2991,7 @@ async function scrollChatToBottom() {
       </section>
 
       <section v-else-if="activeView === 'permissions'" class="view-stack">
-        <section v-if="!isLoggedIn || !currentUser?.is_admin" class="locked-panel">
+        <section v-if="!currentUser?.is_admin" class="locked-panel">
           <h2>需要管理员权限</h2>
           <p>普通用户可在文档管理中浏览可访问资源；授权与部门成员由管理员管理。</p>
         </section>
@@ -3191,12 +3153,6 @@ async function scrollChatToBottom() {
       </section>
 
       <section v-else-if="activeView === 'settings'" class="settings-page">
-        <section v-if="!isLoggedIn" class="locked-panel">
-          <h2>请先登录</h2>
-          <p>系统配置需要登录后查看，后续管理员可在这里修改运行参数。</p>
-        </section>
-
-        <template v-else>
           <section class="settings-card settings-card-wide demo-overview-card">
             <div class="settings-card-head">
               <div>
@@ -3353,8 +3309,6 @@ async function scrollChatToBottom() {
               </div>
             </div>
           </section>
-
-        </template>
       </section>
 
       <section v-else-if="activeView === 'chat'" class="qa-workbench">
@@ -3451,12 +3405,7 @@ async function scrollChatToBottom() {
           </section>
         </aside>
 
-        <section v-if="!isLoggedIn" class="locked-panel">
-          <h2>请先登录</h2>
-          <p>问答接口需要 JWT，并且只会检索当前账号可访问的文档。</p>
-        </section>
-
-        <section v-else class="qa-main">
+        <section class="qa-main">
           <header class="qa-title">
             <div>
               <h2>食品安全监管问答系统</h2>

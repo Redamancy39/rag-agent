@@ -126,6 +126,7 @@ docs/                   使用与设计说明
 - [Ingestion Agent](docs/INGESTION_AGENT_DESIGN.md)
 - [混合检索](docs/BM25_HYBRID_RETRIEVAL.md)
 - [权限与审计](docs/PERMISSION_AUDIT.md)
+- [从 Agent Py 借鉴的后续计划](docs/FOLLOW_UP_FROM_AGENT_PY.md)
 
 ## 当前边界
 
