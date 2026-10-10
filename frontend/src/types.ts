@@ -433,6 +433,8 @@ export interface ChatResponse {
   citation_validation: CitationValidationRead
   retrieval_scope: RetrievalScopeRead
   retrieval_only: boolean
+  knowledge_search?: boolean
+  knowledge_search_reason?: string | null
   log_id: number | null
 }
 

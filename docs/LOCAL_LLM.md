@@ -18,7 +18,7 @@ Copy-Item backend/.env.llm.example backend/.env.llm
 
 没有 `.env.llm` 默认离线，进程变量 `LOCAL_LLM_MODE` 可覆盖。修改后等队列空闲再 STOP/START。启用时，问答选中证据及整理候选发送到配置服务，可能产生 API 费用。
 
-本地启动器关闭 `INGESTION_AGENT_LLM_ENABLED`、`QUERY_AGENT_LLM_ENABLED`、`QUERY_AGENT_EVIDENCE_LLM_ENABLED`，保留规则流程。食品术语预检也只在本地执行。
+本地启动器关闭 `INGESTION_AGENT_LLM_ENABLED`、`QUERY_AGENT_LLM_ENABLED`、`QUERY_AGENT_EVIDENCE_LLM_ENABLED`，保留规则流程。食品术语预检也只在本地执行。`chat` 与 `chat_and_normalization` 会打开 `AGENTIC_RAG_ENABLED`：模型只根据问题决定是否查询知识库，查询之后仍走现有规划、混合检索和证据判断。`offline` 关闭该开关，每次提问都按原检索路径执行。
 
 ## 预算与保留规则
 

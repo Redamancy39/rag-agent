@@ -21,6 +21,7 @@ def configure_local_llm():
     if mode not in {'offline', 'chat', 'chat_and_normalization'}:
         raise RuntimeError('LOCAL_LLM_MODE must be offline, chat, or chat_and_normalization.')
     os.environ['LOCAL_LLM_MODE'] = mode
+    os.environ['AGENTIC_RAG_ENABLED'] = 'false' if mode == 'offline' else 'true'
     normalize = mode == 'chat_and_normalization'
     for key in ('PREPROCESS_LLM_ENABLED', 'CHUNK_LLM_NORMALIZATION_ENABLED'):
         os.environ[key] = 'true' if normalize else 'false'

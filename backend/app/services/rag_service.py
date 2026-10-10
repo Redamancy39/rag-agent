@@ -6,6 +6,7 @@ from collections.abc import Callable
 
 from app.agent.evidence_judge import EvidenceDecision, EvidenceJudge
 from app.agent.query_agent import QueryPlan
+from app.agent.retrieval_gate import decide_knowledge_search
 from app.core.config import get_settings
 from app.core.logger import get_logger
 from app.models.user import User
@@ -78,6 +79,76 @@ class RagService:
         self.settings = get_settings()
 
     def answer(
+        self,
+        db: Session,
+        *,
+        user: User,
+        question: str,
+        requested_document_ids: list[int] | None = None,
+        top_k: int | None = None,
+        progress_callback: Callable[[dict], None] | None = None,
+        retrieval_options: ResolvedRetrievalOptions | None = None,
+        force_retrieval: bool = False,
+    ) -> ChatResponse:
+        self._knowledge_search = True
+        self._knowledge_search_reason = None
+        if self._should_gate_retrieval(requested_document_ids, force_retrieval):
+            _emit_progress(
+                progress_callback,
+                stage="retrieval_gate",
+                message="根据问题判断是否查询知识库",
+                progress=4,
+            )
+            decision = decide_knowledge_search(question)
+            self._knowledge_search_reason = decision.reason
+            if not decision.search:
+                self._knowledge_search = False
+                options = retrieval_options or resolve_retrieval_options(
+                    RetrievalOptions(top_k=top_k or 5), self.settings
+                )
+                _emit_progress(
+                    progress_callback,
+                    stage="completed",
+                    message="问题不需要查询知识库",
+                    progress=100,
+                )
+                return self._finalize_response(
+                    db,
+                    user=user,
+                    question=question,
+                    response=_direct_knowledge_response(decision.answer, decision.reason),
+                    retrieval_scope=RetrievalScopeRead(
+                        requested_document_ids=[],
+                        allowed_document_ids=[],
+                        top_k=options.top_k,
+                        options=options,
+                        usage=RetrievalUsageRead(),
+                    ),
+                )
+        return self._answer_from_knowledge(
+            db,
+            user=user,
+            question=question,
+            requested_document_ids=requested_document_ids,
+            top_k=top_k,
+            progress_callback=progress_callback,
+            retrieval_options=retrieval_options,
+        )
+
+    def _should_gate_retrieval(
+        self,
+        requested_document_ids: list[int] | None,
+        force_retrieval: bool,
+    ) -> bool:
+        if force_retrieval or requested_document_ids:
+            return False
+        if not self.settings.AGENTIC_RAG_ENABLED:
+            return False
+        if not (self.settings.OPENAI_API_KEY or "").strip() or not (self.settings.OPENAI_MODEL_NAME or "").strip():
+            return False
+        return True
+
+    def _answer_from_knowledge(
         self,
         db: Session,
         *,
@@ -390,6 +461,8 @@ class RagService:
         response: ChatResponse,
         retrieval_scope: RetrievalScopeRead,
     ) -> ChatResponse:
+        response.knowledge_search = getattr(self, "_knowledge_search", True)
+        response.knowledge_search_reason = getattr(self, "_knowledge_search_reason", None)
         response.retrieval_scope = retrieval_scope
         _mark_selected_trace_hits(response)
         response.log_id = self._write_log(
@@ -862,6 +935,22 @@ def _sections_to_answer(sections: AnswerSections) -> str:
             f"依据：{sections.basis}",
             f"引用：{sections.citation}",
         ]
+    )
+
+
+def _direct_knowledge_response(answer: str, reason: str) -> ChatResponse:
+    sections = AnswerSections(
+        classification="未查询知识库",
+        conclusion=answer,
+        basis=reason or "该问题不需要查询已上传文档。",
+        citation="无",
+    )
+    return ChatResponse(
+        answer=_sections_to_answer(sections),
+        sections=sections,
+        citation_validation=CitationValidationRead(valid=True),
+        knowledge_search=False,
+        knowledge_search_reason=reason or None,
     )
 
 

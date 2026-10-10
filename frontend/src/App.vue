@@ -1846,6 +1846,7 @@ function chatStageLabel(stage: string) {
     evidence_judge: '审查证据充分性',
     generate: '调用大模型生成答案',
     citation_validate: '校验答案引用',
+    retrieval_gate: '判断是否查询知识库',
     completed: '回答完成',
     failed: '问答任务失败'
   }
@@ -2396,12 +2397,13 @@ function citationById(response: ChatResponse, citationId: number) {
 }
 
 function citationValidationLabel(response: ChatResponse) {
+  if (response.knowledge_search === false) return '未查询知识库'
   if (response.sections.classification === '未找到') return '知识库未找到'
   return response.citation_validation?.valid ? '引用校验通过' : '引用校验未通过'
 }
 
 function citationValidationType(response: ChatResponse) {
-  if (response.sections.classification === '未找到') return 'info'
+  if (response.knowledge_search === false || response.sections.classification === '未找到') return 'info'
   return response.citation_validation?.valid ? 'success' : 'danger'
 }
 
@@ -3470,6 +3472,9 @@ async function scrollChatToBottom() {
                       >
                         {{ citationValidationLabel(turn.response) }}
                       </el-tag>
+                      <span v-if="turn.response.knowledge_search === false && turn.response.knowledge_search_reason" class="query-correction-summary">
+                        {{ turn.response.knowledge_search_reason }}
+                      </span>
                       <span v-if="turn.response.query_plan?.corrections?.length" class="query-correction-summary">
                         本次纠错：{{ turn.response.query_plan.corrections.map(item => `${item.original} → ${item.replacement}`).join('；') }}
                       </span>
@@ -3571,7 +3576,7 @@ async function scrollChatToBottom() {
                       </section>
                     </div>
 
-                    <el-collapse v-model="evidenceCollapseNames" class="evidence-collapse">
+                    <el-collapse v-if="turn.response.knowledge_search !== false" v-model="evidenceCollapseNames" class="evidence-collapse">
                       <el-collapse-item :name="turn.id">
                         <template #title>
                           <span class="evidence-title">检索片段</span>

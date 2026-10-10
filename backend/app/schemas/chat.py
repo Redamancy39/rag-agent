@@ -225,6 +225,8 @@ class ChatResponse(BaseModel):
     )
     retrieval_scope: RetrievalScopeRead = Field(default_factory=RetrievalScopeRead)
     retrieval_only: bool = False
+    knowledge_search: bool = True
+    knowledge_search_reason: str | None = None
     log_id: int | None = None
 
 

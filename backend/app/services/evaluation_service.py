@@ -28,6 +28,7 @@ def run_rag_evaluation(
             question=case.question,
             requested_document_ids=case.document_ids,
             top_k=case.top_k,
+            force_retrieval=True,
         )
         actual_found = _actual_found(response.answer)
         answer_text = "\n".join(
