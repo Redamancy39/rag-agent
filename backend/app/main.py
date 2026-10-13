@@ -9,6 +9,7 @@ from app.api import (
     evaluations,
     logs,
     permissions,
+    system,
     users,
 )
 from app.core.config import get_settings
@@ -41,6 +42,7 @@ app.include_router(document_collections.router, prefix=settings.API_V1_PREFIX)
 app.include_router(permissions.router, prefix=settings.API_V1_PREFIX)
 app.include_router(chat.router, prefix=settings.API_V1_PREFIX)
 app.include_router(logs.router, prefix=settings.API_V1_PREFIX)
+app.include_router(system.router, prefix=settings.API_V1_PREFIX)
 app.include_router(evaluations.router, prefix=settings.API_V1_PREFIX)
 
 

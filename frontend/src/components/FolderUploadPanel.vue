@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { FolderOpened } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { runFolderFiles, scanFolderFiles, type FolderScan, type FolderUploader } from '../utils/folderFiles'
+import { runFolderFiles, scanFolderFiles, type FolderUploader } from '../utils/folderFiles'
 import { paginateItems } from '../utils/documentList'
+import { folderRunning, folderScan, folderStopping } from '../stores/folderUpload'
 
 const props = defineProps<{ createUploader: () => FolderUploader }>()
 const picker = ref<HTMLInputElement>()
-const scan = ref<FolderScan | null>(null)
-const running = ref(false)
-const stopping = ref(false)
+const scan = folderScan
+const running = folderRunning
+const stopping = folderStopping
 const previewPage = ref(1)
 const previewPageSize = ref(20)
 const previewQuery = ref('')
@@ -54,8 +55,6 @@ async function start() {
     else if (pending.value) ElMessage.warning('查询中断，本批已暂停；请恢复连接后查看文档列表，再继续上传')
   } finally { running.value = false }
 }
-onBeforeUnmount(() => { stopping.value = true })
-defineExpose({ running, stopping, pending, working })
 </script>
 
 <template>
@@ -110,17 +109,17 @@ defineExpose({ running, stopping, pending, working })
 </template>
 
 <style scoped>
-.folder-import { margin-bottom: 16px; padding: 16px; border: 1px solid #dce3ea; border-radius: 8px; background: #f8fafc; }
+.folder-import { margin-bottom: 16px; padding: 16px; border: 1px solid var(--c-dce3ea); border-radius: 8px; background: var(--c-f8fafc); }
 .folder-import-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .folder-import-heading > div { min-width: 0; }
-.folder-import-heading strong, .folder-import-summary strong { color: #111827; font-size: 14px; }
-.folder-import-heading p, .folder-import-note, .folder-import-details p { margin: 6px 0; color: #64748b; font-size: 12px; line-height: 1.6; }
-.folder-import-summary { display: grid; gap: 6px; margin-top: 14px; color: #0f766e; font-size: 12px; }
+.folder-import-heading strong, .folder-import-summary strong { color: var(--c-111827); font-size: 14px; }
+.folder-import-heading p, .folder-import-note, .folder-import-details p { margin: 6px 0; color: var(--c-64748b); font-size: 12px; line-height: 1.6; }
+.folder-import-summary { display: grid; gap: 6px; margin-top: 14px; color: var(--c-0f766e); font-size: 12px; }
 .folder-current-path { overflow-wrap: anywhere; }
-.folder-import-details { margin-top: 12px; font-size: 12px; color: #475569; }
+.folder-import-details { margin-top: 12px; font-size: 12px; color: var(--c-475569); }
 .folder-import-details summary { cursor: pointer; padding: 6px 0; }
 .folder-import-details ul { max-height: 240px; overflow: auto; margin: 6px 0 10px; padding: 0; list-style: none; }
-.folder-import-details li { display: grid; grid-template-columns: 24px minmax(0, 1fr) minmax(110px, 30%); align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+.folder-import-details li { display: grid; grid-template-columns: 24px minmax(0, 1fr) minmax(110px, 30%); align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--c-e2e8f0); }
 .folder-import-details li.skipped-file { grid-template-columns: minmax(0, 1fr) minmax(110px, 30%); }
 .folder-preview-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
 .folder-preview-tools .el-input { width: min(300px, 100%); }

@@ -51,6 +51,7 @@ export interface DocumentRead {
   owner_username: string | null
   collection_id: number | null
   collection_name: string | null
+  can_write?: boolean
   created_at: string
   updated_at: string | null
   llm_processing?: DocumentLlmStatus
@@ -209,6 +210,16 @@ export interface CollectionGroupPermissionRead {
   can_read: boolean
   can_write: boolean
   created_at: string
+}
+
+export interface SystemInfo {
+  llm_mode: string
+  llm_model: string | null
+  embedding_model: string
+  reranker_enabled: boolean
+  reranker_model: string | null
+  agentic_rag_enabled: boolean
+  ocr_enabled: boolean
 }
 
 export interface AuditLogRead {
@@ -459,6 +470,21 @@ export interface ChatJobRead {
   updated_at: string | null
 }
 
+export interface ChatTurn {
+  id: string
+  logId: number | null
+  question: string
+  documentIds: number[]
+  documentNames: string[]
+  createdAt: string
+  response: ChatResponse | null
+  loading: boolean
+  error: string | null
+  progress: number
+  progressMessage: string
+  jobTrace: Array<Record<string, unknown>>
+}
+
 export interface ChatLogRead {
   id: number
   user_id: number
@@ -474,17 +500,3 @@ export interface ChatLogRead {
   created_at: string
 }
 
-export interface UploadProgressItem {
-  id: string
-  document_id?: number
-  duplicate?: boolean
-  filename: string
-  relativePath?: string
-  progress: number
-  status: 'ready' | 'uploading' | 'indexing' | 'success' | 'error'
-  message: string
-  stageLabel?: string
-  progressCurrent?: number
-  progressTotal?: number
-  jobUpdatedAt?: string | null
-}

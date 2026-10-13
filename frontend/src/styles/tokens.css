@@ -1,0 +1,84 @@
+:root {
+  --c-008b80: #008b80;
+  --c-087f75: #087f75;
+  --c-0c5e58: #0c5e58;
+  --c-0d9488: #0d9488;
+  --c-0f172a: #0f172a;
+  --c-0f766e: #0f766e;
+  --c-0f9f6e: #0f9f6e;
+  --c-111827: #111827;
+  --c-115e59: #115e59;
+  --c-173b2720: #173b2720;
+  --c-18212f: #18212f;
+  --c-1f2937: #1f2937;
+  --c-28455c: #28455c;
+  --c-334155: #334155;
+  --c-475569: #475569;
+  --c-526172: #526172;
+  --c-52665e: #52665e;
+  --c-579f9a: #579f9a;
+  --c-5ea99d: #5ea99d;
+  --c-60758a: #60758a;
+  --c-64748b: #64748b;
+  --c-71859a: #71859a;
+  --c-8393a4: #8393a4;
+  --c-8796a4: #8796a4;
+  --c-87bbb7: #87bbb7;
+  --c-94a3b8: #94a3b8;
+  --c-99b8b4: #99b8b4;
+  --c-a3dad3: #a3dad3;
+  --c-b7d6d4: #b7d6d4;
+  --c-b8d7d2: #b8d7d2;
+  --c-bee5de: #bee5de;
+  --c-cddcd3: #cddcd3;
+  --c-cfe4e2: #cfe4e2;
+  --c-d5e5e1: #d5e5e1;
+  --c-d5e7dc: #d5e7dc;
+  --c-dc2626: #dc2626;
+  --c-dce3ea: #dce3ea;
+  --c-e2e8f0: #e2e8f0;
+  --c-e2eee7: #e2eee7;
+  --c-e3ecef: #e3ecef;
+  --c-e6eef2: #e6eef2;
+  --c-e6f7f4: #e6f7f4;
+  --c-e7f1f1: #e7f1f1;
+  --c-e7f5f2: #e7f5f2;
+  --c-ecfeff: #ecfeff;
+  --c-edf1f5: #edf1f5;
+  --c-eef7ef: #eef7ef;
+  --c-ef4444: #ef4444;
+  --c-f0fbf8: #f0fbf8;
+  --c-f0fdfa: #f0fdfa;
+  --c-f1f7f6: #f1f7f6;
+  --c-f2f5f8: #f2f5f8;
+  --c-f3f7fa: #f3f7fa;
+  --c-f59e0b: #f59e0b;
+  --c-f5f7fa: #f5f7fa;
+  --c-f7faf9: #f7faf9;
+  --c-f8fafc: #f8fafc;
+  --c-fb5b6b: #fb5b6b;
+  --c-fbfcfd: #fbfcfd;
+  --c-fbfdff: #fbfdff;
+  --c-fbfefd: #fbfefd;
+  --c-fff: #fff;
+  --c-ffffff: #ffffff;
+  --el-color-primary: var(--c-0f766e);
+  --el-color-primary-light-3: #579f9a;
+  --el-color-primary-light-5: #87bbb7;
+  --el-color-primary-light-7: #b7d6d4;
+  --el-color-primary-light-8: #cfe4e2;
+  --el-color-primary-light-9: #e7f1f1;
+  --el-color-primary-dark-2: #0c5e58;
+}
+
+.el-button--primary {
+  --el-button-bg-color: var(--c-0f766e);
+  --el-button-border-color: var(--c-0f766e);
+  --el-button-hover-bg-color: var(--c-0d9488);
+  --el-button-hover-border-color: var(--c-0d9488);
+}
+.el-segmented {
+  --el-segmented-item-selected-bg-color: var(--c-0f766e);
+  --el-segmented-item-selected-color: var(--c-ffffff, #fff);
+  --el-border-radius-base: 6px;
+}

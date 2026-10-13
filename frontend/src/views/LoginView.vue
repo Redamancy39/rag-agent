@@ -45,7 +45,7 @@ async function submit() {
 </script>
 
 <template>
-  <AuthLayout title="登录" subtitle="登录后进入工作台。文档、问答和权限界面需要有效的 JWT。">
+  <AuthLayout title="登录" subtitle="登录后进入工作台。文档、问答和权限界面需要先登录。">
     <el-form class="auth-form" :model="form" label-position="top">
       <el-form-item label="用户名">
         <el-input v-model="form.username" :prefix-icon="User" autocomplete="username" placeholder="demo_user" />

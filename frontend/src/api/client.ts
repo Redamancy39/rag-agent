@@ -1,24 +1,9 @@
 import type {
-  AuditLogRead,
-  ChatJobRead,
-  ChatResponse,
-  ChatLogRead,
-  CollectionGroupPermissionRead,
-  CollectionUserPermissionRead,
-  DocumentChunkRead,
-  DocumentCollectionRead,
-  DocumentProcessingJobRead,
-  DocumentQualityReportRead,
-  DocumentRead,
-  DocumentUploadRead,
-  GroupPermissionRead,
-  GroupRead,
-  PermissionRead,
-  TokenResponse,
-  UserGroupRead,
-  UserRead
+  AuditLogRead, ChatJobRead, ChatLogRead, CollectionGroupPermissionRead,
+  CollectionUserPermissionRead, DocumentChunkRead, DocumentCollectionRead, DocumentProcessingJobRead,
+  DocumentQualityReportRead, DocumentRead, DocumentUploadRead, GroupPermissionRead, GroupRead,
+  PermissionRead, SystemInfo, TokenResponse, UserGroupRead, UserRead, HotwordCatalogue, QueryPreviewRead
 } from '../types'
-import type { HotwordCatalogue, QueryPreviewRead } from '../types'
 import type { RetrievalPreferences } from '../utils/retrievalPreferences'
 
 export const AUTH_ERROR_EVENT = 'rag-agent-auth-error'
@@ -365,15 +350,8 @@ export async function listAuditLogs(token: string, limit = 100): Promise<AuditLo
   return request<AuditLogRead[]>(`/permissions/audit-logs?limit=${limit}`, { token })
 }
 
-export async function askQuestion(
-  token: string,
-  payload: { question: string; document_ids?: number[] } & Partial<RetrievalPreferences>
-): Promise<ChatResponse> {
-  return request<ChatResponse>('/chat/', {
-    method: 'POST',
-    token,
-    body: JSON.stringify(payload)
-  })
+export async function getSystemInfo(token: string): Promise<SystemInfo> {
+  return request<SystemInfo>('/system/info', { token })
 }
 
 export async function createChatJob(

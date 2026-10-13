@@ -52,7 +52,7 @@ async function submit() {
 </script>
 
 <template>
-  <AuthLayout title="注册" subtitle="注册普通账号后会自动登录。管理员账号仍由后端配置创建。">
+  <AuthLayout title="注册" subtitle="注册普通账号后会自动登录。管理员账号由后端配置。">
     <el-form class="auth-form" :model="form" label-position="top">
       <el-form-item label="用户名">
         <el-input v-model="form.username" :prefix-icon="User" autocomplete="username" placeholder="demo_user" />

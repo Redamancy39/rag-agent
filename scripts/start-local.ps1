@@ -193,7 +193,7 @@ function Ensure-FrontendEnvironment {
     Invoke-Checked $script:nodePath @('--version')
     Push-Location $frontendDir
     try {
-        if (-not (Test-CommandQuietly $script:nodePath @('--input-type=module', '-e', "await import('vite'); await import('vue'); await import('@vitejs/plugin-vue'); await import('element-plus')"))) {
+        if (-not (Test-CommandQuietly $script:nodePath @('scripts\check-deps.mjs'))) {
             Write-Host '[2/4] 安装前端依赖 …'
             Invoke-Checked $script:npmPath @('install', '--no-audit', '--no-fund')
         } else { Write-Host '[2/4] 前端依赖已就绪。' }

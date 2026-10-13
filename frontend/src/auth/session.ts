@@ -7,6 +7,13 @@ export const TOKEN_STORAGE_KEY = 'rag_agent_token'
 export const token = ref(localStorage.getItem(TOKEN_STORAGE_KEY) || '')
 export const currentUser = ref<UserRead | null>(null)
 export const isLoggedIn = computed(() => Boolean(token.value && currentUser.value))
+export const sessionVersion = ref(0)
+
+const sessionResetters: Array<() => void> = []
+
+export function onSessionReset(reset: () => void) {
+  sessionResetters.push(reset)
+}
 
 let userRequest: Promise<UserRead | null> | null = null
 let lastAuthFailure: 'unauthorized' | null = null
@@ -28,7 +35,9 @@ export function clearSession() {
   token.value = ''
   currentUser.value = null
   userRequest = null
+  sessionVersion.value += 1
   localStorage.removeItem(TOKEN_STORAGE_KEY)
+  for (const reset of sessionResetters) reset()
 }
 
 export async function ensureCurrentUser(): Promise<UserRead | null> {

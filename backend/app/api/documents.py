@@ -19,13 +19,23 @@ from app.services.document_dedup import DuplicateUpload
 router = APIRouter(prefix="/documents", tags=["documents"])
 
 
+def _with_write_access(db: Session, user: User, documents: list[Document]) -> list[DocumentRead]:
+    reads = documents_with_llm_status(db, documents)
+    return [
+        item.model_copy(update={
+            'can_write': document_service.get_writable_document(db, item.id, user) is not None
+        })
+        for item in reads
+    ]
+
+
 @router.get("/", response_model=list[DocumentRead])
 def list_documents(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[DocumentRead]:
     documents = document_service.list_accessible_documents(db, current_user)
-    return documents_with_llm_status(db, documents)
+    return _with_write_access(db, current_user, documents)
 
 
 @router.get("/{document_id}", response_model=DocumentRead)
@@ -40,7 +50,7 @@ def read_document(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Document not found or not accessible",
         )
-    return documents_with_llm_status(db, [document])[0]
+    return _with_write_access(db, current_user, [document])[0]
 
 
 @router.get("/{document_id}/chunks", response_model=list[DocumentChunkRead])
@@ -132,10 +142,12 @@ async def upload_document(
             source_relative_path=source_relative_path,
         )
         background_tasks.add_task(document_service.index_document_by_id, document.id)
-        return document
+        uploaded = _with_write_access(db, current_user, [document])[0]
+        return DocumentUploadRead.model_validate(uploaded.model_dump()).model_copy(update={'can_write': True})
     except DuplicateUpload as exc:
         response.status_code = status.HTTP_200_OK
-        return DocumentUploadRead.model_validate(exc.document).model_copy(update={
+        duplicate = _with_write_access(db, current_user, [exc.document])[0]
+        return DocumentUploadRead.model_validate(duplicate.model_dump()).model_copy(update={
             'duplicate': True,
             'duplicate_reason': f'相同内容已存在：{exc.document.filename}（文档 #{exc.document.id}），已跳过重复入库',
         })
@@ -165,7 +177,7 @@ def normalize_document_chunks(
             user=current_user,
         )
         background_tasks.add_task(document_service.normalize_document_chunks_by_id, document.id)
-        return document
+        return _with_write_access(db, current_user, [document])[0]
     except PermissionError as exc:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

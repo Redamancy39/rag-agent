@@ -1,6 +1,7 @@
 import { access } from 'node:fs/promises'
 import { join } from 'node:path'
 import { preview } from 'vite'
+import { sharedServer } from '../vite.shared.mjs'
 
 const portIndex = process.argv.findIndex((arg) => arg === '--port')
 const portArg = portIndex >= 0 ? process.argv[portIndex + 1] : undefined
@@ -20,13 +21,11 @@ const outDir = (await pathExists(join(process.cwd(), 'dist-next'))) ? 'dist-next
 const server = await preview({
   configFile: false,
   root: process.cwd(),
-  build: {
-    outDir
-  },
   preview: {
-    host: '127.0.0.1',
+    ...sharedServer,
     port
-  }
+  },
+  build: { outDir }
 })
 
 console.log(`[preview] serving ${outDir}`)
